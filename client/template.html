@@ -1,0 +1,12 @@
+<template name="nucleus">
+  {{> nucleus_tree_widget}}
+  {{> editor}}
+</template>
+
+<template name="nucleus_tree_widget">
+  <div id="nucleus_file_tree">{{tree}}</div>
+</template>
+
+<template name="editor">
+  {{> sharejsAce docid=docid onRender=config id="nucleus_editor"}}
+</template>

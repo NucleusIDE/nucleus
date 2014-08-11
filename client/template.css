@@ -1,0 +1,17 @@
+/* CSS declarations go here */
+#nucleus_file_tree {
+  width: 20%;
+  float: left;
+  height: 100%;
+  color: rgb(211,211,211);
+}
+
+#nucleus_editor {
+  width: 80%;
+  float: right;
+  height: 900px;
+}
+
+.jstree-anchor {
+  color: #422 !important;
+}
