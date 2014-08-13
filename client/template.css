@@ -1,9 +1,15 @@
 /* CSS declarations go here */
-#nucleus_file_tree {
+#sidebar {
   width: 20%;
   float: left;
   height: 100%;
   color: rgb(211,211,211);
+}
+
+.btn-sidebar {
+  /* margin: 10px auto; */
+  width: 100%;
+  border-radius: 0 !important;
 }
 
 #nucleus_editor {
@@ -14,4 +20,7 @@
 
 .jstree-anchor {
   color: #422 !important;
+}
+.alert {
+  margin-bottom: 0px !important;
 }

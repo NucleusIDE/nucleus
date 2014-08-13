@@ -5,12 +5,18 @@ var NucleusClientFactory = function() {
         nucleusClientDep = new Deps.Dependency;
 
 
-    this.curtainUp = function() {
+    this.initialize = function() {
         var url = window.location.origin + '/nucleus',
             windowName = 'Nucleus',
-            nucleusWindow = window.open(url, windowName, 'height=200,width=150');
+            nucleusWindow = window.open(url, windowName, 'height=550,width=900');
 
         if (window.focus) { nucleusWindow.focus(); }
+
+        FlashMessages.configure({
+            autoHide: true,
+            hideDelay: 3000,
+            autoScroll: true
+        });
 
         return false;
     };
@@ -62,11 +68,24 @@ var NucleusClientFactory = function() {
         console.log("SAVING FILE", selectedDocId);
         Meteor.call("nucleusSaveDocToDisk", selectedDocId, function(err, res) {
             if (err) { console.log(err); return;}
+            if(res === 0) FlashMessages.sendWarning("No Changes to Save");
+            if(res === 1) FlashMessages.sendSuccess("File Saved Successfully");
+            if(res === 2) FlashMessages.sendError("Something went Wrong when Saving File");
         });
+    };
+
+    this.markFileForEval = function(selectedDocId) {
+        var doc = NucleusDocuments.findOne({doc_id: selectedDocId});
+        console.log("DOC IS", doc);
+        doc && doc.update({$set: {dirty: true}});
     };
 
     return this;
 };
+
+Deps.autorun(function() {
+    Meteor.subscribe('nucleusPublisher');
+});
 
 
 NucleusClient = new NucleusClientFactory();

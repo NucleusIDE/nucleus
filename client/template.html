@@ -4,9 +4,30 @@
 </template>
 
 <template name="nucleus_tree_widget">
-  <div id="nucleus_file_tree">{{tree}}</div>
+  <div id="sidebar">
+    <div id="nucleus_file_tree">
+      {{tree}}
+    </div>
+
+    {{> nucleus_toolbar}}
+
+    <div id="flash_messages">
+      {{> flashMessages}}
+    </div>
+  </div>
+
 </template>
 
 <template name="editor">
-  {{> sharejsAce docid=docid onRender=config id="nucleus_editor"}}
+  {{> sharejsAce docid=docid onRender=config onConnect=setMode id="nucleus_editor"}}
 </template>
+
+<template name="nucleus_toolbar">
+  <div id="nucleus-toolbar">
+    <button id="commit_changes" class="btn btn-primary btn-sidebar">Commit All Changes</button>
+    <button id="push_changes" class="btn btn-info btn-sidebar">Push To Remote Repo</button>    
+    <button id="pull_changes" class="btn btn-primary btn-sidebar">Pull New Changes</button>    
+  </div>
+</template>
+
+
