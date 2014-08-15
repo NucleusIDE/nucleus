@@ -37,10 +37,9 @@ NucleusFactory = function() {
         child.exec("cd " + projectDir + " && git pull nucleus nucleus", function(err, stdout, stderr) {
             if (err) {console.log(err); fut.return(-1); }
             else {
-                if(stdout.search(/Already up-to-date/) >= 0) {
-                    console.log(stdout, stderr);
+                if(stdout.search(/Already up-to-date/) >= 0)
                     fut.return(0);
-                } else
+                else
                     fut.return(1);
 
                 console.log("STDOUT:", stdout);

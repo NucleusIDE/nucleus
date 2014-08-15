@@ -7,7 +7,7 @@ Npm.depends({
 });
 
 Package.on_use(function (api, where) {
-    api.use(['jquery', 'deps', 'templating', 'underscore', 'session', 'meteor-sharejs', 'flash-messages']);
+    api.use(['jquery', 'deps', 'templating', 'underscore', 'session', 'meteor-sharejs', 'flash-messages', 'meteor-live-update']);
 
     api.add_files('both/nucleus.js', ['client', 'server']);
 

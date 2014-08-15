@@ -1,3 +1,7 @@
+Template.editor.rendered = function() {
+    $("#nucleus_editor").height($(window).height());
+};
+
 Template.nucleus_tree_widget.helpers({
     tree: function() {
         $('#nucleus_file_tree').jstree({
