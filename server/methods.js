@@ -1,29 +1,6 @@
 Meteor.methods({
     nucleusGetFileList: function() {
-        var dirTree = function (filename, parent) {
-            // if (path.basename(filename).indexOf(".") === 0) return false; //not showing hidden files/folders
-
-            var stats = fs.lstatSync(filename),
-                info = {
-                    path: filename,
-                    parent: parent,
-                    name: path.basename(filename)
-                };
-
-            if (stats.isDirectory()) {
-                info.type = "folder";
-                info.children = fs.readdirSync(filename).map(function(child) {
-                    return dirTree(filename + '/' + child, filename);
-                });
-            } else {
-                // Assuming it's a file. In real life it could be a symlink or
-                // something else!
-                info.type = "file";
-            }
-            return info;
-        };
-        var tree = dirTree(Nucleus.config.projectDir, "#");
-        return(tree);
+        return Nucleus.getDirTree(Nucleus.config.projectDir, "#");
     },
     nucleusGetFileContents: function(filepath) {
         if (typeof filepath !== 'string' || fs.lstatSync(filepath).isDirectory()) return;
@@ -102,5 +79,8 @@ Meteor.methods({
     },
     nucleusPullChanges: function() {
         return Nucleus.pullChanges();
+    },
+    nucleusGetAllCSS: function(options) {
+        return Nucleus.getAllCSS(options);
     }
 });

@@ -15,10 +15,48 @@ NucleusFactory = function() {
         project: ''
     };
 
+    this.getDirTree = function dirTree(filename, parent, traverseSymlinks) {
+        filename = filename || Nucleus.config.projectDir;
+        parent = parent || "#";
+        var stats = fs.lstatSync(filename),
+            projectDir = Nucleus.config.projectDir,
+            info = {
+                path: filename,
+                parent: parent,
+                name: path.basename(filename)
+            };
+
+        if (stats.isDirectory()) {
+            info.type = "folder";
+            info.children = fs.readdirSync(filename).map(function(child) {
+                return dirTree(filename + '/' + child, filename);
+            });
+        } else if ( stats.isSymbolicLink()) {
+            info.type = "symlink";
+            //below is for traversing symlinks (packages etc)
+            if(traverseSymlinks) {
+                var link = fs.readlinkSync(filename);
+                if (link.indexOf(".") === 0) return;
+
+                if(fs.lstatSync(link).isDirectory()) {
+                    info.children = fs.readdirSync(link).map(function(child) {
+                        return dirTree(filename + '/' + child, filename, traverseSymlinks);
+                    });
+                }
+            }
+        } else {
+            info.type = "file";
+        }
+        return info;
+    };
+
     this.getFileContents = function(filepath) {
         if (filepath === '*scratch*') return false;
 
-        if (typeof filepath !== 'string' || fs.lstatSync(filepath).isDirectory()) return false;
+        if (typeof filepath !== 'string' || fs.lstatSync(filepath).isDirectory()) {
+            console.log("FILE PATH TYPE", typeof filepath);
+            return false;
+        }
 
         var fut = new Future();
         fs.readFile(filepath, {encoding: 'utf-8'}, function(err, contents) {
@@ -110,6 +148,48 @@ NucleusFactory = function() {
 
         if (nucleusDirExists && repoAlreadyCloned)
             this.pullChanges(projectDir);
+    };
+
+    this.getAllCSS = function(options) {
+        var tree = this.getDirTree(),
+            packagesToInclude = options && options.packagesToInclude,
+            cssFiles = [],
+            collectedCss = '';
+
+        var collectCSSFiles = function(filetree) {
+            if (filetree.name.indexOf(".") !== 0) {
+                if (path.extname(filetree.path).replace(".", "") === 'css')
+                    cssFiles.push(filetree.path);
+
+                _.each(filetree.children, function(node) {
+                    collectCSSFiles(node);
+                });
+            }
+        };
+        var collectCSSFilesFromPackages = function(packages) {
+            packages = packages || [];
+            _.each(packages, function(package) {
+                var tree = this.getDirTree(path.join(this.config.projectDir, "packages/"+package), "#", true);
+                collectCSSFiles(tree);
+            }.bind(this));
+        }.bind(this);
+
+        collectCSSFilesFromPackages(packagesToInclude);
+        collectCSSFiles(tree); //populates cssFiles with filepath of all CSS files
+
+        //TODO: make this better and more meteor like
+        _.each(cssFiles, function(cssfile) {
+            var contents = this.getFileContents(cssfile);
+            console.log("FETCHING : ", cssfile);
+            collectedCss += contents;
+        }.bind(this));
+
+
+        return collectedCss;
+    };
+
+    this.getFileExtension = function (filepath) {
+        return path.extname(filepath).replace(".", "");
     };
 
     this.configure = function(config) {

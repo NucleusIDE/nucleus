@@ -7,39 +7,19 @@ var NucleusClientFactory = function() {
     this.config = {
         nucleusUrl: window.location.origin + '/nucleus',
         windowName: 'Nucleus',
-        clientDir: 'client'
+        clientDir: 'client',
+        serverDir: 'server',
+        suckCSSFromPackages: []
     };
 
     this.configure = function(config) {
         _.extend(this.config, config);
-    };
 
-    this.isClientFile = function(filepath) {
-        var clientRegex = new RegExp("\/"+this.config.clientDir+"\/");
-        return clientRegex.test(filepath);
-    };
+        LiveUpdate.configure({
+            purelyThirdParty: true
+        });
 
-    this.markDocForEval = function(nucDoc) {
-        var filepath = nucDoc.filepath,
-            isClientFile = this.isClientFile(filepath);
-        if (isClientFile) {
-            NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true}});
-        } else {
-            FlashMessages.sendWarning("This file can't be evaled in realtime. Changes will be visible on next deploy.");
-        }
     };
-
-    this.unmarkDocForEval = function(nucDoc) {
-        NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false}});
-    };
-
-    this.evalNucleusDoc = function(nucDoc) {
-        var filepath = nucDoc.filepath,
-            doc = ShareJsDocs.findOne(nucDoc.doc_id),
-            newJs = doc.data.snapshot;
-        console.log("EVALING", filepath);
-    };
-
 
     this.initialize = function(config) {
         this.configure(config);
@@ -56,11 +36,49 @@ var NucleusClientFactory = function() {
             autoScroll: true
         });
 
-        LiveUpdate.configure({
-            cssOnly: false
-        });
-
+        this.updateCSS();
         return false;
+    };
+
+    this.getWindow = function() {
+        return window.name === "Nucleus" ? window.opener : window;
+    };
+
+    this.isClientFile = function(filepath) {
+        var clientRegex = new RegExp("\/"+this.config.clientDir+"\/");
+        return clientRegex.test(filepath);
+    };
+    this.isServerFile = function(filepath) {
+        var serverRegex = new RegExp("\/"+this.config.clientDir+"\/");
+        return serverRegex.test(filepath);
+    };
+    this.isCSSFile = function(filepath) {
+        var splitArr = filepath.split(".");
+        return splitArr[splitArr.length-1] === 'css';
+    };
+
+    this.markDocForEval = function(nucDoc) {
+        var filepath = nucDoc.filepath,
+            isClientFile = this.isClientFile(filepath);
+        if (isClientFile || !this.isServerFile(filepath) && this.isCSSFile(filepath)) {
+            NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true}});
+        } else {
+            FlashMessages.sendWarning("This file can't be evaled in realtime. Changes will be visible on next deploy.");
+        }
+    };
+
+    this.unmarkDocForEval = function(nucDoc) {
+        NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false}});
+    };
+
+    this.evalNucleusDoc = function(nucDoc) {
+        var filepath = nucDoc.filepath,
+            doc = ShareJsDocs.findOne(nucDoc.doc_id),
+            newJs = doc.data.snapshot;
+        if (this.isCSSFile(filepath))
+            this.updateCSS();
+        else
+            console.log("EVALING", filepath);
     };
 
     this.getFileTree = function() {
@@ -85,7 +103,7 @@ var NucleusClientFactory = function() {
         if(! rawtree) return false;
         var setJstreeJSON = function(obj) {
             _.each(obj.children, function(child) {
-                if (child.name.indexOf(".") === 0) return;
+                if (child.name.indexOf(".") === 0) return; //ignore hidden files/folders
                 jstree.push({"id": child.path, "parent": child.parent, "text": child.name});
                 if (obj.type === 'folder') setJstreeJSON(child);
             });
@@ -114,6 +132,25 @@ var NucleusClientFactory = function() {
             if(res === 0) FlashMessages.sendWarning("No Changes to Save");
             if(res === 1) {client.markDocForEval(nucDoc); FlashMessages.sendSuccess("File Saved Successfully");}
             if(res === 2) FlashMessages.sendError("Something went Wrong when Saving File");
+        });
+    };
+
+    this.updateCSS = function() {
+        var nucleusStyle = document.createElement("style"),
+            window = this.getWindow();
+        nucleusStyle.id = "nucleus-style";
+
+        /*
+         * clear old CSS
+         * This works because Meteor injects only one stylesheet <link>
+         */
+        _.each(window.document.querySelectorAll("link"), function(link) {
+            if (link.rel === 'stylesheet') link.href = '';
+        });
+
+        Meteor.call("nucleusGetAllCSS", {packagesToInclude: this.config.suckCSSFromPackages}, function(err, res) {
+            nucleusStyle.innerHTML = res;
+            window.document.body.appendChild(nucleusStyle);
         });
     };
 
