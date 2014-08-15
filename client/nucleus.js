@@ -138,6 +138,7 @@ var NucleusClientFactory = function() {
     this.updateCSS = function() {
         var nucleusStyle = document.createElement("style"),
             window = this.getWindow();
+        if(window.document.getElementById("nucleus-style")) window.document.getElementById("nucleus-style").remove();
         nucleusStyle.id = "nucleus-style";
 
         /*
@@ -150,7 +151,7 @@ var NucleusClientFactory = function() {
 
         Meteor.call("nucleusGetAllCSS", {packagesToInclude: this.config.suckCSSFromPackages}, function(err, res) {
             nucleusStyle.innerHTML = res;
-            window.document.body.appendChild(nucleusStyle);
+            window.document.head.appendChild(nucleusStyle);
         });
     };
 
