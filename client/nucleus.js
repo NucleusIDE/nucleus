@@ -110,8 +110,27 @@ var NucleusClientFactory = function() {
         });
     }.bind(this);
 
+    this.getJstreeHTML = function() {
+        //jstree isn't working when used with JSON from within a meteor package. So, let's create HTML (ul>li) instead.
+        // I tried creating my own simple tree, but it's turning out to be more work
+        var tree = this.getFileTree();
+        if (! tree) return false;
+        var template = "\
+            <ul> \
+              <% _.each(tree.children, function(child) { %>  \
+                <li id='<%= child.path %>' ><%= child.name %> \
+                  <%= childFn({tree: child, childFn: childFn}) %> \
+              </li> \
+              <% }) %> \
+          </ul>";
+        var templateFn = _.template(template);
+
+        var html = templateFn({tree: tree, childFn: templateFn});
+        return html;
+    };
+
     this.getJstreeJSON = function() {
-        //jstree uses a different JSON formatting then produced by MakeMe.getFileList. Here we do the conversion
+        //jstree uses a different JSON formatting then produced by Nucleus.getFileList. Here we do the conversion
         var rawtree = this.getFileTree();
         if(! rawtree) return false;
         var setJstreeJSON = function(obj) {

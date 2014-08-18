@@ -8,8 +8,8 @@
   {{#if no_nuc_user}}
   <div id="nucleus_nick_prompt">
     <div id="nick_form" action="#">
-        <input id="nick" type="text" placeholder="Enter Nick and press Enter"/>
-        <!-- <a id="as_a_guest" href="#">Visit as Guest</a> -->
+      <input id="nick" type="text" placeholder="Enter Nick and press Enter"/>
+      <!-- <a id="as_a_guest" href="#">Visit as Guest</a> -->
     </div>
   </div>
   {{/if}}
@@ -18,7 +18,7 @@
 <template name="nucleus_tree_widget">
   <div id="sidebar">
     <div id="nucleus_file_tree">
-      {{tree}}
+      {{{tree}}}
     </div>
 
     {{> nucleus_toolbar}}

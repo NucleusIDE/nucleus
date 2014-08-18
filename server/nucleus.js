@@ -15,40 +15,59 @@ NucleusFactory = function() {
         project: ''
     };
 
-    this.getDirTree = function dirTree(filename, parent, traverseSymlinks) {
-        filename = filename || Nucleus.config.projectDir;
-        parent = parent || "#";
-        var stats = fs.lstatSync(filename),
-            projectDir = Nucleus.config.projectDir,
-            info = {
-                path: filename,
-                parent: parent,
-                name: path.basename(filename)
-            };
+    this.getDirTree = function(options) {
+        var  dirTree= function (options) {
+            var filename = options.rootDir || Nucleus.config.projectDir,
+                parent = options.parent || "#",
+                traverseSymlinks = options.traverseSymlinks || false,
+                includeHidden = options.includeHidden || false,
 
-        if (stats.isDirectory()) {
-            info.type = "folder";
-            info.children = fs.readdirSync(filename).map(function(child) {
-                return dirTree(filename + '/' + child, filename);
-            });
-        } else if ( stats.isSymbolicLink()) {
-            info.type = "symlink";
-            //below is for traversing symlinks (packages etc)
-            if(traverseSymlinks) {
-                var link = fs.readlinkSync(filename);
-                if (link.indexOf(".") === 0) return;
+                stats = fs.lstatSync(filename),
+                projectDir = Nucleus.config.projectDir,
+                info = {
+                    path: filename,
+                    parent: parent,
+                    name: path.basename(filename)
+                };
 
-                if(fs.lstatSync(link).isDirectory()) {
-                    info.children = fs.readdirSync(link).map(function(child) {
-                        return dirTree(filename + '/' + child, filename, traverseSymlinks);
-                    });
+            if(! includeHidden && info.name.indexOf(".") === 0)
+                return;
+
+            if (stats.isDirectory()) {
+                info.type = "folder";
+                info.children = fs.readdirSync(filename).map(function(child) {
+                    return dirTree({rootDir: filename + '/' + child, parent: filename, traverseSymlinks: traverseSymlinks, includeHidden: includeHidden});
+                });
+            } else if ( stats.isSymbolicLink()) {
+                info.type = "symlink";
+                //below is for traversing symlinks (packages etc)
+                if(traverseSymlinks) {
+                    var link = fs.readlinkSync(filename);
+                    if (link.indexOf(".") === 0) return;
+
+                    if(fs.lstatSync(link).isDirectory()) {
+                        info.children = fs.readdirSync(link).map(function(child) {
+                            return dirTree({rootDir: filename + '/' + child, parent: filename, traverseSymlinks: traverseSymlinks, includeHidden: includeHidden});
+                        });
+                    }
                 }
+            } else {
+                info.type = "file";
             }
-        } else {
-            info.type = "file";
+            return info;
+        };
+        var removeEmptyChildren = function(tree) {
+            tree.children = _.compact(tree.children);
+            _.each(tree.children, removeEmptyChildren);
+        };
+
+        var tree = dirTree(options);
+        if (! options.includeHidden) {
+            removeEmptyChildren(tree);
         }
-        return info;
+        return tree;
     };
+
 
     this.getFileContents = function(filepath) {
         if (filepath === '*scratch*') return false;

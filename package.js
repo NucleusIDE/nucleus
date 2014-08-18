@@ -21,12 +21,16 @@ Package.on_use(function (api, where) {
         'client/template.css',
         'client/template.js',
         'client/events.js',
-        // 'client/lib/jstree.js',
-        // 'client/lib/themes/default/style.css',
-        // 'client/lib/themes/default/32px.png',
-        // 'client/lib/themes/default/40px.png',
-        // 'client/lib/themes/default/throbber.gif',
+        'client/lib/jstree/jstree.js',
+        'client/lib/jstree/themes/default/style.css',
     ], ['client']);
+
+    api.add_files([
+        'client/lib/jstree/themes/default/32px.png',
+        'client/lib/jstree/themes/default/40px.png',
+        'client/lib/jstree/themes/default/throbber.gif',
+    ], 'client', {isAsset: true});
+
     api.add_files([
         'server/nucleus.js',
         'server/methods.js',

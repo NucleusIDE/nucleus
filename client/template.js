@@ -60,20 +60,24 @@ Template.editor.rendered = function() {
 
 Template.nucleus_tree_widget.helpers({
     tree: function() {
-        $('#nucleus_file_tree').jstree({
-            'core' : {
-                'data' : NucleusClient.getJstreeJSON(),
-                'themes': {
-                    icons: false,
-                    stripes: true,
-                    responsive: true,
-                    dots: true
-                }
-            }});
-
+        console.log("CREATING THE TREE");
         $("#nucleus_file_tree").on("select_node.jstree", function(e,data) {
             Session.set("nucleus_selected_file", data.selected[0]);
         });
+        Meteor.setTimeout(function() {
+            $('#nucleus_file_tree').jstree({
+            'core' : {
+                // 'data' : NucleusClient.getJstreeJSON(),
+                'themes': {
+                    icons: false,
+                    stripes: false,
+                    responsive: true,
+                    dots: false
+                }
+            }});
+
+        }, 300);
+        return NucleusClient.getJstreeHTML();
     }
 });
 
@@ -107,7 +111,6 @@ Template.editor.setMode = function() {
             },
             mode = 'ace/mode/' + (aceModesForExts[ext] || ext);
 
-        console.log("MODE IS", mode);
         editor.getSession().setMode(mode);
     };
 };
