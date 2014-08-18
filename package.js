@@ -11,7 +11,8 @@ Package.on_use(function (api, where) {
 
     api.add_files([
         'both/nucleus.js',
-        'both/models/nucleus_user.js'
+        'both/models/nucleus_user.js',
+        'both/utilities.js'
     ], ['client', 'server']);
 
     api.add_files([
