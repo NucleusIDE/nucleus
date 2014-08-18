@@ -1,4 +1,4 @@
-var Utils = {};
+Utils = {};
 
 Utils.getRandomColor = function() {
     var letters = '0123456789ABCDEF'.split('');

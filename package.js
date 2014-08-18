@@ -10,15 +10,16 @@ Package.on_use(function (api, where) {
     api.use(['jquery', 'deps', 'templating', 'underscore', 'session','stupid-models', 'meteor-sharejs', 'flash-messages', 'meteor-live-update']);
 
     api.add_files([
+        'both/utilities.js',
         'both/nucleus.js',
         'both/models/nucleus_user.js',
-        'both/utilities.js'
     ], ['client', 'server']);
 
     api.add_files([
         'client/lib/cookie.js',
         'client/nucleus.js',
         'client/template.html',
+        'client/hint.css',
         'client/template.css',
         'client/template.js',
         'client/events.js',

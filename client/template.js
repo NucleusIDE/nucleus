@@ -22,7 +22,7 @@ Template.nucleus_nick_prompt.events({
         e.preventDefault();
         var $in = $("#nick"),
             nick = $in.val(),
-            validNick = nick.length > 3 && ! NucleusUsers.findOne({nick: $in.val()});
+            validNick = nick.length > 3 && ! NucleusUsers.findOne({nick: $in.val()}) && nick.indexOf(" ") < 0;
 
         if($in.val() === "") {
             $("#nick").css({
@@ -62,20 +62,29 @@ Template.nucleus_tree_widget.helpers({
     tree: function() {
         console.log("CREATING THE TREE");
         $("#nucleus_file_tree").on("select_node.jstree", function(e,data) {
-            Session.set("nucleus_selected_file", data.selected[0]);
+            if(data.node.data.type === 'folder') {
+                if(data.node.state.opened)
+                    NucleusClient.jsTree.close_node(data.node);
+                else
+                    NucleusClient.jsTree.open_node(data.node);
+            }
+            if(data.node.data.type === 'file') {
+                Session.set("nucleus_selected_file", data.selected[0]);
+            }
         });
         Meteor.setTimeout(function() {
-            $('#nucleus_file_tree').jstree({
-            'core' : {
-                // 'data' : NucleusClient.getJstreeJSON(),
-                'themes': {
-                    icons: false,
-                    stripes: false,
-                    responsive: true,
-                    dots: false
-                }
-            }});
-
+            var fileTree = $('#nucleus_file_tree').jstree({
+                'core' : {
+                    // 'data' : NucleusClient.getJstreeJSON(),
+                    'themes': {
+                        icons: false,
+                        stripes: false,
+                        responsive: true,
+                        dots: false
+                    },
+                    'multiple': false
+                }});
+            NucleusClient.jsTree = fileTree;
         }, 300);
         return NucleusClient.getJstreeHTML();
     }
@@ -151,4 +160,40 @@ Deps.autorun(function() {
     if (!selecttedFile) return;
 
     NucleusClient.editFile(selecttedFile);
+});
+
+Deps.autorun(function() {
+    var users = NucleusClient.getOnlineUsers().fetch();
+
+    //clear all user-status boxes
+    // $(".user-status-box").remove();
+
+    //setup a user-status box for each user
+    _.each(users, function(user) {
+        var $currNickNode = $("[data-user-nick="+user.getNick()+"]"),
+            currentFile = $currNickNode.parent().attr("id");
+
+        if (user && user.getCurrentFilepath() === currentFile) {
+            console.log("USER", user.getNick(), "IS ON SAME FILE", currentFile);
+            return;
+        } else {
+            $currNickNode.remove();
+        }
+
+        var interval = Meteor.setInterval(function() {
+            var li = document.getElementById(user.getCurrentFilepath());
+            if (li) {
+                Meteor.clearInterval(interval);
+                var i = document.createElement("i");
+                i.className = "user-status-box hint--left";
+                i.style.cssText = "background:" + user.getColor();
+                i.setAttribute('data-user-nick', user.getNick());
+                i.setAttribute('data-hint', user.getNick());
+                li.appendChild(i);
+                i.style.opacity = 0;
+                window.getComputedStyle(i).opacity; //this is so the transition b/w opacity of i work
+                i.style.opacity = 1;
+            }
+        },100);
+    });
 });

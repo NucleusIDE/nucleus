@@ -68,6 +68,15 @@
   outline: none;
 }
 
-#nick:select {
-  
+.user-status-box {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: inline;
+  background: transparent;
+  margin-right: 5px;
+  float: right;
+  transition: opacity 500ms;
 }
+
+

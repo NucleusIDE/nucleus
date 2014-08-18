@@ -45,6 +45,7 @@ var NucleusClientFactory = function() {
         this.editor = editor;
     };
 
+
     this.getScratchDoc = function() {
         return 'scratch';
     };
@@ -118,7 +119,7 @@ var NucleusClientFactory = function() {
         var template = "\
             <ul> \
               <% _.each(tree.children, function(child) { %>  \
-                <li id='<%= child.path %>' ><%= child.name %> \
+                <li id='<%= child.path %>' data-type='<%= child.type %>'><%= child.name %> \
                   <%= childFn({tree: child, childFn: childFn}) %> \
               </li> \
               <% }) %> \
@@ -151,7 +152,8 @@ var NucleusClientFactory = function() {
         Meteor.call('nucleusSetupFileForEditting', filepath, function(err, res) {
             if (err) { console.log(err); return; }
 
-            NucleusUser.me().changeCwd(res);
+            NucleusUser.me().setCwd(res);
+            NucleusUser.me().setCurrentFilepath(filepath);
             Session.set("nucleus_selected_doc_id", res);
         });
     };
