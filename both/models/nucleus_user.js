@@ -14,6 +14,7 @@ NucleusUser.extend({
         return this.cwd;
     },
     getNick: function() {
+        if(NucleusUser.me() && this._id === NucleusUser.me()._id) return "Me";
         return this.nick;
     },
     getColor: function() {
