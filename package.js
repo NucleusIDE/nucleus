@@ -7,15 +7,20 @@ Npm.depends({
 });
 
 Package.on_use(function (api, where) {
-    api.use(['jquery', 'deps', 'templating', 'underscore', 'session', 'meteor-sharejs', 'flash-messages', 'meteor-live-update']);
-
-    api.add_files('both/nucleus.js', ['client', 'server']);
+    api.use(['jquery', 'deps', 'templating', 'underscore', 'session','stupid-models', 'meteor-sharejs', 'flash-messages', 'meteor-live-update']);
 
     api.add_files([
+        'both/nucleus.js',
+        'both/models/nucleus_user.js'
+    ], ['client', 'server']);
+
+    api.add_files([
+        'client/lib/cookie.js',
         'client/nucleus.js',
         'client/template.html',
         'client/template.css',
         'client/template.js',
+        'client/events.js',
         // 'client/lib/jstree.js',
         // 'client/lib/themes/default/style.css',
         // 'client/lib/themes/default/32px.png',
@@ -27,6 +32,7 @@ Package.on_use(function (api, where) {
         'server/methods.js',
     ], ['server']);
 
+    api.export && api.export(['NucleusUser'], ['server', 'client']);
     api.export && api.export(['Nucleus'], ['server']);
-    api.export && api.export(['NucleusClient', 'NucleusEditor'], ['client']);
+    api.export && api.export(['NucleusClient'], ['client']);
 });

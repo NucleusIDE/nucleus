@@ -1,3 +1,59 @@
+Template.nucleus_nick_prompt.rendered = function() {
+    //this is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success
+    $("#nick").css({
+        boxShadow: "0 0 29px 0px rgba(17,153,230, 0.9)",
+        border: "1px solid rgba(17,153,230,0.5)"
+    });
+    $("#nick").focus();
+};
+
+
+Template.nucleus_nick_prompt.helpers({
+    no_nuc_user: function() {
+        return ! Session.get("nucleus_user");
+    }
+});
+
+Template.nucleus_nick_prompt.events({
+    "blur #nick": function() {
+        $("#nick").focus();
+    },
+    "keyup #nick": function(e) {
+        e.preventDefault();
+        var $in = $("#nick"),
+            nick = $in.val(),
+            validNick = nick.length > 3 && ! NucleusUsers.findOne({nick: $in.val()});
+
+        if($in.val() === "") {
+            $("#nick").css({
+                boxShadow: "0 0 29px 0px rgba(17,153,230, 0.9)",
+                border: "1px solid rgba(17,153,230,0.5)"
+            });
+            return false;
+        }
+
+        if (!validNick) {
+            $("#nick").css({
+                boxShadow: "0 0 29px 0px rgba(218, 61, 66, 0.9)",
+                border: "1px solid rgba(218, 61, 66,0.5)"
+            });
+        } else {
+            $("#nick").css({
+                boxShadow: "0 0 29px 0px rgba(17, 230, 179, 0.9)",
+                border: "1px solid rgba(17, 230, 179, 0.5)"
+            });
+        }
+
+        if (e.keyCode === 13 && validNick) {
+            var nucUser = NucleusUser.new(nick);
+        }
+    },
+    "click #as_a_guest": function(e) {
+        e.preventDefault();
+        NucleusClient.editor.setReadOnly(true);
+    }
+});
+
 Template.editor.rendered = function() {
     $("#nucleus_editor").height($(window).height());
 };
@@ -11,7 +67,7 @@ Template.nucleus_tree_widget.helpers({
                     icons: false,
                     stripes: true,
                     responsive: true,
-                    dots: false
+                    dots: true
                 }
             }});
 
@@ -23,6 +79,7 @@ Template.nucleus_tree_widget.helpers({
 
 Template.editor.config = function () {
     return function(editor) {
+        NucleusClient.setEditor(editor);
         editor.setTheme('ace/theme/monokai');
         editor.getSession().setMode('ace/mode/javascript');
         editor.commands.addCommand({

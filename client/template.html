@@ -1,6 +1,18 @@
 <template name="nucleus">
+  {{> nucleus_nick_prompt}}
   {{> nucleus_tree_widget}}
   {{> editor}}
+</template>
+
+<template name="nucleus_nick_prompt">
+  {{#if no_nuc_user}}
+  <div id="nucleus_nick_prompt">
+    <div id="nick_form" action="#">
+        <input id="nick" type="text" placeholder="Enter Nick and press Enter"/>
+        <!-- <a id="as_a_guest" href="#">Visit as Guest</a> -->
+    </div>
+  </div>
+  {{/if}}
 </template>
 
 <template name="nucleus_tree_widget">

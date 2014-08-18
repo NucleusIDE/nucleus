@@ -36,11 +36,24 @@ var NucleusClientFactory = function() {
             autoScroll: true
         });
 
+        this.nucleusWindow = nucleusWindow;
         this.updateCSS();
         return false;
     };
 
+    this.setEditor = function(editor) {
+        this.editor = editor;
+    };
+
+    this.getScratchDoc = function() {
+        return 'scratch';
+    };
+
     this.getWindow = function() {
+        return this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : false;
+    };
+
+    this.getAppWindow = function() {
         return window.name === "Nucleus" ? window.opener : window;
     };
 
@@ -118,7 +131,8 @@ var NucleusClientFactory = function() {
     this.editFile = function(filepath) {
         Meteor.call('nucleusSetupFileForEditting', filepath, function(err, res) {
             if (err) { console.log(err); return; }
-            console.log("SELECTED DOC ID",res);
+
+            NucleusUser.me().changeCwd(res);
             Session.set("nucleus_selected_doc_id", res);
         });
     };
@@ -137,7 +151,7 @@ var NucleusClientFactory = function() {
 
     this.updateCSS = function() {
         var nucleusStyle = document.createElement("style"),
-            window = this.getWindow();
+            window = this.getAppWindow();
         if(window.document.getElementById("nucleus-style")) window.document.getElementById("nucleus-style").remove();
         nucleusStyle.id = "nucleus-style";
 
@@ -155,6 +169,10 @@ var NucleusClientFactory = function() {
         });
     };
 
+    this.getOnlineUsers = function() {
+        return NucleusUsers.find();
+    };
+
     return this;
 };
 
@@ -169,3 +187,10 @@ Deps.autorun(function() {
 
 
 NucleusClient = new NucleusClientFactory();
+
+
+//this deletes the current user
+NucleusClient.getWindow().onbeforeunload = function() {
+    console.log("UNLOADING NUCLEUS WINDOW");
+    NucleusUser.me().delete();
+};
