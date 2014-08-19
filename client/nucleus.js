@@ -46,7 +46,7 @@ var NucleusClientFactory = function() {
     };
 
     this.getWindow = function() {
-        return this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : false;
+        return this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : window;
     };
 
     this.getAppWindow = function() {

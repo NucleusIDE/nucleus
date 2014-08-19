@@ -1,6 +1,7 @@
 var NucleusEditorFactory = function() {
     this.editor = null;
     this.extraCursors = {};
+    this.addedStyleRules = {};
     this.aceModesForExts = {
         'html': "handlebars",
         'css': 'css',
@@ -98,12 +99,19 @@ var NucleusEditorFactory = function() {
         this.registerAllEvents(true);
     };
 
-    this.insertExtraCursor = function(row, col) {
-        var cursorRange = new this.Range(row, col, row, col),
+    this.insertExtraCursor = function(row, column, color) {
+        var cursorRange = new this.Range(row, column, row, column),
             session = this.getSession(),
-            doc = session.getDocument();
-        var self = this;
+            doc = session.getDocument(),
+            self = this,
+            curClass = "extra-ace-cursor-"+color.replace("#", '');
 
+        var cursorCss = "."+ curClass +" {\
+        position: absolute;\
+        background-color: " + color + ";\
+        border-left: 2px solid "+ color + ";\
+        }";
+        this.addStyleRule(cursorCss);
         //I don't really know why this is needed. I copied this from firepad code
         cursorRange.clipRows = function() {
             var localRange = new self.Range().clipRows.apply(this, arguments);
@@ -115,9 +123,23 @@ var NucleusEditorFactory = function() {
 
         cursorRange.start = doc.createAnchor(cursorRange.start);
         cursorRange.end = doc.createAnchor(cursorRange.end);
-        cursorRange.id = session.addMarker(cursorRange, "clazz", "text");
+        cursorRange.id = session.addMarker(cursorRange, curClass + " blink", "text");
 
         return cursorRange;
+    };
+
+    this.addStyleRule= function(css) {
+        var document = NucleusClient.getWindow().document;
+        if(!document) return;
+
+        var styleElement = document.createElement('style');
+
+        document.documentElement.getElementsByTagName('head')[0].appendChild(styleElement);
+        this.addedStyleSheet = styleElement.sheet;
+        if(this.addedStyleRules[css]) return;
+
+        this.addedStyleRules[css] = true;
+        this.addedStyleSheet.insertRule(css, 0);
     };
 
     this.removeCursor = function(cursorRange) {
@@ -126,16 +148,20 @@ var NucleusEditorFactory = function() {
         this.getSession().removeMarker(cursorRange.id);
     };
 
-    this.addCursorForUser = function(userId) {
-        console.log("USER ID", userId);
-        var user = NucleusUsers.findOne(userId),
-            pos = user.getCursor();
+    this.updateCursorForUser = function(user) {
+        if (! NucleusUser.me() || user._id === NucleusUser.me()._id) return;
 
+        var pos = user.getCursor(),
+            userId = user._id,
+            color = user.getColor();
+        if(! pos) return;
         if(this.extraCursors[userId])
             this.removeCursor(this.extraCursors[userId]);
+        this.extraCursors[userId] = this.insertExtraCursor(pos[0], pos[1], color);
+    };
 
-        console.log("INSERTING CURSOR AT", pos[0], pos[1]);
-        this.extraCursors[userId] = this.insertExtraCursor(pos[0], pos[1]);
+    this.userAreOnSameFile = function(user1, user2) {
+        return user1.getCwd() === user2.getCwd();
     };
 
     return this;
@@ -145,6 +171,5 @@ NucleusEditor = new NucleusEditorFactory();
 
 NucleusEditor.addCursorMovementAction(function(e) {
     var cursor = NucleusEditor.getSelection().getCursor();
-    console.log("CURSOR IS", cursor);
     NucleusUser.me() && NucleusUser.me().setCursor(cursor.row, cursor.column);
 });
