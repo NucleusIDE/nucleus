@@ -189,6 +189,31 @@ var NucleusClientFactory = function() {
         return NucleusUsers.find();
     };
 
+    this.clearDeadUsers = function(users) {
+        users = users || NucleusClient.getOnlineUsers().fetch(); //try to decrease db queries
+        var nicks = _.map(users, function(user) {
+            return user.getNick();
+        });
+        var userIds = _.map(users, function(user) {
+            return user._id;
+        });
+
+        //clear sidebar
+        var nicksNodes = _.map($(".user-status-box"), function(n) {
+            return n.getAttribute('data-user-nick');
+        });
+        var deadNicks = _.difference(nicksNodes, nicks);
+        _.each(deadNicks, function(deadNick) {
+            $("[data-user-nick="+deadNick+"]").remove();
+        });
+
+        //clear extra cursors
+        var deadUserCursors = _.difference(Object.keys(NucleusEditor.extraCursors), userIds);
+        _.each(deadUserCursors, function(deadCursor) {
+            NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
+        });
+    };
+
     return this;
 };
 

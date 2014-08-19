@@ -142,6 +142,7 @@ Deps.autorun(function() {
 
 Deps.autorun(function() {
     var users = NucleusClient.getOnlineUsers().fetch();
+    NucleusClient.clearDeadUsers(users);
 
     _.each(users, function(user) {
         NucleusSidebar.updateUserStatusBox(user);
