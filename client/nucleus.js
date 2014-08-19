@@ -41,11 +41,6 @@ var NucleusClientFactory = function() {
         return false;
     };
 
-    this.setEditor = function(editor) {
-        this.editor = editor;
-    };
-
-
     this.getScratchDoc = function() {
         return 'scratch';
     };

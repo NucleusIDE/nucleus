@@ -17,14 +17,17 @@ Package.on_use(function (api, where) {
 
     api.add_files([
         'client/lib/cookie.js',
-        'client/nucleus.js',
-        'client/template.html',
-        'client/hint.css',
-        'client/template.css',
-        'client/template.js',
-        'client/events.js',
         'client/lib/jstree/jstree.js',
         'client/lib/jstree/themes/default/style.css',
+
+        'client/nucleus.js',
+        'client/nucleus_editor.js',
+
+        'client/hint.css',
+        'client/template.css',
+        'client/template.html',
+        'client/template.js',
+        'client/events.js',
     ], ['client']);
 
     api.add_files([
@@ -40,5 +43,5 @@ Package.on_use(function (api, where) {
 
     api.export && api.export(['NucleusUser'], ['server', 'client']);
     api.export && api.export(['Nucleus'], ['server']);
-    api.export && api.export(['NucleusClient'], ['client']);
+    api.export && api.export(['NucleusClient', 'NucleusEditor'], ['client']);
 });

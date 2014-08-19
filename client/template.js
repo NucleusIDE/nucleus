@@ -47,16 +47,8 @@ Template.nucleus_nick_prompt.events({
         if (e.keyCode === 13 && validNick) {
             var nucUser = NucleusUser.new(nick);
         }
-    },
-    "click #as_a_guest": function(e) {
-        e.preventDefault();
-        NucleusClient.editor.setReadOnly(true);
     }
 });
-
-Template.editor.rendered = function() {
-    $("#nucleus_editor").height($(window).height());
-};
 
 Template.nucleus_tree_widget.helpers({
     tree: function() {
@@ -90,19 +82,13 @@ Template.nucleus_tree_widget.helpers({
     }
 });
 
+Template.editor.rendered = function() {
+    $("#nucleus_editor").height($(window).height());
+};
+
 Template.editor.config = function () {
     return function(editor) {
-        NucleusClient.setEditor(editor);
-        editor.setTheme('ace/theme/monokai');
-        editor.getSession().setMode('ace/mode/javascript');
-        editor.commands.addCommand({
-            name: 'saveFile',
-            bindKey: {win: 'Ctrl-s',  mac: 'Command-s'},
-            exec: function(editor) {
-                NucleusClient.saveSelectedFileToDisk();
-            },
-            readOnly: true // false if this command should not apply in readOnly mode
-        });
+        NucleusEditor.initilize(editor);
     };
 };
 
@@ -110,17 +96,8 @@ Template.editor.setMode = function() {
     return function(editor) {
         var selectedFile = Session.get("nucleus_selected_file"),
             extRe = /(?:\.([^.]+))?$/,
-            ext = extRe.exec(selectedFile)[1],
-            aceModesForExts = {
-                'html': "handlebars",
-                'css': 'css',
-                'json': 'json',
-                'js': 'javascript',
-                'lock': 'json'
-            },
-            mode = 'ace/mode/' + (aceModesForExts[ext] || ext);
-
-        editor.getSession().setMode(mode);
+            ext = extRe.exec(selectedFile)[1];
+        NucleusEditor.setModeForExt(ext);
     };
 };
 
