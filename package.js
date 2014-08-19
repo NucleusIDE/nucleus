@@ -22,6 +22,7 @@ Package.on_use(function (api, where) {
 
         'client/nucleus.js',
         'client/nucleus_editor.js',
+        'client/nucleus_sidebar.js',
 
         'client/hint.css',
         'client/template.css',
