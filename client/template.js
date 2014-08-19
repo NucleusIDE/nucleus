@@ -52,7 +52,6 @@ Template.nucleus_nick_prompt.events({
 
 Template.nucleus_tree_widget.helpers({
     tree: function() {
-        console.log("CREATING THE TREE");
         $("#nucleus_file_tree").on("select_node.jstree", function(e,data) {
             if(data.node.data.type === 'folder') {
                 if(data.node.state.opened)
@@ -98,6 +97,8 @@ Template.editor.setMode = function() {
             extRe = /(?:\.([^.]+))?$/,
             ext = extRe.exec(selectedFile)[1];
         NucleusEditor.setModeForExt(ext);
+        //some events get unregistered on filechange
+        NucleusEditor.registerAllEvents();
     };
 };
 
@@ -142,16 +143,12 @@ Deps.autorun(function() {
 Deps.autorun(function() {
     var users = NucleusClient.getOnlineUsers().fetch();
 
-    //clear all user-status boxes
-    // $(".user-status-box").remove();
-
     //setup a user-status box for each user
     _.each(users, function(user) {
         var $currNickNode = $("[data-user-nick="+user.getNick()+"]"),
             currentFile = $currNickNode.parent().attr("id");
 
         if (user && user.getCurrentFilepath() === currentFile) {
-            console.log("USER", user.getNick(), "IS ON SAME FILE", currentFile);
             return;
         } else {
             $currNickNode.remove();

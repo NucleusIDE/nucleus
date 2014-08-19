@@ -1,5 +1,6 @@
 var NucleusEditorFactory = function() {
     this.editor = null;
+    this.extraCursors = {};
     this.aceModesForExts = {
         'html': "handlebars",
         'css': 'css',
@@ -7,40 +8,10 @@ var NucleusEditorFactory = function() {
         'js': 'javascript',
         'lock': 'json'
     };
-
-    this.setEditor = function(aceInstance) {
-        this.editor = aceInstance;
+    this.events = {
+        cursorMovement: []
     };
-    this.getEditor = function() {
-        return this.editor;
-    };
-
-    this.getSession = function() {
-        return this.getEditor().getSession();
-    };
-
-
-    this.setMode = function(mode) {
-        this.getSession().setMode("ace/mode/"+ mode);
-    };
-    this.setTheme = function(theme) {
-        this.getEditor().setTheme("ace/theme/" + theme);
-    };
-
-    this.addModeForExt = function(obj) {
-        _.extend(this.aceModesForExts, obj);
-    };
-    this.setModeForExt = function(ext) {
-        var mode = this.aceModesForExts[ext] || ext;
-        this.setMode(mode);
-    };
-
-    this.addCommands = function(commands) {
-        _.each(commands, function(command) {
-            console.log(this.getEditor());
-            this.getEditor().commands.addCommand(command);
-        }.bind(this));
-    };
+    this.Range = ace.require('ace/range').Range;
 
     this.initilize = function(aceInstance) {
         this.setEditor(aceInstance);
@@ -58,7 +29,122 @@ var NucleusEditorFactory = function() {
         ]);
     };
 
+    this.setEditor = function(aceInstance) {
+        this.editor = aceInstance;
+    };
+    this.getEditor = function() {
+        return this.editor;
+    };
+
+    this.getSession = function() {
+        return this.getEditor().getSession();
+    };
+
+    this.getSelection = function() {
+        return this.getEditor().getSelection();
+    };
+
+    this.setMode = function(mode) {
+        this.getSession().setMode("ace/mode/"+ mode);
+    };
+    this.setTheme = function(theme) {
+        this.getEditor().setTheme("ace/theme/" + theme);
+    };
+
+    this.addCursorMovementAction = function(action) {
+        //I don't even know why I am overdoing this shit. Just based on a hunch
+        this.events.cursorMovement.push(action);
+        this.registerAllEvents();
+    };
+
+    this.addModeForExt = function(obj) {
+        _.extend(this.aceModesForExts, obj);
+    };
+    this.setModeForExt = function(ext) {
+        var mode = this.aceModesForExts[ext] || ext;
+        this.setMode(mode);
+    };
+
+    this.addCommands = function(commands) {
+        _.each(commands, function(command) {
+            this.getEditor().commands.addCommand(command);
+        }.bind(this));
+    };
+
+    this.registerAllEvents = function(invert) {
+        if(! this.getEditor()) {
+            var interval = Meteor.setInterval(function() {
+                if(this.getEditor()) {
+                    Meteor.clearInterval(interval);
+                    this.registerAllEvents(invert);
+                }
+            }.bind(this), 100);
+            return;
+        }
+        //let's unbind all events before adding new ones to avoid double events.
+        //May be this is why I am overdoing it. I have a deja-vu feeling I've been here struggling with ace double events
+        //although I don't remember working with this part of ace
+        var binder = invert ? "off" : "on";
+        // well, ace don't really double call events when we call registerAllEvents multiple times, but let's keep it
+        //TODO: remove it if double events are not a problem TODAY: Tue Aug 19 14:42:19 2014
+        // if(binder === 'on') this.registerAllEvents(true);
+
+        var cursorEvents = this.events.cursorMovement;
+        _.each(cursorEvents, function(action) {
+            this.getSelection()[binder]("changeCursor", action);
+        }.bind(this));
+    };
+    this.unregisterAllEvents = function() {
+        this.registerAllEvents(true);
+    };
+
+    this.insertExtraCursor = function(row, col) {
+        var cursorRange = new this.Range(row, col, row, col),
+            session = this.getSession(),
+            doc = session.getDocument();
+        var self = this;
+
+        //I don't really know why this is needed. I copied this from firepad code
+        cursorRange.clipRows = function() {
+            var localRange = new self.Range().clipRows.apply(this, arguments);
+            localRange.isEmpty = function() {
+                return false;
+            };
+            return localRange;
+        };
+
+        cursorRange.start = doc.createAnchor(cursorRange.start);
+        cursorRange.end = doc.createAnchor(cursorRange.end);
+        cursorRange.id = session.addMarker(cursorRange, "clazz", "text");
+
+        return cursorRange;
+    };
+
+    this.removeCursor = function(cursorRange) {
+        cursorRange.start.detach();
+        cursorRange.end.detach();
+        this.getSession().removeMarker(cursorRange.id);
+    };
+
+    this.addCursorForUser = function(userId) {
+        console.log("USER ID", userId);
+        var user = NucleusUsers.findOne(userId),
+            pos = user.getCursor();
+
+        if(this.extraCursors[userId])
+            this.removeCursor(this.extraCursors[userId]);
+
+        console.log("INSERTING CURSOR AT", pos[0], pos[1]);
+        this.extraCursors[userId] = this.insertExtraCursor(pos[0], pos[1]);
+    };
+
     return this;
 };
 
 NucleusEditor = new NucleusEditorFactory();
+
+NucleusEditor.addCursorMovementAction(function(e) {
+    var cursor = NucleusEditor.getSelection().getCursor();
+    console.log("CURSOR IS", cursor);
+    NucleusUser.me() && NucleusUser.me().setCursor(cursor.row, cursor.column);
+});

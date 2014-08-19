@@ -4,6 +4,7 @@
  * cwd                          MONGO ID (Current Working Document)
  * current_filepath                     String
  * color                        STRING
+ * cursor_pos                   ARRAY [row, col]
  */
 
 NucleusUsers = new Meteor.Collection('nucleus_users');
@@ -13,23 +14,33 @@ NucleusUser.extend({
     getCwd: function() {
         return this.cwd;
     },
+    setCwd: function(docId) {
+        this.update({cwd: docId});
+    },
+
     getNick: function() {
         if(NucleusUser.me() && this._id === NucleusUser.me()._id) return "Me";
         return this.nick;
     },
+    getCursor: function() {
+        return this.cursor_pos;
+    },
+    setCursor: function(row, col) {
+        this.update({cursor_pos: [row, col]});
+    },
+
     getColor: function() {
         return this.color;
     },
+
     getCurrentFilepath: function() {
         return this.currentFilepath;
-    },
-
-    setCwd: function(docId) {
-        this.update({cwd: docId});
     },
     setCurrentFilepath: function(filepath) {
         this.update({currentFilepath: filepath});
     },
+
+
     delete: function() {
         NucleusUsers.remove({_id: this._id});
         Session.set("nucleus_user", null);
@@ -47,7 +58,7 @@ NucleusUser.new = function(nick) {
 
     var newUser = new NucleusUser();
     newUser.nick = nick;
-    newUser.cwd = NucleusClient.getScratchDoc();
+    newUser.setCwd(NucleusClient.getScratchDoc());
     newUser.color = Utils.getRandomColor();
     newUser.save();
 
