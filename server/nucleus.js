@@ -16,6 +16,7 @@ NucleusFactory = function() {
     };
 
     this.getDirTree = function(options) {
+        options = options || {};
         var  dirTree= function (options) {
             var filename = options.rootDir || Nucleus.config.projectDir,
                 parent = options.parent || "#",
