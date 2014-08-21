@@ -7,7 +7,11 @@ Npm.depends({
 });
 
 Package.on_use(function (api, where) {
-    api.use(['jquery', 'deps', 'templating', 'underscore', 'session','stupid-models', 'meteor-sharejs', 'flash-messages', 'meteor-live-update']);
+    api.use(['jquery', 'deps', 'templating', 'underscore', 'session', 'moment', 'stupid-models', 'meteor-sharejs', 'flash-messages', 'meteor-live-update']);
+
+    api.add_files([
+        'nucleus.js'
+    ], 'client');
 
     api.add_files([
         'both/utilities.js',
@@ -19,6 +23,9 @@ Package.on_use(function (api, where) {
         'client/lib/cookie.js',
         'client/lib/jstree/jstree.js',
         'client/lib/jstree/themes/default/style.css',
+        // 'client/lib/tooltipster/jquery.tooltipster.js',
+        // 'client/lib/tooltipster/tooltipster.css',
+        // 'client/lib/tooltipster/tooltipster-light.css',
 
         'client/nucleus.js',
         'client/nucleus_editor.js',
@@ -28,7 +35,10 @@ Package.on_use(function (api, where) {
         'client/template.css',
         'client/template.html',
         'client/template.js',
-        'client/events.js',
+
+        'client/eventsync/nucleus_eventsync.js',
+        'client/eventsync/utils.js',
+        'client/eventsync/clicks.js',
     ], ['client']);
 
     api.add_files([
@@ -44,5 +54,5 @@ Package.on_use(function (api, where) {
 
     api.export && api.export(['NucleusUser'], ['server', 'client']);
     api.export && api.export(['Nucleus'], ['server']);
-    api.export && api.export(['NucleusClient', 'NucleusEditor'], ['client']);
+    api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventSync'], ['client']);
 });

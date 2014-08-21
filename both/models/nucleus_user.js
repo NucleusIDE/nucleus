@@ -5,6 +5,7 @@
  * current_filepath                     String
  * color                        STRING
  * cursor_pos                   ARRAY [row, col]
+ * receive_events               Boolean
  */
 
 NucleusUsers = new Meteor.Collection('nucleus_users');
@@ -38,6 +39,13 @@ NucleusUser.extend({
     },
     setCurrentFilepath: function(filepath) {
         this.update({currentFilepath: filepath});
+    },
+
+    toggleEventSync: function(toggle) {
+        var recieveEvents = this.recieve_events;
+        toggle = toggle || !recieveEvents;
+
+        this.update({recieve_events: toggle});
     },
 
 
