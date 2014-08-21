@@ -99,12 +99,16 @@ var NucleusEditorFactory = function() {
         this.registerAllEvents(true);
     };
 
-    this.insertExtraCursor = function(row, column, color) {
+    this.insertExtraCursor = function(row, column, user) {
         var cursorRange = new this.Range(row, column, row, column),
             session = this.getSession(),
             doc = session.getDocument(),
             self = this,
+            user = typeof user === 'string' ? NucleusUsers.findOne(user) : user,
+            color = user.getColor(),
+            nick = user.getNick(),
             curClass = "extra-ace-cursor-"+color.replace("#", '');
+
 
         var cursorCss = "."+ curClass +" {\
         position: absolute;\
@@ -123,7 +127,7 @@ var NucleusEditorFactory = function() {
 
         cursorRange.start = doc.createAnchor(cursorRange.start);
         cursorRange.end = doc.createAnchor(cursorRange.end);
-        cursorRange.id = session.addMarker(cursorRange, curClass + " blink", "text");
+        cursorRange.id = session.addMarker(cursorRange, curClass + " blink" + " cursor-"+nick, "text");
 
         return cursorRange;
     };
@@ -157,7 +161,7 @@ var NucleusEditorFactory = function() {
         if(! pos) return;
         if(this.extraCursors[userId])
             this.removeCursor(this.extraCursors[userId]);
-        this.extraCursors[userId] = this.insertExtraCursor(pos[0], pos[1], color);
+        this.extraCursors[userId] = this.insertExtraCursor(pos[0], pos[1], user);
     };
 
     this.userAreOnSameFile = function(user1, user2) {
