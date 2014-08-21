@@ -108,6 +108,13 @@ Template.editor.helpers({
     }
 });
 
+Template.nucleus_toolbar.helpers({
+    recieveEvents: function() {
+        if (NucleusUser.me())
+            return  NucleusUser.me().recieve_events ? 'active': '';
+    }
+});
+
 Template.nucleus_toolbar.events({
     "click #commit_changes": function(e) {
         Meteor.call("nucleusCommitAllChanges", function(err, res) {
@@ -129,6 +136,9 @@ Template.nucleus_toolbar.events({
             else if (res === 0) FlashMessages.sendWarning("Already Up-to-date");
             else FlashMessages.sendError("Something Went Wrong While Pulling Changes");
         });
+    },
+    "click #sync_events": function(e) {
+        NucleusUser.me().toggleEventSync();
     }
 });
 
