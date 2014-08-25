@@ -30,8 +30,9 @@ var click = {
         return function(event) {
             if(! NucleusUser.me().syncEvents()) return;
 
-            if(! NucleusEventManager.utils.isOriginalEvent(event))
+            if(! NucleusEventManager.utils.isOriginalClick(event)) {
                 return;
+            }
 
             var elem = event.target || event.srcElement;
             if (elem.type === "checkbox" || elem.type === "radio") {

@@ -20,6 +20,8 @@ NucleusEventManager = {
             if(this.stopRecievingEvents) return;
 
             _.each(events, function(event) {
+                if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
+
                 event.markDoneForMe();
                 NucleusEventManager.click.handle(event.getTarget());
             });

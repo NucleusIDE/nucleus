@@ -94,13 +94,13 @@ NucleusEventManager.utils = {
 
     //FIXME: we are not syncing any event which is caused by a script to avoid infinite ping-pong of events.
     // But this also prevents any events triggered by scripts in users' app form getting synced too.
-    isOriginalEvent: function(event) {
+    isOriginalClick: function(event) {
+        //this works because scripted click don't have mouse details
         var scriptedEvent = event.clientX === 0
                 && event.clientY === 0
                 && event.layerX === 0
-                && event.layerY === 0
-                && event.pageX === 0
-                && event.pageY === 0;
+                && event.layerY === 0;
+
         return !scriptedEvent;
     }
 

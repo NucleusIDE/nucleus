@@ -23,6 +23,9 @@ NucleusEvent.extend({
         return this.name;
     },
 
+    getDoneUsers: function() {
+        return this.users_done;
+    },
     markDoneForMe: function() {
         var userId = NucleusUser.me()._id;
         this.users_done.push(userId);
