@@ -52,7 +52,8 @@ Template.nucleus_nick_prompt.events({
 
 Template.nucleus_tree_widget.helpers({
     tree: function() {
-        $("#nucleus_file_tree").on("select_node.jstree", function(e,data) {
+        var treeId = "nucleus_file_tree";
+        $('#'+treeId).on("select_node.jstree", function(e,data) {
             if(data.node.data.type === 'folder') {
                 if(data.node.state.opened)
                     NucleusClient.jsTree.close_node(data.node);
@@ -63,20 +64,24 @@ Template.nucleus_tree_widget.helpers({
                 Session.set("nucleus_selected_file", data.selected[0]);
             }
         });
-        Meteor.setTimeout(function() {
-            var fileTree = $('#nucleus_file_tree').jstree({
-                'core' : {
-                    // 'data' : NucleusClient.getJstreeJSON(),
-                    'themes': {
-                        icons: false,
-                        stripes: false,
-                        responsive: true,
-                        dots: false
-                    },
-                    'multiple': false
-                }});
-            NucleusClient.jsTree = fileTree;
+        var treeInterval = Meteor.setInterval(function() {
+            if(document.getElementById(treeId).childElementCount === 1) {
+                var fileTree = $('#'+treeId).jstree({
+                    'core' : {
+                        // 'data' : NucleusClient.getJstreeJSON(),
+                        'themes': {
+                            icons: false,
+                            stripes: false,
+                            responsive: true,
+                            dots: false
+                        },
+                        'multiple': false
+                    }});
+                NucleusClient.jsTree = fileTree;
+                Meteor.clearInterval(treeInterval);
+            }
         }, 300);
+
         return NucleusClient.getJstreeHTML();
     }
 });
