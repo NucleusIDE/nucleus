@@ -41,22 +41,31 @@ NucleusUser.extend({
         this.update({currentFilepath: filepath});
     },
 
-    toggleEventSync: function(toggle) {
-        var recieveEvents = this.recieve_events;
-        toggle = toggle || !recieveEvents;
+    toggleEventSync: function(shouldRecieve) {
+        var isRecievingEvents = this.recieve_events;
+        var recieveEvents = shouldRecieve || !isRecievingEvents;
 
-        this.update({recieve_events: toggle});
+        if (recieveEvents)
+            NucleusClient.getAppWindow().eval("NucleusEventManager.initialize()");
+        else NucleusClient.getAppWindow().eval("NucleusEventManager.tearDown()");
+
+        this.update({recieve_events: recieveEvents});
     },
-
+    syncEvents: function() {
+        return this.recieve_events;
+    },
 
     delete: function() {
         NucleusUsers.remove({_id: this._id});
+        $.cookie("nucleus_user", null);
         Session.set("nucleus_user", null);
     }
 });
 
 NucleusUser.me = function() {
-    var nucUserId = Session.get("nucleus_user");
+    if(Meteor.isServer) throw new Error("Client only method");
+    var nucUserId = Session.get('nucleus_user') || $.cookie("nucleus_user");
+
     return NucleusUsers.findOne(nucUserId);
 };
 
@@ -70,6 +79,7 @@ NucleusUser.new = function(nick) {
     newUser.color = Utils.getRandomColor();
     newUser.save();
 
+    $.cookie("nucleus_user", newUser._id);
     Session.set("nucleus_user", newUser._id);
     return newUser;
 };

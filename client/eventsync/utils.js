@@ -7,7 +7,7 @@ var getDocument = function() {
 };
 
 
-NucleusEventSync.utils = {
+NucleusEventManager.utils = {
     /**
      * Cross-browser scroll position
      * @returns {{x: number, y: number}}
@@ -90,5 +90,18 @@ NucleusEventSync.utils = {
     getBody: function () {
         var $document = getDocument();
         return $document.getElementsByTagName("body")[0];
+    },
+
+    //FIXME: we are not syncing any event which is caused by a script to avoid infinite ping-pong of events.
+    // But this also prevents any events triggered by scripts in users' app form getting synced too.
+    isOriginalEvent: function(event) {
+        var scriptedEvent = event.clientX === 0
+                && event.clientY === 0
+                && event.layerX === 0
+                && event.layerY === 0
+                && event.pageX === 0
+                && event.pageY === 0;
+        return !scriptedEvent;
     }
+
 };

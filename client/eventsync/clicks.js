@@ -1,49 +1,57 @@
 //copied from browser sync
-/**
- * This is for syncing clicks between browsers
- * @type {string}
- */
-var EVENT_NAME  = "click";
+var EVENT_NAME  = "click",
+    $document = NucleusClient.getAppWindow().document;
 
+var click = {
+    initialize: function () {
+        console.log("ADDING CLIKS EVENT LISTERNER");
+        NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
+        //        bs.socket.on(EVENT_NAME, this.handle(bs, eventManager));
+    },
+    tearDown: function() {
+        console.log("REMOVING CLIKS EVENT LISTERNER");
+        NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
+    },
+    triggerClick: function (elem) {
+        var evObj;
+        if (document.createEvent) {
+            evObj = document.createEvent("MouseEvents");
+            evObj.initEvent("click", true, true);
+            elem.dispatchEvent(evObj);
+        } else {
+            if (document.createEventObject) {
+                evObj = document.createEventObject();
+                evObj.cancelBubble = true;
+                elem.fireEvent("on" + "click", evObj);
+            }
+        }
+    },
+    syncBrowserEvent: function () {
+        return function(event) {
+            if(! NucleusUser.me().syncEvents()) return;
 
-init = function (bs, eventManager) {
-    eventManager.addEvent(document.body, EVENT_NAME, exports.browserEvent(bs));
-    bs.socket.on(EVENT_NAME, exports.socketEvent(bs, eventManager));
-};
+            if(! NucleusEventManager.utils.isOriginalEvent(event))
+                return;
 
-/**
- * Uses event delegation to determine the clicked element
- * @param {BrowserSync} bs
- * @returns {Function}
- */
-NucleusEventSync.syncBrowserEvent = function (event) {
-    var elem = event.target || event.srcElement;
-    if (elem.type === "checkbox" || elem.type === "radio") {
-        NucleusEventSync.utils.forceChange(elem);
-        return;
+            var elem = event.target || event.srcElement;
+            if (elem.type === "checkbox" || elem.type === "radio") {
+                NucleusEventManager.utils.forceChange(elem);
+                return;
+            }
+            //below line should put the event in mongodb
+            var ev = new NucleusEvent();
+            ev.setName(EVENT_NAME);
+            ev.setTarget(NucleusEventManager.utils.getElementData(elem));
+            ev.broadcast();
+        };
+    },
+    handle: function (target, virtual) {
+        console.log("TRIGGERING click on", target);
+        var elem = NucleusEventManager.utils.getSingleElement(target.tagName, target.index);
+        if (elem) {
+            this.triggerClick(elem);
+        }
     }
-    //below line should put the event in mongodb
-    console.log(EVENT_NAME, NucleusEventSync.utils.getElementData(elem));
 };
 
-
-/**
- * @param {BrowserSync} bs
- * @param {manager} eventManager
- * @returns {Function}
- */
-// exports.socketEvent = function (bs, eventManager) {
-
-//     return function (data) {
-
-//         if (bs.canSync(data)) {
-
-//             var elem = NucleusEventSync.utils.getSingleElement(data.tagName, data.index);
-
-//             if (elem) {
-//                 exports.canEmitEvents = false;
-//                 eventManager.triggerClick(elem);
-//             }
-//         }
-//     };
-// };
+NucleusEventManager[EVENT_NAME] = click;

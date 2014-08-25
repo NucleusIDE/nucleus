@@ -17,6 +17,7 @@ Package.on_use(function (api, where) {
         'both/utilities.js',
         'both/nucleus.js',
         'both/models/nucleus_user.js',
+        'both/models/nucleus_event_model.js'
     ], ['client', 'server']);
 
     api.add_files([
@@ -36,7 +37,7 @@ Package.on_use(function (api, where) {
         'client/template.html',
         'client/template.js',
 
-        'client/eventsync/nucleus_eventsync.js',
+        'client/eventsync/nucleus_event_manager.js',
         'client/eventsync/utils.js',
         'client/eventsync/clicks.js',
     ], ['client']);
@@ -54,5 +55,5 @@ Package.on_use(function (api, where) {
 
     api.export && api.export(['NucleusUser'], ['server', 'client']);
     api.export && api.export(['Nucleus'], ['server']);
-    api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventSync'], ['client']);
+    api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager'], ['client']);
 });
