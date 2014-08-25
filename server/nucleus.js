@@ -190,9 +190,7 @@ NucleusFactory = function() {
             packages = packages || [];
             _.each(packages, function(package) {
                 var packageDir = path.join(this.config.projectDir, "packages/"+package);
-                console.log("PACKAGE DIR ", packageDir);
                 var tree = this.getDirTree({rootDir: packageDir, parent: "#", traverseSymlinks: true});
-                console.log("TREE", tree);
                 collectCSSFiles(tree);
             }.bind(this));
         }.bind(this);
@@ -230,7 +228,8 @@ Meteor.publish("nucleusPublisher",function() {
     return [
         NucleusDocuments.find({}),
         ShareJsDocs.find({}),
-        NucleusUsers.find({})
+        NucleusUsers.find({}),
+        NucleusEvents.find({})
     ];
 });
 
