@@ -105,3 +105,6 @@ NucleusEventManager.utils = {
     }
 
 };
+
+//for allowing users to check if their events are triggered from original clicks or if they are from virtual clicks
+NucleusClient.isOriginalClick = NucleusEventManager.utils.isOriginalClick;
