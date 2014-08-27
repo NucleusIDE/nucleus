@@ -100,7 +100,8 @@
   to { visibility: hidden; }
 }
 
-.user_nick_cursor_label {  
+.user_nick_cursor_label {
+  display: none;
   position: absolute;
   background-color: #fff;
   z-index: 9;

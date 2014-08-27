@@ -1,9 +1,11 @@
 /**
  * name                         String
  * triggered_at                 Date
- * target                       Object {tagName: 'DIV', index: 0}
  * users_done                   Array (of mongo_ids)
  * originator                   mongo_id (user who triggered the event in first place)
+ *
+ * target                       Object {tagName: 'DIV', index: 0} (for click)
+ * position                     Object (for scroll)
  */
 
 NucleusEvents = new Meteor.Collection('nucleus_events');

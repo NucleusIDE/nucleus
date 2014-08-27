@@ -40,6 +40,7 @@ Package.on_use(function (api, where) {
         'client/eventsync/nucleus_event_manager.js',
         'client/eventsync/utils.js',
         'client/eventsync/clicks.js',
+        'client/eventsync/scroll.js',
     ], ['client']);
 
     api.add_files([

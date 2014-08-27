@@ -3,27 +3,29 @@ var $window = NucleusClient.getAppWindow();
 NucleusEventManager = {
     initialize: function() {
         this.click.initialize();
+        this.scroll.initialize();
         this.startRecievingEvents();
     },
     tearDown: function() {
         this.click.tearDown();
+        this.scroll.tearDown();
         this.stopRecievingEvents = true;
     },
     getRecievers: function() {
         return NucleusUsers.find({recieve_events: true});
     },
     startRecievingEvents: function() {
-        Deps.autorun(function() {
+        Deps.autorun(function(c) {
             var events = NucleusEvent.getNewEvents();
 
             if(NucleusUser.me() && ! NucleusUser.me().syncEvents()) return;
-            if(this.stopRecievingEvents) return;
+            if(this.stopRecievingEvents) c.stop();
 
             _.each(events, function(event) {
                 if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
 
                 event.markDoneForMe();
-                NucleusEventManager.click.handle(event.getTarget());
+                NucleusEventManager[event.getName()].handleEvent(event);
             });
         });
     }

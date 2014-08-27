@@ -4,12 +4,10 @@ var EVENT_NAME  = "click",
 
 var click = {
     initialize: function () {
-        console.log("ADDING CLIKS EVENT LISTERNER");
         NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
         //        bs.socket.on(EVENT_NAME, this.handle(bs, eventManager));
     },
     tearDown: function() {
-        console.log("REMOVING CLIKS EVENT LISTERNER");
         NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
     },
     triggerClick: function (elem) {
@@ -46,7 +44,8 @@ var click = {
             ev.broadcast();
         };
     },
-    handle: function (target, virtual) {
+    handleEvent: function (event) {
+        var target = event.getTarget();
         console.log("TRIGGERING click on", target);
         var elem = NucleusEventManager.utils.getSingleElement(target.tagName, target.index);
         if (elem) {
