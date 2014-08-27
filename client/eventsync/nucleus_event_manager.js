@@ -1,6 +1,10 @@
 var $window = NucleusClient.getAppWindow();
 
 NucleusEventManager = {
+    canEmitEvents: true, //this flag is used to prevent event ping-pong and re-inserts
+    isProcessingEvent: function() {
+        return ! this.canEmitEvents;
+    },
     initialize: function() {
         this.click.initialize();
         this.scroll.initialize();

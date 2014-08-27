@@ -6,7 +6,6 @@ var scroll = {
     //this is used to avoid infinite ping-pong of events. We set it to false when we receive an event over the wire, and check while syncing the event.
     // If it's false in syncEvent function, it means the event was triggered from within 'handle' function and we don't need to sync it. So we set it to
     // true so the events start getting synced again
-    canEmitEvents: true,
     initialize: function () {
         NucleusEventManager.addEvent($window, EVENT_NAME, this.syncEvent());
         // bs.socket.on(EVENT_NAME, exports.socketEvent());
@@ -17,7 +16,7 @@ var scroll = {
     },
     syncEvent: function (bs) {
         return function () {
-            var canEmit = this.canEmitEvents;
+            var canEmit = NucleusEventManager.canEmitEvents;
 
             if(canEmit) {
                 if(! NucleusUser.me().syncEvents()) return;
@@ -30,13 +29,13 @@ var scroll = {
                 ev.broadcast();
             }
 
-            this.canEmitEvents = true;
+            NucleusEventManager.canEmitEvents = true;
         }.bind(this);
     },
 
     handleEvent: function (data) {
         var scrollSpace = utils.getScrollSpace();
-        this.canEmitEvents = false;
+        NucleusEventManager.canEmitEvents = false;
         console.log("RECEIVING SCROLL", data);
         //I couldn't understand the meaning of below lines for code from browser-sync
         // if (bs.opts && bs.opts.scrollProportionally) {
