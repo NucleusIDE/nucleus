@@ -5,7 +5,7 @@
 var originalInsert = Meteor.Collection.prototype.insert;
 Meteor.Collection.prototype.insert = function() {
     //let's not re-insert the doc if it's because of the event being synced
-    if(NucleusEventManager.isProcessingEvent()) return;
+    if(NucleusEventManager.isProcessingEvent()) return false;
 
     var args = new Array(arguments.length);
     var ctx = this;
@@ -13,5 +13,5 @@ Meteor.Collection.prototype.insert = function() {
     for(var i = 0; i < args.length; ++i) {
         args[i] = arguments[i];
     }
-    originalInsert.apply(ctx, args);
+    return originalInsert.apply(ctx, args);
 };
