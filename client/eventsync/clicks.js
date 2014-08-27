@@ -26,27 +26,30 @@ var click = {
     },
     syncBrowserEvent: function () {
         return function(event) {
-            if(! NucleusUser.me().syncEvents()) return;
+            var canEmit = NucleusEventManager.canEmitEvents;
 
-            if(! NucleusEventManager.utils.isOriginalClick(event)) {
-                return;
-            }
+            if (canEmit) {
+                if(! NucleusUser.me().syncEvents()) return;
 
-            var elem = event.target || event.srcElement;
-            if (elem.type === "checkbox" || elem.type === "radio") {
-                NucleusEventManager.utils.forceChange(elem);
-                return;
+                var elem = event.target || event.srcElement;
+                if (elem.type === "checkbox" || elem.type === "radio") {
+                    NucleusEventManager.utils.forceChange(elem);
+                    return;
+                }
+                //below line should put the event in mongodb
+                var ev = new NucleusEvent();
+                ev.setName(EVENT_NAME);
+                ev.setTarget(NucleusEventManager.utils.getElementData(elem));
+                ev.broadcast();
             }
-            //below line should put the event in mongodb
-            var ev = new NucleusEvent();
-            ev.setName(EVENT_NAME);
-            ev.setTarget(NucleusEventManager.utils.getElementData(elem));
-            ev.broadcast();
+            NucleusEventManager.canEmitEvents = true;
+
         };
     },
     handleEvent: function (event) {
+        NucleusEventManager.canEmitEvents = false;
+
         var target = event.getTarget();
-        console.log("TRIGGERING click on", target);
         var elem = NucleusEventManager.utils.getSingleElement(target.tagName, target.index);
         if (elem) {
             this.triggerClick(elem);

@@ -237,6 +237,7 @@ var NucleusEditorFactory = function() {
     };
 
     this.userAreOnSameFile = function(user1, user2) {
+        if (!(user1 && user2)) return false;
         return user1.getCwd() === user2.getCwd();
     };
 

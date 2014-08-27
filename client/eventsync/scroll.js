@@ -34,9 +34,9 @@ var scroll = {
     },
 
     handleEvent: function (data) {
-        var scrollSpace = utils.getScrollSpace();
         NucleusEventManager.canEmitEvents = false;
-        console.log("RECEIVING SCROLL", data);
+
+        var scrollSpace = utils.getScrollSpace();
         //I couldn't understand the meaning of below lines for code from browser-sync
         // if (bs.opts && bs.opts.scrollProportionally) {
             return $window.scrollTo(0, scrollSpace.y * data.position.proportional); // % of y axis of scroll to px
