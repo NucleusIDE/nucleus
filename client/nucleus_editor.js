@@ -1,3 +1,45 @@
+var showLabelOnMouseMove = function(e) {
+    var mousePos = [e.clientX,e.clientY];
+
+    var getRectangleForElem = function(elem) {
+        var boundingRect = elem.getBoundingClientRect(),
+            topLeft = [boundingRect.left, boundingRect.top],
+            bottomRight = [boundingRect.right, boundingRect.bottom];
+
+        return [topLeft, bottomRight];
+    };
+
+    var pointIsInRect = function(point, rect) {
+        var x = point[0],
+            y = point[1];
+
+        var z1 = rect[0][0],
+            z2 = rect[0][1],
+            z3 = rect[1][0],
+            z4 = rect[1][1];
+
+        var x1 = Math.min(z1, z3),
+            x2 = Math.max(z1, z3),
+            y1 = Math.min(z2, z4),
+            y2 = Math.max(z2, z4);
+
+        return (x1 <= x && x <= x2) && (y1 <= y && y <= y2);
+    };
+
+    var cursorRects = _.map(Object.keys(NucleusEditor.extraCursors), function(userId) {
+        var elem = document.getElementsByClassName(NucleusEditor.extraCursors[userId].class)[0];
+        return {userId: userId, rect: getRectangleForElem(elem)};
+    });
+
+    _.each(cursorRects, function(item) {
+        if(pointIsInRect(mousePos, item.rect))
+            NucleusEditor.showLabelForUser(item.userId);
+        else
+            NucleusEditor.clearCursorLabel();
+    });
+};
+
+
 var NucleusEditorFactory = function() {
     this.editor = null;
     this.extraCursors = {};
@@ -10,7 +52,10 @@ var NucleusEditorFactory = function() {
         'lock': 'json'
     };
     this.events = {
-        cursorMovement: []
+        cursorMovement: [],
+        mouseMove: [
+            showLabelOnMouseMove
+        ]
     };
     this.Range = ace.require('ace/range').Range;
 
@@ -18,6 +63,7 @@ var NucleusEditorFactory = function() {
         this.setEditor(aceInstance);
         this.setTheme('monokai');
         this.setMode('javascript');
+        this.editor.setHighlightActiveLine(false);
         this.addCommands([
             {
                 name: 'saveFile',
@@ -94,13 +140,42 @@ var NucleusEditorFactory = function() {
         _.each(cursorEvents, function(action) {
             this.getSelection()[binder]("changeCursor", action);
         }.bind(this));
+
+        var mouseMoveEvents = this.events.mouseMove;
+        _.each(mouseMoveEvents, function(action) {
+            this.editor[binder]("mousemove", action);
+        }.bind(this));
     };
     this.unregisterAllEvents = function() {
         this.registerAllEvents(true);
     };
 
-    this.insertExtraCursor = function(row, column, user) {
-        var cursorRange = new this.Range(row, column, row, column),
+
+    this.clearCursorLabel = function() {
+        var $label = $(".user_nick_cursor_label");
+        $label.css({display: "none"});
+    };
+
+    this.showLabelForUser = function(user) {
+        user = typeof user === 'string' ? NucleusUsers.findOne(user) : user;
+
+        var userCursorRange = this.extraCursors[user._id].range,
+            userCursorPos = this.editor.renderer.textToScreenCoordinates(userCursorRange.start.row, userCursorRange.start.column),
+            color = user.getColor(),
+            nick = user.getNick();
+
+        var lineHeight = this.editor.renderer.lineHeight;
+
+        var $label = $(".user_nick_cursor_label");
+        $label.text(nick);
+        $label.css({display: 'inline', top: userCursorPos.pageY+lineHeight, left: userCursorPos.pageX, background: color, padding: "2px", color: Utils.getComplementoryColor(color), lineHeight: lineHeight+'px'});
+    };
+
+    this.insertExtraCursor = function(user) {
+        var cursor = user.getCursor(),
+            row =  cursor[0],
+            column = cursor[1],
+            cursorRange = new this.Range(row, column, row, column),
             session = this.getSession(),
             doc = session.getDocument(),
             self = this,
@@ -114,7 +189,7 @@ var NucleusEditorFactory = function() {
         position: absolute;\
         background-color: " + color + ";\
         border-left: 2px solid "+ color + ";\
-        }";
+    }";
         this.addStyleRule(cursorCss);
         //I don't really know why this is needed. I copied this from firepad code
         cursorRange.clipRows = function() {
@@ -128,8 +203,7 @@ var NucleusEditorFactory = function() {
         cursorRange.start = doc.createAnchor(cursorRange.start);
         cursorRange.end = doc.createAnchor(cursorRange.end);
         cursorRange.id = session.addMarker(cursorRange, curClass + " blink" + " cursor-"+nick, "text");
-
-        return cursorRange;
+        return {range: cursorRange, class: curClass};
     };
 
     this.addStyleRule= function(css) {
@@ -155,13 +229,11 @@ var NucleusEditorFactory = function() {
     this.updateCursorForUser = function(user) {
         if (! NucleusUser.me() || user._id === NucleusUser.me()._id) return;
 
-        var pos = user.getCursor(),
-            userId = user._id,
-            color = user.getColor();
-        if(! pos) return;
+        var userId = user._id;
+        if(! user.getCursor()) return;
         if(this.extraCursors[userId])
-            this.removeCursor(this.extraCursors[userId]);
-        this.extraCursors[userId] = this.insertExtraCursor(pos[0], pos[1], user);
+            this.removeCursor(this.extraCursors[userId].range);
+        this.extraCursors[userId] = this.insertExtraCursor(user);
     };
 
     this.userAreOnSameFile = function(user1, user2) {

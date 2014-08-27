@@ -12,6 +12,10 @@
   border-radius: 0 !important;
 }
 
+#nuc-editor {
+  width: 100%;
+}
+
 #nucleus_editor {
   width: 80%;
   float: right;
@@ -94,4 +98,10 @@
 }
 @-webkit-keyframes blink {
   to { visibility: hidden; }
+}
+
+.user_nick_cursor_label {  
+  position: absolute;
+  background-color: #fff;
+  z-index: 9;
 }
