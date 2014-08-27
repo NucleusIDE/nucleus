@@ -10,7 +10,7 @@ Template.nucleus_nick_prompt.rendered = function() {
 
 Template.nucleus_nick_prompt.helpers({
     no_nuc_user: function() {
-        return ! Session.get("nucleus_user");
+        return ! NucleusUser.me();
     }
 });
 
@@ -65,7 +65,7 @@ Template.nucleus_tree_widget.helpers({
             }
         });
         var treeInterval = Meteor.setInterval(function() {
-            if(document.getElementById(treeId).childElementCount === 1) {
+            if(document.getElementById(treeId).childElementCount >= 1) {
                 var fileTree = $('#'+treeId).jstree({
                     'core' : {
                         // 'data' : NucleusClient.getJstreeJSON(),
