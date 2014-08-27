@@ -1,6 +1,5 @@
 <template name="nucleus">
-  {{> nucleus_nick_prompt}}
-  {{> nucleus_tree_widget}}
+  {{> sidebar}}
   {{> editor}}
 </template>
 
@@ -15,19 +14,19 @@
   {{/if}}
 </template>
 
-<template name="nucleus_tree_widget">
+<template name="sidebar">
   <div id="sidebar">
-    <div id="nucleus_file_tree">
-      {{{tree}}}
-    </div>
-
+    {{> nucleus_nick_prompt}}
+    {{> nucleus_tree_widget}}
     {{> nucleus_toolbar}}
-
-    <div id="flash_messages">
-      {{> flashMessages}}
-    </div>
+    {{> chatbox}}    
   </div>
+</template>
 
+<template name="nucleus_tree_widget">
+  <div id="nucleus_file_tree">
+    {{{tree}}}
+  </div>
 </template>
 
 <template name="editor">
@@ -46,6 +45,24 @@
     <a id="pull_changes" class="btn btn-primary btn-sidebar">Pull New Changes</a>    
     <a id="sync_events" class="{{recieveEvents}} btn btn-info btn-sidebar">Start Sync Events</a>    
   </div>
+  <div id="flash_messages">
+    {{> flashMessages}}
+  </div>
 </template>
 
+<template name="chatbox">
+  <div id="chat_box">
+    <div id="chat_history"></div>
+    <div id="get_chat_message">
+      <input id='chat_input' type="text" placeholder="Enter Chat Message here" />
+    </div>
+  </div>
+</template>
+
+<template name="chat_message">
+  <div class="chat_msg">
+    <b><span class="chat_msg_nick">{{nick}}</span>:</b>
+    <span class="chat_msg_content">{{message}}</span>
+  </div>  
+</template>
 

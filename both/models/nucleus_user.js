@@ -59,6 +59,12 @@ NucleusUser.extend({
         NucleusUsers.remove({_id: this._id});
         $.cookie("nucleus_user", null);
         Session.set("nucleus_user", null);
+    },
+
+    sendChat: function(message) {
+        var nick = this.nick;
+        var chat = new ChatMessage();
+        chat.broadcast(nick, message);
     }
 });
 

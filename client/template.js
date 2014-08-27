@@ -165,3 +165,52 @@ Deps.autorun(function() {
         NucleusEditor.getEditor() && NucleusEditor.userAreOnSameFile(NucleusUser.me(), user) && NucleusEditor.updateCursorForUser(user);
     });
 });
+
+
+/*
+ * Chat
+ */
+Template.chatbox.events({
+    'keyup #chat_input': function(e) {
+        e.preventDefault();
+
+        var msg = $("#chat_input").val().trim();
+        if (msg === '')
+            return;
+
+        if (e.keyCode === 13) {
+            NucleusUser.me().sendChat(msg);
+            $("#chat_input").val("");
+        }
+    }
+});
+var chatCache = [];
+
+Deps.autorun(function() {
+    var chatMessages = ChatMessages.find({}).fetch();
+    var chatIds = _.map(chatMessages, function(msg) {
+        return msg._id;
+    });
+
+    var newMsgIds = _.difference(chatIds, chatCache);
+
+    _.each(newMsgIds, function(id) {
+        chatCache.push(id);
+    });
+
+    _.each(newMsgIds, function(id) {
+        var msg = ChatMessages.findOne(id);
+        var html = Blaze.toHTML(Blaze.With({nick: msg.sender_name, message: msg.message}, function() { return Template.chat_message; }));
+        var elemReadyInterval = Meteor.setInterval(function() {
+            var elem = document.getElementById("chat_history");
+            if (elem) {
+                $("#chat_history").ready(function() {
+                    $("#chat_history").append(html);
+                });
+                elem.scrollTop = elem.scrollHeight;
+                Meteor.clearInterval(elemReadyInterval);
+            }
+        }, 300);
+
+    });
+});
