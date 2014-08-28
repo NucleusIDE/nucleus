@@ -26,6 +26,8 @@ Package.on_use(function (api, where) {
         'client/lib/jstree/jstree.js',
         'client/lib/jstree/themes/default/style.css',
 
+        'client/lib/font-awesome/css/font-awesome.css',
+
         'client/nucleus.js',
         'client/nucleus_editor.js',
         'client/nucleus_sidebar.js',
@@ -47,6 +49,12 @@ Package.on_use(function (api, where) {
         'client/lib/jstree/themes/default/32px.png',
         'client/lib/jstree/themes/default/40px.png',
         'client/lib/jstree/themes/default/throbber.gif',
+
+        'client/lib/font-awesome/fonts/FontAwesome.otf',
+        'client/lib/font-awesome/fonts/fontawesome-webfont.woff',
+        'client/lib/font-awesome/fonts/fontawesome-webfont.ttf',
+        'client/lib/font-awesome/fonts/fontawesome-webfont.svg',
+        'client/lib/font-awesome/fonts/fontawesome-webfont.eot',
     ], 'client', {isAsset: true});
 
     api.add_files([
