@@ -19,7 +19,7 @@
     {{> nucleus_nick_prompt}}
     {{> nucleus_tree_widget}}
     {{> nucleus_toolbar}}
-    {{> chatbox}}    
+    {{> footer_controls}}
   </div>
 </template>
 
@@ -50,11 +50,22 @@
   </div>
 </template>
 
+
+<template name="footer_controls">
+  <div class="footer_popup">
+    {{> footer_popup_template}}
+  </div>
+  <div class="footer_controls">
+      <a class="show_chatbox {{activeBox 'chatbox'}}"><i class="fa fa-comments fa-2x"></i></a>
+      <a class="show_buddy_list {{activeBox 'buddy_list'}}"><i class="fa fa-users fa-2x"></i></a>
+  </div>
+</template>
+
 <template name="chatbox">
-  <div id="chat_box">
-    <div id="chat_history"></div>
-    <div id="get_chat_message">
-      <input id='chat_input' type="text" placeholder="Enter Chat Message here" />
+  <div class="chat_box">
+    <div class="chat_history"></div>
+    <div class="get_chat_message">
+      <input class='chat_input' type="text" placeholder="Enter Chat Message here" />
     </div>
   </div>
 </template>
@@ -66,3 +77,14 @@
   </div>  
 </template>
 
+
+<template name="buddy_list">
+  <ul class="buddy_list">
+    {{#each buddies}}
+    <li class="buddy_detail">
+      <span class="buddy-color-box" style="{{statusBoxStyle}}"></span>
+      <span class="buddy_name">{{nick}} ({{currentFile}})</span>
+    </li>
+    {{/each}}
+  </ul>
+</template>

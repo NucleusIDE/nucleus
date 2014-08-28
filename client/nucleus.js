@@ -233,5 +233,6 @@ NucleusClient = new NucleusClientFactory();
 //this deletes the current user
 NucleusClient.getWindow().onbeforeunload = function() {
     console.log("UNLOADING NUCLEUS WINDOW");
-    NucleusUser.me().delete();
+    //TODO: REMOVE BELOW LINE WHEN DONE TEsTING
+    // NucleusUser.me().delete();
 };

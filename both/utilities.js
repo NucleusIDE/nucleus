@@ -114,5 +114,13 @@ Utils = {
         temprgb = hsv2rgb(temphsv);
 
         return rgbToHex(temprgb.r, temprgb.g, temprgb.b);
+    },
+    shortenText: function(str, max) {
+        if(!str) return false;
+
+        if (str.length > max) {
+            return str.substr(0, parseInt(max/2)-3) + '...' + str.substr(str.length-parseInt(max/2), str.length);
+        }
+        return str;
     }
 };

@@ -35,7 +35,7 @@ NucleusUser.extend({
     },
 
     getCurrentFilepath: function() {
-        return this.currentFilepath;
+        return this.currentFilepath || '*scratch*';
     },
     setCurrentFilepath: function(filepath) {
         this.update({currentFilepath: filepath});

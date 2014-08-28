@@ -1,9 +1,11 @@
 /* CSS declarations go here */
 #sidebar {
+  position: relative;
   width: 20%;
   float: left;
   height: 100%;
   color: rgb(211,211,211);
+  background: #272822;
 }
 
 .btn-sidebar {
@@ -22,9 +24,6 @@
   height: 900px;
 }
 
-.jstree-anchor {
-  color: #422 !important;
-}
 .alert {
   margin-bottom: 0px !important;
 }
@@ -52,7 +51,6 @@
 }
 
 #nick {
-  color: #ddd;
   font-weight: 100;
   text-shadow: 0 2px 15px #fff;
   margin: 0px auto;
@@ -109,21 +107,88 @@
 
 
 /* CHAT BOX */
-#chat_box {
-  color: #222;
+.chat_box {
   font-size: 14px;
+  background: none repeat scroll 0% 0% #2F3129;
 }
-#chat_history {
-  height: 100px;
+.chat_history {
   width: 100%;
-  border: 1px solid #3ad;
   padding: 5px;
   overflow: scroll;
+  height: 171px;
+  background: rgba(222,222,222,0.2);
 }
-#chat_input {
+.chat_input {
+  padding: 8px;
+  background: #2F3129;
   width: 100%;
   height: 35px;
-  color: #222;
-  padding: 8px;
+  border: 0px none;
+  color: rgba(169, 170, 165, 1);
 }
 /* END CHAT BOX */
+
+/* FOOTER CONTROL BOX */
+.active-box {
+  background: #2F3129;
+}
+
+.footer_controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  background: none repeat scroll 0% 0% #1D1E16;
+  text-align: center;
+  padding: 0px;
+}
+
+.footer_controls a {
+  cursor: pointer;
+  color: rgba(169, 170, 165, 1);
+  padding: 10px 15px;
+  display: inline-block;
+  margin-left: -5px;
+  margin-top: -5px;
+}
+.footer_controls a:hover {
+  color: #fff;
+}
+
+.footer_popup {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  height: 215px;
+  background: #1D1E16;
+  padding: 5px;
+}
+/* END FOOTER CONTROL BOX */
+
+/* BUDDY BOX */
+.buddy_list {
+  list-style-type: none;
+  padding: 2px 0px;
+  height: 205px;
+  background: #2F3129;
+}
+.buddy_list li {
+  padding: 10px;
+}
+.buddy-color-box {
+  width: 20px;
+  height: 20px;
+  display: inline block;
+  transition: opacity 500ms;
+  float: left;
+}
+.buddy_name {
+  margin: 0 15px;
+  font-size: 14px;
+}
+.buddy_detail {
+  cursor: pointer;
+}
+/* END BUDDY BOX */
