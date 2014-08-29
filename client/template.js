@@ -60,6 +60,11 @@ Template.nucleus_tree_widget.helpers({
     tree: function() {
         var treeId = "nucleus_file_tree";
         $('#'+treeId).on("select_node.jstree", function(e,data) {
+            //hides chat/buddylist popup if filetree needs more space
+            Meteor.setTimeout(function() {
+                if($("#nucleus_file_tree").height() >= ($(window).height()*50)/100) hideFooterPopup();
+            }, 100);
+
             if(data.node.data.type === 'folder') {
                 if(data.node.state.opened)
                     NucleusClient.jsTree.close_node(data.node);
