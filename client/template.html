@@ -24,6 +24,9 @@
 </template>
 
 <template name="nucleus_tree_widget">
+  <div class="sidebar-marker-label">
+    File System
+  </div>
   <div id="nucleus_file_tree">
     {{{tree}}}
   </div>
@@ -40,10 +43,42 @@
 
 <template name="nucleus_toolbar">
   <div id="nucleus-toolbar">
-    <a id="commit_changes" class="btn btn-primary btn-sidebar">Commit All Changes</a>
-    <a id="push_changes" class="btn btn-info btn-sidebar">Push To Remote Repo</a>    
-    <a id="pull_changes" class="btn btn-primary btn-sidebar">Pull New Changes</a>    
-    <a id="sync_events" class="{{recieveEvents}} btn btn-info btn-sidebar">Start Sync Events</a>    
+
+    <div class="sidebar-marker-label">
+      Git Controls
+    </div>
+    
+    <div class="sidebar-row" style="text-align: center;">
+      <a id="pull_changes" class="btn-custom btn-dark btn-40">
+        <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-level-down"></i>
+        Pull</a>    
+      <a id="push_changes" class="btn-custom btn-dark btn-40">
+        <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-level-up"></i>
+        Push</a>    
+    </div>
+
+    <div class="sidebar-row sidebar-commit-row">
+      <a id="commit_changes" class="btn-custom btn-dark commit-btn">
+        <i class="fa fa-circle-o-notch"></i>
+        Commit</a>
+      <input class="sidebar-commit-message" placeholder="Enter Commit Message" type="text" />
+    </div>
+
+
+    <div class="sidebar-marker-label">
+      Event Sync
+    </div>
+    
+    <div class="sidebar-row" style="text-align: center;">
+      <a id="sync_events" class="{{recievingEvents}} btn-custom btn-dark  btn-40">
+        <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-chain"></i>
+        App 
+      </a>    
+      <a id="sync_events" class="{{recievingEvents}} btn-custom btn-dark  btn-40">
+        <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-chain"></i>
+        Nucleus
+      </a>
+    </div>
   </div>
   <div id="flash_messages">
     {{> flashMessages}}
@@ -56,8 +91,8 @@
     {{> footer_popup_template}}
   </div>
   <div class="footer_controls">
-      <a class="show_chatbox {{activeBox 'chatbox'}}"><i class="fa fa-comments fa-2x"></i></a>
-      <a class="show_buddy_list {{activeBox 'buddy_list'}}"><i class="fa fa-users fa-2x"></i></a>
+    <a class="show_chatbox {{activeBox 'chatbox'}}"><i class="fa fa-comments fa-2x"></i></a>
+    <a class="show_buddy_list {{activeBox 'buddy_list'}}"><i class="fa fa-users fa-2x"></i></a>
   </div>
 </template>
 
@@ -83,7 +118,7 @@
     {{#each buddies}}
     <li class="buddy_detail">
       <span class="buddy-color-box" style="{{statusBoxStyle}}"></span>
-      <span class="buddy_name">{{nick}} ({{currentFile}})</span>
+      <span class="buddy_name">{{nick}}</span>
     </li>
     {{/each}}
   </ul>

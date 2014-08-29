@@ -1,11 +1,21 @@
+html, body {
+  height: 100%;
+}
+
 /* CSS declarations go here */
 #sidebar {
-  position: relative;
+  position: absolute;
   width: 20%;
   float: left;
   height: 100%;
   color: rgb(211,211,211);
   background: #272822;
+  overflow: scroll;
+}
+
+#nucleus_file_tree {
+  max-height: 350px;
+  overflow: scroll;
 }
 
 .btn-sidebar {
@@ -21,7 +31,7 @@
 #nucleus_editor {
   width: 80%;
   float: right;
-  height: 900px;
+  height: 700px;
 }
 
 .alert {
@@ -85,12 +95,10 @@
   position: absolute;
   background-color: #f00;
   border-left: 2px solid #f00;
-}
-
-.blink {
   animation: blink 3s steps(5, start) infinite;
   -webkit-animation: blink 3s steps(5, start) infinite;
 }
+
 @keyframes blink {
   to { visibility: hidden; }
 }
@@ -125,6 +133,7 @@
   height: 35px;
   border: 0px none;
   color: rgba(169, 170, 165, 1);
+  outline: none;
 }
 /* END CHAT BOX */
 
@@ -192,3 +201,183 @@
   cursor: pointer;
 }
 /* END BUDDY BOX */
+
+
+/* buttons */
+
+.sidebar-row {
+  width: 100%;
+  position: relative;
+}
+
+.btn-custom {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  background-image: none;
+}
+
+.btn-dark {
+  border: 1px solid #63655F;
+  border-radius: 0px;
+  background: #51534C;
+  color: #D2D2D2;
+}
+
+.btn-dark:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-dark-active {
+  /* background: #2F3129; */
+  background: none repeat scroll 0% 0% rgba(158, 161, 149, 1); /* i think light color is better for active buttons */
+  color: #fff;
+}
+
+.btn-40 {
+  width: 40%;
+  max-width: 40%;
+  margin: 10px 5px;
+}
+
+.btn-90 {
+  width: 90%;
+  margin: 10px 5%;
+}
+
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+
+/* end buttons */
+
+/* sidebar commit */
+.commit-btn {
+  width: 30%;
+  float: left;
+  display: inline-block;
+  padding-left: 5px;
+}
+
+.sidebar-commit-row {
+  margin: 10px 0;
+  overflow: hidden; /* clear fix */
+}
+
+.sidebar-commit-message {
+  border: 1px solid #63655F;
+  padding: 6px 2px 6px 10px;
+  background: #A9AAA5;;
+  width: 70%;
+  float: right;
+  display: inline-block;
+  color: #1D1E16;
+}
+/* end sidebar commit */
+
+/* labels  */
+.sidebar-marker-label {
+  line-height: 1.5;
+  background: none repeat scroll 0% 0% #51534C;
+  font-size: 10px;
+  text-align: center;
+  margin: 10px 0px;
+  text-transform: uppercase;
+}
+/* end labels  */
+
+/* jstree theme  */
+#nucleus_file_tree {
+  background: #51534C;
+}
+
+.jstree-default .jstree-clicked {
+    background: rgba(151, 153, 144, 1);
+    border-radius: 2px;
+    box-shadow: 0px 0px 1px #999 inset;
+    color: #222;
+}
+
+.vakata-context li > a:hover {
+  position: relative;
+  background-color: rgba(151, 153, 144, 1);
+  -moz-box-shadow: 0 0 2px #0a6aa1;
+  -webkit-box-shadow: 0 0 2px #0a6aa1;
+  box-shadow: 0 0 2px #0a6aa1;
+}
+
+.vakata-context .vakata-context-hover > a {
+  position: relative;
+  background-color: rgba(151, 153, 144, 1);
+  -moz-box-shadow: 0 0 2px #0a6aa1;
+  -webkit-box-shadow: 0 0 2px #0a6aa1;
+  box-shadow: 0 0 2px #0a6aa1;
+}
+
+.vakata-context .vakata-context-separator > a,
+.vakata-context .vakata-context-separator > a:hover {
+  background: rgba(151, 153, 144, 1);
+  border: 0;
+  border-top: 1px solid #e2e3e3;
+  height: 1px;
+  min-height: 1px;
+  max-height: 1px;
+  padding: 0;
+  margin: 0 0 0 2.4em;
+  border-left: 1px solid #e0e0e0;
+  -moz-text-shadow: 0 0 0 transparent;
+  -webkit-text-shadow: 0 0 0 transparent;
+  text-shadow: 0 0 0 transparent;
+  -moz-box-shadow: 0 0 0 transparent;
+  -webkit-box-shadow: 0 0 0 transparent;
+  box-shadow: 0 0 0 transparent;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}
+.vakata-context .vakata-contextmenu-disabled a,
+.vakata-context .vakata-contextmenu-disabled a:hover {
+  color: silver;
+  background-color: transparent;
+  border: 0;
+  box-shadow: 0 0 0;
+}
+
+.jstree-default .jstree-hovered {
+  background: rgba(151, 153, 144, 1);
+  border-radius: 2px;
+  box-shadow: inset 0 0 1px #ccc;
+}
+
+.jstree-default .jstree-disabled.jstree-hovered {
+  background: transparent;
+  box-shadow: none;
+}
+
+.jstree-default.jstree-checkbox-no-clicked .jstree-clicked.jstree-hovered {
+  background: rgba(151, 153, 144, 1);
+}
+.jstree-default > .jstree-wholerow-ul .jstree-hovered,
+.jstree-default > .jstree-wholerow-ul .jstree-clicked {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+.jstree-default .jstree-wholerow-hovered {
+  background: rgba(151, 153, 144, 1);
+}
+
+/* /\* end jstree theme  *\/ */

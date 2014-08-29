@@ -1,7 +1,9 @@
 Template.sidebar.rendered = function() {
     $("#sidebar").height($(window).height());
 };
-
+Template.nucleus_tree_widget.rendered = function() {
+    $("#nucleus_file_tree").css({maxHeight: ($(window).height()*50)/100});
+};
 Template.nucleus_nick_prompt.rendered = function() {
     //this is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success
     $("#nick").css({
@@ -92,6 +94,7 @@ Template.nucleus_tree_widget.helpers({
 
 Template.editor.rendered = function() {
     $("#nucleus_editor").height($(window).height());
+    $("#nucleus_editor").css({maxHeight: $(window).height()});
 };
 
 Template.editor.config = function () {
@@ -106,8 +109,14 @@ Template.editor.setMode = function() {
             extRe = /(?:\.([^.]+))?$/,
             ext = extRe.exec(selectedFile)[1];
         NucleusEditor.setModeForExt(ext);
-        //some events get unregistered on filechange
+        //events get unregistered on filechange
         NucleusEditor.registerAllEvents();
+
+        //we need to re-assign the window height on document change otherwise editor falls back to height given in css.
+        //sharejs does dom overwrite may be
+        Meteor.setTimeout(function() {
+            $("#nucleus_editor").height($(window).height());
+        }, 200);
     };
 };
 
@@ -118,7 +127,7 @@ Template.editor.helpers({
 });
 
 Template.nucleus_toolbar.helpers({
-    recieveEvents: function() {
+    recievingEvents: function() {
         if (NucleusUser.me())
             return  NucleusUser.me().recieve_events ? 'active': '';
     }
@@ -287,12 +296,14 @@ Template.buddy_list.helpers({
         var users = NucleusClient.getOnlineUsers();
         return users.map(function(user) {
             var filepath = user.getCurrentFilepath();
-            var currentFile = filepath.length > 20 ? "..."+filepath.substr(filepath.length-20, filepath.length): filepath;
+
+            var nick = user.getNick()+'('+filepath+')';
+            nick = Utils.shortenText(nick, 25);
+
             return {
                 filepath: filepath,
-                nick: user.getNick(),
-                statusBoxStyle: "background: "+user.getColor(),
-                currentFile: currentFile
+                nick: nick,
+                statusBoxStyle: "background: "+user.getColor()
             };
         });
     }
