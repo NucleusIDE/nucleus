@@ -134,16 +134,25 @@ Template.editor.helpers({
 Template.nucleus_toolbar.helpers({
     recievingEvents: function() {
         if (NucleusUser.me())
-            return  NucleusUser.me().recieve_events ? 'active': '';
+            return  NucleusUser.me().isSyncingEvents() ? 'btn-dark-active': '';
+    },
+    fa_recievingEvents: function() {
+        if (NucleusUser.me())
+            return  NucleusUser.me().isSyncingEvents() ? 'fa-chain': 'fa-chain-broken';
     }
 });
 
 Template.nucleus_toolbar.events({
     "click #commit_changes": function(e) {
-        Meteor.call("nucleusCommitAllChanges", function(err, res) {
+        var commitMessage = $(".sidebar-commit-message").val();
+        if(!commitMessage) {alert("Please Enter Commit Message"); return;}
+
+        Meteor.call("nucleusCommitAllChanges", commitMessage, function(err, res) {
             if (res === 1) FlashMessages.sendSuccess("Changes Committed Successfully");
             else if (res === 0) FlashMessages.sendWarning("Nothing to Commit");
             else FlashMessages.sendError("Something Went Wrong with Git Commit");
+
+            $(".sidebar-commit-message").val("");
         });
     },
     "click #push_changes": function(e) {
@@ -160,7 +169,7 @@ Template.nucleus_toolbar.events({
             else FlashMessages.sendError("Something Went Wrong While Pulling Changes");
         });
     },
-    "click #sync_events": function(e) {
+    "click #sync_app_events": function(e) {
         NucleusUser.me().toggleEventSync();
     }
 });

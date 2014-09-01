@@ -8,6 +8,8 @@ NucleusEventManager = {
     initialize: function() {
         this.click.initialize();
         this.scroll.initialize();
+        this.forms.initialize();
+
         this.startRecievingEvents();
     },
     tearDown: function() {
@@ -22,7 +24,7 @@ NucleusEventManager = {
         Deps.autorun(function(c) {
             var events = NucleusEvent.getNewEvents();
 
-            if(NucleusUser.me() && ! NucleusUser.me().syncEvents()) return;
+            if(NucleusUser.me() && ! NucleusUser.me().isSyncingEvents()) return;
             if(this.stopRecievingEvents) c.stop();
 
             _.each(events, function(event) {

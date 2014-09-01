@@ -12,13 +12,13 @@ var click = {
     },
     triggerClick: function (elem) {
         var evObj;
-        if (document.createEvent) {
-            evObj = document.createEvent("MouseEvents");
+        if ($document.createEvent) {
+            evObj = $document.createEvent("MouseEvents");
             evObj.initEvent("click", true, true);
             elem.dispatchEvent(evObj);
         } else {
-            if (document.createEventObject) {
-                evObj = document.createEventObject();
+            if ($document.createEventObject) {
+                evObj = $document.createEventObject();
                 evObj.cancelBubble = true;
                 elem.fireEvent("on" + "click", evObj);
             }
@@ -29,7 +29,7 @@ var click = {
             var canEmit = NucleusEventManager.canEmitEvents;
 
             if (canEmit) {
-                if(! NucleusUser.me().syncEvents()) return;
+                if(! NucleusUser.me().isSyncingEvents()) return;
 
                 var elem = event.target || event.srcElement;
                 if (elem.type === "checkbox" || elem.type === "radio") {

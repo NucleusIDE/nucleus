@@ -6,6 +6,8 @@
  *
  * target                       Object {tagName: 'DIV', index: 0} (for click)
  * position                     Object (for scroll)
+ *
+ * value                        String (for form inputs)
  */
 
 NucleusEvents = new Meteor.Collection('nucleus_events');
@@ -23,6 +25,10 @@ NucleusEvent.extend({
     },
     getName: function() {
         return this.name;
+    },
+
+    setValue: function(val) {
+        this.value = val;
     },
 
     getDoneUsers: function() {

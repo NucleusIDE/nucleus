@@ -51,7 +51,7 @@ NucleusUser.extend({
 
         this.update({recieve_events: recieveEvents});
     },
-    syncEvents: function() {
+    isSyncingEvents: function() {
         return this.recieve_events;
     },
 

@@ -42,6 +42,9 @@ Package.on_use(function (api, where) {
         'client/eventsync/clicks.js',
         'client/eventsync/scroll.js',
 
+        'client/eventsync/forms.js',
+        'client/eventsync/form_inputs.js',
+
         'chat/client/chat.js'
     ], ['client']);
 

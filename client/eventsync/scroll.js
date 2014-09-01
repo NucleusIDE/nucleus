@@ -19,7 +19,7 @@ var scroll = {
             var canEmit = NucleusEventManager.canEmitEvents;
 
             if(canEmit) {
-                if(! NucleusUser.me().syncEvents()) return;
+                if(! NucleusUser.me().isSyncingEvents()) return;
 
                 var ev = new NucleusEvent();
                 ev.setName(EVENT_NAME);
