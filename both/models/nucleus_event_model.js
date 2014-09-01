@@ -4,7 +4,7 @@
  * users_done                   Array (of mongo_ids)
  * originator                   mongo_id (user who triggered the event in first place)
  *
- * target                       Object {tagName: 'DIV', index: 0} (for click)
+ * target                       Object {tagName: 'DIV', index: 0} (can have extra params 'type' and 'checked' for checkbox/selec/radio)
  * position                     Object (for scroll)
  *
  * value                        String (for form inputs)

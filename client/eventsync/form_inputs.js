@@ -7,7 +7,9 @@ var $document = NucleusClient.getAppWindow().document;
 var input_text = {
     initialize: function () {
         NucleusEventManager.addEvent($document.body, "keyup", this.syncBrowserEvent());
-        // bs.socket.on(EVENT_NAME, exports.socketEvent(bs, eventManager));
+    },
+    tearDown: function () {
+        NucleusEventManager.removeEvent($document.body, "keyup", this.syncBrowserEvent());
     },
 
     syncBrowserEvent: function () {
