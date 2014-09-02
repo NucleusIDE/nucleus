@@ -11,18 +11,22 @@ var click = {
         NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
     },
     triggerClick: function (elem) {
-        var evObj;
-        if ($document.createEvent) {
-            evObj = $document.createEvent("MouseEvents");
-            evObj.initEvent("click", true, true);
-            elem.dispatchEvent(evObj);
-        } else {
-            if ($document.createEventObject) {
-                evObj = $document.createEventObject();
-                evObj.cancelBubble = true;
-                elem.fireEvent("on" + "click", evObj);
-            }
-        }
+        //let's use jquery to trigger the click instead of doing it ourselves. Jquery's click work well with Router.go()/MobiRouter.go()
+        //calls. Other way of triggering click event cause a window reload which is certainly not what we want
+        $(elem).click();
+
+        // var evObj;
+        // if ($document.createEvent) {
+        //     evObj = $document.createEvent("MouseEvents");
+        //     evObj.initEvent("click", true, true);
+        //     elem.dispatchEvent(evObj);
+        // } else {
+        //     if ($document.createEventObject) {
+        //         evObj = $document.createEventObject();
+        //         evObj.cancelBubble = true;
+        //         elem.fireEvent("on" + "click", evObj);
+        //     }
+        // }
     },
     syncBrowserEvent: function () {
         return function(event) {

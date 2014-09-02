@@ -1,5 +1,3 @@
-"use strict";
-
 var EVENT_NAME  = "input:text";
 var $document = NucleusClient.getAppWindow().document;
 

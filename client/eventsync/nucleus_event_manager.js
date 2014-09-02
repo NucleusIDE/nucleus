@@ -9,12 +9,16 @@ NucleusEventManager = {
         this.click.initialize();
         this.scroll.initialize();
         this.forms.initialize();
+        this.location.initialize();
 
         this.startRecievingEvents();
     },
     tearDown: function() {
         this.click.tearDown();
         this.scroll.tearDown();
+        this.forms.tearDown();
+        this.location.tearDown();
+
         this.stopRecievingEvents = true;
     },
     getRecievers: function() {
