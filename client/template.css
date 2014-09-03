@@ -313,6 +313,64 @@ html, body {
 /* end labels  */
 
 /* jstree theme  */
+
+/* contextmenu */
+.vakata-context { 
+  z-index:999 !important; 
+}
+
+.vakata-context, .vakata-context ul {
+  margin: 0;
+  padding: 0px;
+  position: absolute;
+  background: rgba(256, 256, 256, 0.8);
+  box-shadow: inset 0px 0px 17px 60px rgba(151,153,144, 0.6);
+  border: 0px;
+  border-radius: 5px;
+}
+
+.vakata-context li > a .vakata-contextmenu-sep {
+  background: transparent;
+  border-left: none;
+}
+
+.vakata-context li > a {
+  display: block;
+  /* padding: 0 30%; */
+  text-decoration: none;
+  width: auto;
+  color: #222;
+  white-space: nowrap;
+  line-height: 2.4em;
+  text-shadow: 0px 0px 0px white;
+  border-radius: 0px;
+}
+
+.vakata-context .vakata-context-separator > a, .vakata-context .vakata-context-separator > a:hover {
+  border-top: none !important;
+  border-left: none !important;
+}
+
+.vakata-context .vakata-contextmenu-disabled a,
+.vakata-context .vakata-contextmenu-disabled a:hover {
+  color: rgba(256,256,256,0.7);
+  background-color: transparent;
+  border: 0;
+  box-shadow: 0 0 0;
+  text-shadow: 0px 0px 1px #222;
+}
+
+.vakata-context .vakata-context-hover > a, .vakata-context .vakata-context-hover > a:hover {
+  position: relative;
+  background-color: rgba(256,256, 256, 0.7);
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+
+
+/* end contextmenu */
+
 #nucleus_file_tree {
   background: #51534C;
 }
@@ -325,14 +383,6 @@ html, body {
 }
 
 .vakata-context li > a:hover {
-  position: relative;
-  background-color: rgba(151, 153, 144, 1);
-  -moz-box-shadow: 0 0 2px #0a6aa1;
-  -webkit-box-shadow: 0 0 2px #0a6aa1;
-  box-shadow: 0 0 2px #0a6aa1;
-}
-
-.vakata-context .vakata-context-hover > a {
   position: relative;
   background-color: rgba(151, 153, 144, 1);
   -moz-box-shadow: 0 0 2px #0a6aa1;
@@ -361,13 +411,7 @@ html, body {
   -webkit-border-radius: 0;
   border-radius: 0;
 }
-.vakata-context .vakata-contextmenu-disabled a,
-.vakata-context .vakata-contextmenu-disabled a:hover {
-  color: silver;
-  background-color: transparent;
-  border: 0;
-  box-shadow: 0 0 0;
-}
+
 
 .jstree-default .jstree-hovered {
   background: rgba(151, 153, 144, 1);

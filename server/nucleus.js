@@ -75,13 +75,13 @@ NucleusFactory = function() {
             _.each(tree.children, removeEmptyChildren);
         };
 
+
         var tree = dirTree(options);
         if (! options.includeHidden) {
             removeEmptyChildren(tree);
         }
         return tree;
     };
-
 
     this.getFileContents = function(filepath) {
         if (filepath === '*scratch*') return false;
@@ -241,7 +241,29 @@ NucleusFactory = function() {
         return fut.wait();
     };
 
+    this.createNewFile = function(filepath) {
+        filepath = filepath.indexOf("/") === 0 ? filepath : this.config.projectDir + "/" + filepath;
+        var fileName = path.basename(filepath);
 
+        var renameUnique = function(filepath) {
+            var count = 1;
+            var newPath = filepath + "_" + count;
+
+            while(fs.existsSync(newPath)) {
+                newPath = filepath + "_" + count++;
+            }
+
+            return newPath;
+        };
+
+        if (fs.existsSync(filepath))
+            filepath = renameUnique(filepath);
+        fs.openSync(filepath, 'w');
+
+        console.log("CREATED NEW FILE", filepath);
+
+        return filepath;
+    };
 };
 
 Meteor.publish("nucleusPublisher",function() {

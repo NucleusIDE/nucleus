@@ -31,7 +31,7 @@ var NucleusClientFactory = function() {
         if (window.focus) { nucleusWindow.focus(); }
 
         FlashMessages.configure({
-            autoHide: true,
+            autoHide: false,
             hideDelay: 3000,
             autoScroll: true
         });
@@ -109,12 +109,14 @@ var NucleusClientFactory = function() {
     this.getJstreeHTML = function() {
         //jstree isn't working when used with JSON from within a meteor package. So, let's create HTML (ul>li) instead.
         // I tried creating my own simple tree, but it's turning out to be more work
+
         var tree = this.getFileTree();
+
         if (! tree) return false;
         var template = "\
             <ul> \
               <% _.each(tree.children, function(child) { %>  \
-                <li id='<%= child.path %>' data-type='<%= child.type %>'><%= child.name %> \
+                <li class='nucleus_tree_node' id='<%= child.path %>' data-type='<%= child.type %>'><%= child.name %> \
                   <%= childFn({tree: child, childFn: childFn}) %> \
               </li> \
               <% }) %> \
@@ -212,6 +214,14 @@ var NucleusClientFactory = function() {
         _.each(deadUserCursors, function(deadCursor) {
             NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
         });
+
+    };
+
+    this.createNewFile = function(filepath, cb) {
+        Meteor.call("nucleusCreateNewFile", filepath, function(err, res) {
+            if(err) {cb(err); return;}
+            cb(null, res);
+        });
     };
 
     return this;
@@ -233,6 +243,5 @@ NucleusClient = new NucleusClientFactory();
 //this deletes the current user
 NucleusClient.getWindow().onbeforeunload = function() {
     console.log("UNLOADING NUCLEUS WINDOW");
-    //TODO: REMOVE BELOW LINE WHEN DONE TEsTING
-    // NucleusUser.me().delete();
+    NucleusUser.me().delete();
 };

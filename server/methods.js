@@ -85,5 +85,8 @@ Meteor.methods({
     },
     nucleusMupDeploy: function(mup_setup) {
         return Nucleus.mupDeploy(mup_setup);
+    },
+    nucleusCreateNewFile: function(filepath) {
+        return Nucleus.createNewFile(filepath);
     }
 });

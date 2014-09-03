@@ -59,37 +59,10 @@ Template.nucleus_nick_prompt.events({
 Template.nucleus_tree_widget.helpers({
     tree: function() {
         var treeId = "nucleus_file_tree";
-        $('#'+treeId).on("select_node.jstree", function(e,data) {
-            //hides chat/buddylist popup if filetree needs more space
-            Meteor.setTimeout(function() {
-                if($("#nucleus_file_tree").height() >= ($(window).height()*50)/100) hideFooterPopup();
-            }, 100);
 
-            if(data.node.data.type === 'folder') {
-                if(data.node.state.opened)
-                    NucleusClient.jsTree.close_node(data.node);
-                else
-                    NucleusClient.jsTree.open_node(data.node);
-            }
-            if(data.node.data.type === 'file') {
-                Session.set("nucleus_selected_file", data.selected[0]);
-            }
-        });
         var treeInterval = Meteor.setInterval(function() {
             if(document.getElementById(treeId).childElementCount >= 1) {
-                var fileTree = $('#'+treeId).jstree({
-                    'core' : {
-                        // 'data' : NucleusClient.getJstreeJSON(), //this doesn't work when jstree.js is kept in meteor package
-                        check_callback: true,
-                        'themes': {
-                            icons: false,
-                            stripes: false,
-                            responsive: true,
-                            dots: false
-                        },
-                        'multiple': false
-                    }});
-                NucleusClient.jsTree = fileTree;
+                NucleusClient.jsTree = NucleusSidebar.initializeJsTree(treeId);
                 Meteor.clearInterval(treeInterval);
             }
         }, 300);
