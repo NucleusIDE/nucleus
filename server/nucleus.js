@@ -286,6 +286,14 @@ NucleusFactory = function() {
         return fut.wait();
     };
 
+    this.renameFile = function(oldpath, newpath) {
+        if (!fs.existsSync(oldpath)) {
+            return;
+        }
+
+        return fs.renameSync(oldpath, newpath);
+    }
+
 };
 
 Meteor.publish("nucleusPublisher",function() {

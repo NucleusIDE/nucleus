@@ -94,5 +94,8 @@ Meteor.methods({
     },
     nucleusDeleteFile: function(filepath) {
         return Nucleus.deleteFile(filepath);
+    },
+    nucleusRenameFile: function(oldpath, newpath) {
+        return Nucleus.renameFile(oldpath, newpath);
     }
 });

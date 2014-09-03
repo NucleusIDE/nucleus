@@ -235,7 +235,14 @@ var NucleusClientFactory = function() {
             if(err) {cb(err); return;}
             cb(null, res);
         });
-    }
+    };
+
+    this.renameFile = function(oldpath, newpath, cb) {
+        Meteor.call("nucleusRenameFile", oldpath, newpath, function(err, res) {
+            if(err) {cb(err); return;}
+            cb(null, res);
+        });
+    };
 
     return this;
 };

@@ -17,7 +17,30 @@ NucleusSidebar = {
             "plugins" : [ "themes", "contextmenu", "sort"],
             'core' : {
                 // 'data' : NucleusClient.getJstreeJSON(), //this doesn't work when jstree.js is kept in meteor package
-                check_callback: true,
+                'check_callback' : function (operation, node, node_parent, newname, more) {
+                    // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                    // in case of 'rename_node' node_position is filled with the new node name
+                    if (operation === 'rename_node') {
+                        var oldpath = node.id;
+                        var path = node.id.split("/");
+                        path.splice(-1);
+                        var newpath = path.join("/")+"/"+newname;
+
+                        console.log("OLD PATH", oldpath);
+                        console.log("NEW PATH", newpath);
+
+                        NucleusClient.renameFile(oldpath, newpath, function(err, res) {
+                            if (err) {
+                                FlashMessages.sendError("Failed to rename file. " + err);
+                                return;
+                            }
+                            FlashMessages.sendSuccess("File Renamed successfully.");
+                            NucleusClient.jsTree.set_id(node, newpath);
+                        });
+                    }
+
+                    else return true;
+                },
                 'themes': {
                     icons: false,
                     stripes: false,
@@ -113,11 +136,6 @@ NucleusSidebar = {
                         "separator_after"	: false,
                         "_disabled"			: false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
                         "label"				: "Rename",
-                        /*
-                         "shortcut"			: 113,
-                         "shortcut_label"	: 'F2',
-                         "icon"				: "glyphicon glyphicon-leaf",
-                         */
                         "action"			: function (data) {
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
