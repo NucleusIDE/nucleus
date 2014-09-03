@@ -1,14 +1,27 @@
 NucleusSidebar = {
+    redrawJsTree: function(elemId) {
+        $("#"+elemId).html(NucleusClient.getJstreeHTML());
+        NucleusClient.jsTree.destroy(true);
+
+        var treeInterval = Meteor.setInterval(function() {
+            NucleusClient.jsTree = NucleusSidebar.initializeJsTree(elemId);
+
+            if(Object.getPrototypeOf(NucleusClient.jsTree) !== Object.getPrototypeOf($(document))) {
+                Meteor.clearInterval(treeInterval);
+            }
+        }, 300);
+
+    },
     initializeJsTree: function(elemId) {
         //set events on jstree
         $('#'+elemId).on("select_node.jstree", function(e,data) {
-            if(data.node.data.type === 'folder') {
+            if(document.getElementById(data.node.id).getAttribute("data-type") === 'folder') {
                 if(data.node.state.opened)
                     NucleusClient.jsTree.close_node(data.node);
                 else
                     NucleusClient.jsTree.open_node(data.node);
             }
-            if(data.node.data.type === 'file') {
+            if(document.getElementById(data.node.id).getAttribute("data-type") === 'file') {
                 Session.set("nucleus_selected_file", data.selected[0]);
             }
         });

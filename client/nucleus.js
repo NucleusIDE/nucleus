@@ -111,6 +111,7 @@ var NucleusClientFactory = function() {
         // I tried creating my own simple tree, but it's turning out to be more work
 
         var tree = this.getFileTree();
+        nucleusClientDep.depend();
 
         if (! tree) return false;
         var template = "\
