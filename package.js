@@ -27,12 +27,12 @@ Package.on_use(function (api, where) {
         'client/lib/jstree/themes/default/style.css',
 
         'client/lib/font-awesome/css/font-awesome.css',
+        'client/lib/hint.css',
 
         'client/nucleus.js',
         'client/nucleus_editor.js',
         'client/nucleus_sidebar.js',
 
-        'client/hint.css',
         'client/template.css',
         'client/template.html',
         'client/template.js',
