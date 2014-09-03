@@ -230,6 +230,12 @@ var NucleusClientFactory = function() {
             cb(null, res);
         });
     };
+    this.deleteFile = function(filepath, cb) {
+        Meteor.call("nucleusDeleteFile", filepath, function(err, res) {
+            if(err) {cb(err); return;}
+            cb(null, res);
+        });
+    }
 
     return this;
 };

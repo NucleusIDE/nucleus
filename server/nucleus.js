@@ -268,6 +268,24 @@ NucleusFactory = function() {
         return filepath;
     };
 
+    this.deleteFile = function(filepath) {
+        if (!fs.existsSync(filepath)) {
+            return true;
+        }
+        var stat = fs.statSync(filepath);
+
+        var fut = new Future();
+
+        if (stat.isDirectory())
+            child.exec("rm -rf "+filepath, function(err, res) {
+                fut.return(res);
+            });
+        else
+            fut.return(fs.unlinkSync(filepath));
+
+        return fut.wait();
+    };
+
 };
 
 Meteor.publish("nucleusPublisher",function() {
