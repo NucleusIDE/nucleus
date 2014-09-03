@@ -79,7 +79,8 @@ Template.nucleus_tree_widget.helpers({
             if(document.getElementById(treeId).childElementCount >= 1) {
                 var fileTree = $('#'+treeId).jstree({
                     'core' : {
-                        // 'data' : NucleusClient.getJstreeJSON(),
+                        // 'data' : NucleusClient.getJstreeJSON(), //this doesn't work when jstree.js is kept in meteor package
+                        check_callback: true,
                         'themes': {
                             icons: false,
                             stripes: false,
@@ -145,7 +146,7 @@ Template.nucleus_toolbar.helpers({
 Template.nucleus_toolbar.events({
     "click #commit_changes": function(e) {
         var commitMessage = $(".sidebar-commit-message").val();
-        if(!commitMessage) {alert("Please Enter Commit Message"); return;}
+        if(!commitMessage) { FlashMessages.sendError("Please Enter Commit Message"); return;}
 
         Meteor.call("nucleusCommitAllChanges", commitMessage, function(err, res) {
             if (res === 1) FlashMessages.sendSuccess("Changes Committed Successfully");
@@ -167,6 +168,14 @@ Template.nucleus_toolbar.events({
             if (res === 1) FlashMessages.sendSuccess("New Changes Pulled Successfully");
             else if (res === 0) FlashMessages.sendWarning("Already Up-to-date");
             else FlashMessages.sendError("Something Went Wrong While Pulling Changes");
+        });
+    },
+    "click #mup_deploy": function(e) {
+        e.preventDefault();
+        var should_mup_setup = true;
+        Meteor.call("nucleusMupDeploy", should_mup_setup, function(err, res) {
+            if (res === 1) FlashMessages.sendSuccess("Deployed Successfully");
+            else FlashMessages.sendError("Something Went Wrong While Deploying. Please make sure you have mup.json in project root and it has correct settings.");
         });
     },
     "click #sync_app_events": function(e) {

@@ -15,6 +15,19 @@ NucleusFactory = function() {
         project: ''
     };
 
+    this.getFileExtension = function (filepath) {
+        return path.extname(filepath).replace(".", "");
+    };
+
+    this.configure = function(config) {
+        _.extend(Nucleus.config, config);
+        Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
+    };
+
+    this.initialize = function() {
+        this.nucleusCloneRepo();
+    };
+
     this.getDirTree = function(options) {
         options = options || {};
         var  dirTree= function (options) {
@@ -209,18 +222,25 @@ NucleusFactory = function() {
         return collectedCss;
     };
 
-    this.getFileExtension = function (filepath) {
-        return path.extname(filepath).replace(".", "");
+    //let's keep mup deploy here until we have a clear/bigger deployment strategy
+    this.mupDeploy = function(mup_setup) {
+        var projectDir = this.config.projectDir;
+        var fut = new Future();
+
+        var commmand = "cd " + projectDir + (mup_setup ? " && mup setup " : "")  + " && mup deploy";
+
+        child.exec(command, function(err, stdout, stderr) {
+            if (err) {console.log(err); fut.return(-1); }
+            else {
+                fut.return(1);
+
+                console.log("STDOUT:", stdout);
+                console.log("STDERR", stderr);
+            }
+        });
+        return fut.wait();
     };
 
-    this.configure = function(config) {
-        _.extend(Nucleus.config, config);
-        Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
-    };
-
-    this.initialize = function() {
-        this.nucleusCloneRepo();
-    };
 
 };
 

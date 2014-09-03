@@ -82,5 +82,8 @@ Meteor.methods({
     },
     nucleusGetAllCSS: function(options) {
         return Nucleus.getAllCSS(options);
+    },
+    nucleusMupDeploy: function(mup_setup) {
+        return Nucleus.mupDeploy(mup_setup);
     }
 });

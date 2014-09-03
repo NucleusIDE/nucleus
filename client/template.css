@@ -4,13 +4,16 @@ html, body {
 
 /* CSS declarations go here */
 #sidebar {
-  position: absolute;
+  position: relative;
   width: 20%;
   float: left;
-  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
   color: rgb(211,211,211);
   background: #272822;
   overflow: scroll;
+  top: 0;
+  bottom: 0;
 }
 
 .nucleus_tree_node {
@@ -153,7 +156,7 @@ html, body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 50px;
+  height: 40px;
   background: none repeat scroll 0% 0% #1D1E16;
   text-align: center;
   padding: 0px;
@@ -173,7 +176,7 @@ html, body {
 
 .footer_popup {
   position: absolute;
-  bottom: 50px;
+  bottom: 40px;
   left: 0;
   right: 0;
   height: 215px;
@@ -239,6 +242,10 @@ html, body {
   color: #D2D2D2;
 }
 
+.btn-dark:active {
+  background: none repeat scroll 0% 0% rgba(158, 161, 149, 1); /* i think light color is better for active buttons */
+  color: #fff;  
+}
 .btn-dark:hover {
   color: #fff;
   text-decoration: none;
