@@ -241,7 +241,7 @@ NucleusFactory = function() {
         return fut.wait();
     };
 
-    this.createNewFile = function(filepath) {
+    this.createNewFile = function(filepath, directory) {
         filepath = filepath.indexOf("/") === 0 ? filepath : this.config.projectDir + "/" + filepath;
         var fileName = path.basename(filepath);
 
@@ -258,12 +258,16 @@ NucleusFactory = function() {
 
         if (fs.existsSync(filepath))
             filepath = renameUnique(filepath);
-        fs.openSync(filepath, 'w');
 
-        console.log("CREATED NEW FILE", filepath);
+        if(!directory) {
+            fs.openSync(filepath, 'w');
+            return filepath;
+        }
 
+        fs.mkdirSync(filepath);
         return filepath;
     };
+
 };
 
 Meteor.publish("nucleusPublisher",function() {

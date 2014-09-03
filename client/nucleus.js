@@ -224,6 +224,13 @@ var NucleusClientFactory = function() {
         });
     };
 
+    this.createNewFolder = function(filepath, cb) {
+        Meteor.call("nucleusCreateNewFolder", filepath, function(err, res) {
+            if(err) {cb(err); return;}
+            cb(null, res);
+        });
+    };
+
     return this;
 };
 

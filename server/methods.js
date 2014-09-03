@@ -88,5 +88,8 @@ Meteor.methods({
     },
     nucleusCreateNewFile: function(filepath) {
         return Nucleus.createNewFile(filepath);
+    },
+    nucleusCreateNewFolder: function(filepath) {
+        return Nucleus.createNewFile(filepath, true);
     }
 });
