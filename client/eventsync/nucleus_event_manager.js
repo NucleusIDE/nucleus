@@ -6,6 +6,10 @@ NucleusEventManager = {
         return ! this.canEmitEvents;
     },
     initialize: function() {
+        //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
+        // this is to bring everyone on same page.
+        if($window.Meteor.logout) $window.Meteor.logout();
+
         this.click.initialize();
         this.scroll.initialize();
         this.forms.initialize();
@@ -43,8 +47,6 @@ NucleusEventManager = {
 
             event.markDoneForMe();
             NucleusEventManager[event.getName()].handleEvent(event);
-            console.log("PLAYING", event.name, "on", event.target);
-
         });
     },
     replayEventsSinceLastRouteChange: function() {
@@ -58,18 +60,27 @@ NucleusEventManager = {
         // last go event created by any logged in nucleus user
         var lastGoEvent = NucleusEvents.find({name: "location", originator: {$in: onlineUsers}}, {sort: {triggered_at: -1}, limit: 1}).fetch()[0];
 
-        if(!lastGoEvent) return false;
+        if(lastGoEvent) {
+            var followingEvents = NucleusEvents.find({triggered_at: {$gt: lastGoEvent.triggered_at}}).fetch();
+        }
 
-        var followingEvents = NucleusEvents.find({triggered_at: {$gt: lastGoEvent.triggered_at}}).fetch();
+        var lastLoginEvent = NucleusEvents.find({name: "login", type: "login", originator: {$in: onlineUsers}}, {sort: {triggered_at: -1}, limit: 1}).fetch()[0];
 
 
-        //the template to which the go event goes need rendered before we can trigger events that follow.
-        //otherwise it interfere and some of the following events get triggered on the page before go event
-        //FIXME: Find a reliable way to call following events after the template to which go event takes is rendered
-        NucleusEventManager.playEvents([lastGoEvent]);
+        NucleusEventManager.playEvents([lastLoginEvent]);
 
+        if(! lastGoEvent) return false;
+
+        //FIXME: Find a reliable way to make sure last login event is played and user is logged in successfully before playing last route event
         Meteor.setTimeout(function() {
-            NucleusEventManager.playEvents(followingEvents);
+            //the template to which the go event goes need rendered before we can trigger events that follow.
+            //otherwise it interfere and some of the following events get triggered on the page before go event
+            //FIXME: Find a reliable way to call following events after the template to which go event takes is rendered
+            NucleusEventManager.playEvents([lastGoEvent]);
+
+            Meteor.setTimeout(function() {
+                NucleusEventManager.playEvents(followingEvents);
+            }, 300);
         }, 300);
     }
 };
