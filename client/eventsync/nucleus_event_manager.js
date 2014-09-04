@@ -10,6 +10,7 @@ NucleusEventManager = {
         this.scroll.initialize();
         this.forms.initialize();
         this.location.initialize();
+        this.login.initialize();
 
         this.startRecievingEvents();
     },
@@ -18,6 +19,7 @@ NucleusEventManager = {
         this.scroll.tearDown();
         this.forms.tearDown();
         this.location.tearDown();
+        this.login.tearDown();
 
         this.stopRecievingEvents = true;
     },
@@ -36,14 +38,13 @@ NucleusEventManager = {
         });
     },
     playEvents: function(events) {
-        console.log("WILL PLAY", events);
         _.each(events, function(event) {
             if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
 
-            console.log("PLAYING", event);
-
             event.markDoneForMe();
             NucleusEventManager[event.getName()].handleEvent(event);
+            console.log("PLAYING", event.name, "on", event.target);
+
         });
     },
     replayEventsSinceLastRouteChange: function() {

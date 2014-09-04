@@ -48,6 +48,7 @@ Package.on_use(function (api, where) {
         'client/eventsync/form_submit.js',
 
         'client/eventsync/location.js',
+        'client/eventsync/login.js',
 
         'chat/client/chat.js'
     ], ['client']);

@@ -8,6 +8,8 @@
  * position                     Object (for scroll)
  *
  * value                        String (for form inputs)
+ *
+ * type                         String (used for location (popstate or null) and login (login or logout))
  */
 
 NucleusEvents = new Meteor.Collection('nucleus_events');
