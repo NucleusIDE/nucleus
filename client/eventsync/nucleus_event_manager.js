@@ -25,19 +25,51 @@ NucleusEventManager = {
         return NucleusUsers.find({recieve_events: true});
     },
     startRecievingEvents: function() {
+        this.replayEventsSinceLastRouteChange();
         Deps.autorun(function(c) {
             var events = NucleusEvent.getNewEvents();
 
             if(NucleusUser.me() && ! NucleusUser.me().isSyncingEvents()) return;
             if(this.stopRecievingEvents) c.stop();
 
-            _.each(events, function(event) {
-                if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
-
-                event.markDoneForMe();
-                NucleusEventManager[event.getName()].handleEvent(event);
-            });
+            NucleusEventManager.playEvents(events);
         });
+    },
+    playEvents: function(events) {
+        console.log("WILL PLAY", events);
+        _.each(events, function(event) {
+            if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
+
+            console.log("PLAYING", event);
+
+            event.markDoneForMe();
+            NucleusEventManager[event.getName()].handleEvent(event);
+        });
+    },
+    replayEventsSinceLastRouteChange: function() {
+        var onlineUsers = NucleusEventManager.getRecievers().map(function(user) {
+            return user._id;
+        });
+        onlineUsers = _.difference(onlineUsers, NucleusUser.me()._id);
+
+        if(onlineUsers.length === 0) {console.log("You are the first online event listener"); return false;}
+
+        // last go event created by any logged in nucleus user
+        var lastGoEvent = NucleusEvents.find({name: "location", originator: {$in: onlineUsers}}, {sort: {triggered_at: -1}, limit: 1}).fetch()[0];
+
+        if(!lastGoEvent) return false;
+
+        var followingEvents = NucleusEvents.find({triggered_at: {$gt: lastGoEvent.triggered_at}}).fetch();
+
+
+        //the template to which the go event goes need rendered before we can trigger events that follow.
+        //otherwise it interfere and some of the following events get triggered on the page before go event
+        //FIXME: Find a reliable way to call following events after the template to which go event takes is rendered
+        NucleusEventManager.playEvents([lastGoEvent]);
+
+        Meteor.setTimeout(function() {
+            NucleusEventManager.playEvents(followingEvents);
+        }, 300);
     }
 };
 
