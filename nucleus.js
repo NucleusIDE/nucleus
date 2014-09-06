@@ -4,14 +4,14 @@
 //overriding Meteor.Collection.prototype.insert to avoid duplicate inserts
 var originalInsert = Meteor.Collection.prototype.insert;
 Meteor.Collection.prototype.insert = function() {
-    //let's not re-insert the doc if it's because of the event being synced
-    if(NucleusEventManager.isProcessingEvent()) return false;
+  //let's not re-insert the doc if it's because of the event being synced
+  if(NucleusEventManager.isProcessingEvent()) return false;
 
-    var args = new Array(arguments.length);
-    var ctx = this;
+  var args = new Array(arguments.length);
+  var ctx = this;
 
-    for(var i = 0; i < args.length; ++i) {
-        args[i] = arguments[i];
-    }
-    return originalInsert.apply(ctx, args);
+  for(var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  return originalInsert.apply(ctx, args);
 };

@@ -14,11 +14,6 @@ var NucleusClientFactory = function() {
 
     this.configure = function(config) {
         _.extend(this.config, config);
-
-        LiveUpdate.configure({
-            purelyThirdParty: true
-        });
-
     };
 
     this.initialize = function(config) {
