@@ -1,6 +1,7 @@
 <template name="nucleus">
   {{> nucleus_nick_prompt}}
   {{> sidebar}}
+  {{> nucleus_topbar}}
   {{> editor}}
 </template>
 
@@ -13,6 +14,15 @@
     </div>
   </div>
   {{/if}}
+</template>
+
+<template name="nucleus_topbar">
+  <div id="nucleus_topbar">
+    <div class="button-group">
+      <a id="nucleus_save_file" class="btn-custom btn-topbar {{file_dirty 'save'}}" href="">Save</a>
+      <a id="nucleus_discard_file" class="btn-custom btn-topbar {{file_dirty 'discard'}}" href="">Discard</a>
+    </div>
+  </div>
 </template>
 
 <template name="sidebar">

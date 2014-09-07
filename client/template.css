@@ -443,7 +443,7 @@ html, body {
 
 #flash_messages {
   position: fixed;
-  bottom: 50px;
+  bottom: 10px;
   left: 25%;
   z-index: 99999999;
 }
@@ -453,3 +453,37 @@ html, body {
 }
 /* end flash messages */
 
+/* topbar */
+#nucleus_topbar {
+  width: 80%;
+  float: right;
+  height: 35px;
+  background: #2F3129;
+}
+.button-group {
+  float: right;
+  margin-top: 3px;
+  margin-right: 5px;  
+}
+.btn-topbar {
+  border: 1px solid #63655F;
+  border-radius: 0px;
+  background: transparent;
+  color: #D2D2D2;
+  padding: 3px 15px;
+}
+.btn-topbar:hover {
+  color: #fff;
+  text-decoration: none;
+}
+.btn-topbar:active {
+  background: none repeat scroll 0% 0% rgba(158, 161, 149, 1);
+  color: #fff;
+}
+.btn-save {
+  border: 1px solid #37AA73;
+}
+.btn-discard {
+  border: 1px solid #AA3737;
+}
+/* end topbar */

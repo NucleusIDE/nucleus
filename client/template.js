@@ -158,10 +158,10 @@ Template.nucleus_toolbar.events({
 
 
 Deps.autorun(function() {
-  var selecttedFile = Session.get("nucleus_selected_file");
-  if (!selecttedFile) return;
+  var selectedFile = Session.get("nucleus_selected_file");
+  if (!selectedFile) return;
 
-  NucleusClient.editFile(selecttedFile);
+  NucleusClient.editFile(selectedFile);
 });
 
 Deps.autorun(function() {
@@ -235,9 +235,19 @@ Deps.autorun(function() {
 // START footer-control  //
 ///////////////////////////
 
+var hideFooterPopup = function() {
+  $(".footer_controls .active-box").removeClass("active-box");
+  $(".footer_popup").hide();
+  Session.set("footer_controls_template", null);
+};
+
 Template.footer_controls.helpers({
   footer_popup_template: function() {
-    var template = Session.get("footer_controls_template") || 'chatbox';
+    var template = Session.get("footer_controls_template") || null;
+    if(!template) {
+      hideFooterPopup();
+      return null;
+    }
     return Template[template];
   },
   activeBox: function(box) {
@@ -246,12 +256,6 @@ Template.footer_controls.helpers({
   }
 });
 
-
-var hideFooterPopup = function() {
-  $(".footer_controls .active-box").removeClass("active-box");
-  $(".footer_popup").hide();
-  Session.set("footer_controls_template", null);
-};
 
 Template.footer_controls.events({
   "click .show_chatbox": function() {
@@ -315,3 +319,30 @@ Template.buddy_list.events({
 ////////////////////
 // END BUDDY_LIST //
 ////////////////////
+
+
+//////////////////
+// START TOPBAR //
+//////////////////
+Template.nucleus_topbar.helpers({
+  file_dirty: function(btnType) {
+    if(btnType === 'save') return "btn-save";
+    else return "btn-discard";
+  }
+});
+
+Template.nucleus_topbar.events({
+  "click #nucleus_save_file": function() {
+    NucleusClient.saveSelectedFileToDisk();
+  },
+  "click #nucleus_discard_file": function() {
+    var selectedFile = Session.get("nucleus_selected_file");
+    if (!selectedFile) return;
+
+    console.log("DISCARDING CHANGES");
+    NucleusClient.editFile(selectedFile, true);
+  }
+});
+////////////////
+// END TOPBAR //
+////////////////
