@@ -40,8 +40,12 @@ var NucleusClientFactory = function() {
     return 'scratch';
   };
 
-  this.getWindow = function() {
-    return this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : window;
+  this.getWindow = function(app_name) {
+    var nucleus_window = this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : window;
+
+    if(app_name === "app") return nucleus_window.opener ? nucleus_window.opener : nucleus_window;
+
+    return nucleus_window;
   };
 
   this.getAppWindow = function() {
