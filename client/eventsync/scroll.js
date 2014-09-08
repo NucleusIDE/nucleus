@@ -1,6 +1,8 @@
-Scroll = function($window) {
+Scroll = function(appName) {
   var EVENT_NAME = "scroll",
-      utils = NucleusEventManager.utils;
+      APP_NAME = appName,
+      $window = NucleusClient.getWindow(APP_NAME),
+      utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.$window = $window;
 

@@ -162,6 +162,7 @@ Template.nucleus_toolbar.events({
 });
 
 
+//autorun to set file for editing when user clicks on a file in sidebar
 Deps.autorun(function() {
   var selectedFile = Session.get("nucleus_selected_file");
   if (!selectedFile) return;
@@ -169,6 +170,8 @@ Deps.autorun(function() {
   NucleusClient.editFile(selectedFile);
 });
 
+
+//autorun to update sidebar user state boxes and cursor position for different users
 Deps.autorun(function() {
   var users = NucleusClient.getOnlineUsers().fetch();
   NucleusClient.clearDeadUsers(users);

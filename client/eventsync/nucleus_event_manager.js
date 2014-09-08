@@ -5,27 +5,55 @@ var EventManager = function() {
     return ! this.canEmitEvents;
   };
 
+  this.handleEvent = function(event) {
+    this[event.getName()](event.getAppName()).handleEvent();
+  };
+
+  this.getUtils = function(appName) {
+    return appName === "app" ? this.appUtils : this.nucleusUtils;
+  };
+
   this.initialize = function() {
     var user = NucleusUser.me(),
-        event_recieving_app = user ? user.event_recieving_app : "app",
-        $window = NucleusClient.getWindow(event_recieving_app);
+        syncing_app_events = user.syncing_app_events,
+        syncing_nucleus_events = user.syncing_nucleus_events,
+        $appWindow = NucleusClient.getWindow("app"),
+        $nucleusWindow = NucleusClient.getWindow("nucleus");
 
-    this.utils = new EventUtils($window);
-    this.click = new Click($window.document);
-    this.scroll = new Scroll($window);
 
-    //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
-    // this is to bring everyone on same page.
-    if($window.Meteor.logout) $window.Meteor.logout();
-    window.test_window = $window;
+    this.appUtils = new EventUtils($appWindow);
+    var appClick = new Click("app"),
+        appScroll = new Scroll("app");
 
-    this.click.initialize();
-    this.scroll.initialize();
-    // this.forms.initialize();
-    // this.location.initialize();
-    // this.login.initialize();
+    this.nucleusUtils = new EventUtils($nucleusWindow);
+    var nucleusClick = new Click("nucleus"),
+        nucleusScroll = new Scroll("scroll");
 
-    this.startRecievingEvents();
+    this.click = function(appName) {
+      return appName === "app" ? appClick : nucleusClick;
+    };
+    this.scroll = function(appName) {
+      return appName === "app" ? appScroll : nucleusScroll;
+    };
+
+    if(syncing_app_events) {
+      //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
+      // this is to bring everyone on same page.
+      if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
+
+      this.click("app").initialize();
+      this.scroll("app").initialize();
+      // this.forms.initialize();
+      // this.location.initialize();
+      // this.login.initialize();
+
+      this.startRecievingEvents();
+    }
+
+    if(syncing_nucleus_events) {
+      this.click("nucleus").initialize();
+      this.scroll("nucleus").initialize();
+    }
   };
 
   this.tearDown = function() {
@@ -61,7 +89,7 @@ var EventManager = function() {
       if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
 
       event.markDoneForMe();
-      NucleusEventManager[event.getName()].handleEvent(event);
+      NucleusEventManager.handleEvent(event);
     });
   };
 
@@ -135,9 +163,10 @@ var _ElementCache = function () {
 /**
  * Fix an event
  * @param event
+ * @param appName
  * @returns {*}
  */
-var _fixEvent = function (event) {
+var _fixEvent = function (event, elem) {
   function returnTrue() {
     return true;
   }
@@ -145,6 +174,7 @@ var _fixEvent = function (event) {
     return false;
   }
 
+  var $window = elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow;
   if (!event || !event.stopPropagation) {
     var old = event || $window.event;
     // Clone the old object so that we can modify the values
@@ -236,7 +266,7 @@ var _EventManager = function (cache) {
       data.dispatcher = function (event) {
 
         if (data.disabled) return;
-        event = _fixEvent(event);
+        event = _fixEvent(event, elem);
 
         var handlers = data.handlers[event.type];
         if (handlers) {

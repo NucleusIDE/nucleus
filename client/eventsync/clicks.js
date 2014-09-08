@@ -1,6 +1,9 @@
-Click = function(doc) {
-  this.$document = doc;
+Click = function(app) {
+  this.APP_NAME = app;
+
+  this.$document = NucleusClient.getWindow(this.APP).document;
   this.EVENT_NAME  = "click";
+  this.utils = NucleusEventManager.getUtils(this.APP_NAME);
 
   this.initialize = function () {
     NucleusEventManager.addEvent(this.$document.body, this.EVENT_NAME, this.syncBrowserEvent.bind(this));
@@ -39,13 +42,14 @@ Click = function(doc) {
 
       var elem = event.target || event.srcElement;
       if (elem.type === "checkbox" || elem.type === "radio") {
-        NucleusEventManager.utils.forceChange(elem);
+        this.utils.forceChange(elem);
         return;
       }
       //below line should put the event in mongodb
       var ev = new NucleusEvent();
       ev.setName(this.EVENT_NAME);
-      ev.setTarget(NucleusEventManager.utils.getElementData(elem));
+      ev.setAppName(this.APP_NAME);
+      ev.setTarget(this.utils.getElementData(elem));
       ev.broadcast();
     }
     else NucleusEventManager.canEmitEvents = true;
@@ -55,7 +59,7 @@ Click = function(doc) {
     NucleusEventManager.canEmitEvents = false;
 
     var target = event.getTarget();
-    var elem = NucleusEventManager.utils.getSingleElement(target.tagName, target.index);
+    var elem = this.utils.getSingleElement(target.tagName, target.index);
     if (elem) {
       this.triggerClick(elem);
     }

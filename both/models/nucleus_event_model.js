@@ -1,5 +1,6 @@
 /**
  * name                         String
+ * app_name                     String (app or nucleus)
  * triggered_at                 Date
  * users_done                   Array (of mongo_ids)
  * originator                   mongo_id (user who triggered the event in first place)
@@ -28,6 +29,14 @@ NucleusEvent.extend({
   getName: function() {
     return this.name;
   },
+
+  setAppName: function(name) {
+    this.app_name = name;
+  },
+  getAppName: function() {
+    return this.app_name;
+  },
+
 
   setValue: function(val) {
     this.value = val;

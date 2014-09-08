@@ -5,8 +5,8 @@
  * current_filepath                     String
  * color                        STRING
  * cursor_pos                   ARRAY [row, col]
- * receive_events               Boolean
- * event_recieving_app          String (app which receives events)
+ * syncing_nucleus_events       BOOLEAN
+ * syncing_app_events       BOOLEAN
  */
 
 NucleusUsers = new Meteor.Collection('nucleus_users');
@@ -45,23 +45,22 @@ NucleusUser.extend({
   toggleEventSync: function(app, shouldRecieve) {
     app = app || "app";
 
-    var event_recieving_app = app,
-        other_app = app === "app" ? "nucleus" : "app";
+    var is_syncing_events = shouldRecieve || app === "app" ? !this.syncing_app_events : !this.syncing_nucleus_events;
 
-    var isRecievingEvents = this.recieve_events;
-    var recieveEvents = (this.event_recieving_app === event_recieving_app) && isRecievingEvents ? false : true;
-
-    if (recieveEvents) {
-      NucleusClient.getWindow(event_recieving_app).eval("NucleusEventManager.initialize()");
+    if (is_syncing_events) {
+      NucleusClient.getWindow(app).eval("NucleusEventManager.initialize()");
     }
-    else NucleusClient.getAppWindow(other_app).eval("NucleusEventManager.tearDown()");
+    else NucleusClient.getAppWindow(app).eval("NucleusEventManager.tearDown()");
 
-    this.update({recieve_events: recieveEvents, event_recieving_app: event_recieving_app});
-    console.log("SYNC EVENTS ON", event_recieving_app,"?",recieveEvents);
+    if(app === "app")
+      this.update({syncing_app_events: is_syncing_events});
+    else
+      this.update({syncing_nucleus_events: is_syncing_events});
   },
+
   isSyncingEvents: function(app) {
-    app = app || this.event_recieving_app;
-    return this.recieve_events && this.event_recieving_app === app;
+    app = app || "app";
+    return app === "app" ? this.syncing_app_events : this.syncing_nucleus_events;
   },
 
   delete: function() {
