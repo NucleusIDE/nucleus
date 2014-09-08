@@ -6,7 +6,7 @@ var EventManager = function() {
   };
 
   this.handleEvent = function(event) {
-    this[event.getName()](event.getAppName()).handleEvent();
+    this[event.getName()](event.getAppName()).handleEvent(event);
   };
 
   this.getUtils = function(appName) {
@@ -14,6 +14,8 @@ var EventManager = function() {
   };
 
   this.initialize = function() {
+    console.log("INITIALIZING EVENT MANAGER");
+
     var user = NucleusUser.me(),
         syncing_app_events = user.syncing_app_events,
         syncing_nucleus_events = user.syncing_nucleus_events,
@@ -36,24 +38,26 @@ var EventManager = function() {
       return appName === "app" ? appScroll : nucleusScroll;
     };
 
-    if(syncing_app_events) {
-      //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
-      // this is to bring everyone on same page.
-      if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
+    Deps.autorun(function() {
+      if(NucleusUser.me().syncing_app_events) {
+        //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
+        // this is to bring everyone on same page.
+        if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
 
-      this.click("app").initialize();
-      this.scroll("app").initialize();
-      // this.forms.initialize();
-      // this.location.initialize();
-      // this.login.initialize();
+        this.click("app").initialize();
+        this.scroll("app").initialize();
+        // this.forms.initialize();
+        // this.location.initialize();
+        // this.login.initialize();
 
-      this.startRecievingEvents();
-    }
+        this.startRecievingEvents();
+      }
 
-    if(syncing_nucleus_events) {
-      this.click("nucleus").initialize();
-      this.scroll("nucleus").initialize();
-    }
+      if(NucleusUser.me().syncing_nucleus_events) {
+        this.click("nucleus").initialize();
+        this.scroll("nucleus").initialize();
+      }
+    }.bind(this));
   };
 
   this.tearDown = function() {

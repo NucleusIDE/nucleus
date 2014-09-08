@@ -6,6 +6,7 @@ Click = function(app) {
   this.utils = NucleusEventManager.getUtils(this.APP_NAME);
 
   this.initialize = function () {
+    console.log("Initializing CLICK for", app);
     NucleusEventManager.addEvent(this.$document.body, this.EVENT_NAME, this.syncBrowserEvent.bind(this));
   };
 
