@@ -13,8 +13,8 @@ Click = function(doc) {
   this.triggerClick = function (elem) {
     //let's use jquery to trigger the click instead of doing it ourselves. Jquery's click work well with Router.go()/MobiRouter.go()
     //calls. Other way of triggering click event cause a window reload which is certainly not what we want
-    console.log("TRIGGERING CLICK ON", elem);
-    $(elem).click();
+    if(elem.id !== "sync_nucleus_events")
+      $(elem).click();
 
     // var evObj;
     // if (this.$document.createEvent) {
@@ -46,8 +46,6 @@ Click = function(doc) {
       var ev = new NucleusEvent();
       ev.setName(this.EVENT_NAME);
       ev.setTarget(NucleusEventManager.utils.getElementData(elem));
-      console.log("EVENT NAME IS", this);
-      console.log("SYNCING EVENT", ev);
       ev.broadcast();
     }
     else NucleusEventManager.canEmitEvents = true;
