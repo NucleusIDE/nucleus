@@ -1,49 +1,63 @@
-NucleusEventManager = {
-  canEmitEvents: true, //this flag is used to prevent event ping-pong and re-inserts
-  isProcessingEvent: function() {
+var EventManager = function() {
+  this.canEmitEvents = true; //this flag is used to prevent event ping-pong and re-inserts
+
+  this.isProcessingEvent= function() {
     return ! this.canEmitEvents;
-  },
-  initialize: function() {
+  };
+
+  this.initialize = function() {
     var user = NucleusUser.me(),
-        event_recieving_app = user.event_recieving_app,
+        event_recieving_app = user ? user.event_recieving_app : "app",
         $window = NucleusClient.getWindow(event_recieving_app);
+
+    this.utils = new EventUtils($window);
+    this.click = new Click($window.document);
 
     //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
     // this is to bring everyone on same page.
     if($window.Meteor.logout) $window.Meteor.logout();
+    window.test_window = $window;
 
     this.click.initialize();
-    this.scroll.initialize();
-    this.forms.initialize();
-    this.location.initialize();
-    this.login.initialize();
+    // this.scroll.initialize();
+    // this.forms.initialize();
+    // this.location.initialize();
+    // this.login.initialize();
 
     this.startRecievingEvents();
-  },
-  tearDown: function() {
+  };
+
+  this.tearDown = function() {
+    console.log("TEARING DOWN ON", $window);
+
     this.click.tearDown();
-    this.scroll.tearDown();
-    this.forms.tearDown();
-    this.location.tearDown();
-    this.login.tearDown();
+    // this.scroll.tearDown();
+    // this.forms.tearDown();
+    // this.location.tearDown();
+    // this.login.tearDown();
 
     this.stopRecievingEvents = true;
-  },
-  getRecievers: function() {
+  };
+
+  this.getRecievers = function() {
     return NucleusUsers.find({recieve_events: true});
-  },
-  startRecievingEvents: function() {
+  };
+
+  this.startRecievingEvents = function() {
     this.replayEventsSinceLastRouteChange();
+
     Deps.autorun(function(c) {
       var events = NucleusEvent.getNewEvents();
+      console.log("NEW EVENTS ARE", events);
 
       if(NucleusUser.me() && ! NucleusUser.me().isSyncingEvents()) return;
       if(this.stopRecievingEvents) c.stop();
 
       NucleusEventManager.playEvents(events);
     });
-  },
-  playEvents: function(events) {
+  };
+
+  this.playEvents = function(events) {
     _.each(events, function(event) {
       if(!event) return;
       if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
@@ -51,8 +65,9 @@ NucleusEventManager = {
       event.markDoneForMe();
       NucleusEventManager[event.getName()].handleEvent(event);
     });
-  },
-  replayEventsSinceLastRouteChange: function() {
+  };
+
+  this.replayEventsSinceLastRouteChange = function() {
     var onlineUsers = NucleusEventManager.getRecievers().map(function(user) {
       return user._id;
     });
@@ -85,7 +100,7 @@ NucleusEventManager = {
         NucleusEventManager.playEvents(followingEvents);
       }, 300);
     }, 300);
-  }
+  };
 };
 
 
@@ -325,6 +340,6 @@ var _EventManager = function (cache) {
   };
 };
 
-
+NucleusEventManager = new EventManager();
 NucleusEventManager.cache = new _ElementCache();
 _.extend(NucleusEventManager, new _EventManager(NucleusEventManager.cache));

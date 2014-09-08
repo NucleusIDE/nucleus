@@ -60,6 +60,7 @@ NucleusUser.extend({
     console.log("SYNC EVENTS ON", event_recieving_app,"?",recieveEvents);
   },
   isSyncingEvents: function(app) {
+    app = app || this.event_recieving_app;
     return this.recieve_events && this.event_recieving_app === app;
   },
 

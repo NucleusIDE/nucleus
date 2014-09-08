@@ -1,25 +1,24 @@
-//mostly copied from browser-sync
-var user = NucleusUser.me(),
-    event_recieving_app = user ? user.event_recieving_app : "app",
-    $window = NucleusClient.getWindow(event_recieving_app);
+EventUtils = function($window) {
+  this.$window = $window;
 
-var getWindow = function() {
-  return $window;
-};
-var getDocument = function() {
-  return getWindow().document;
-};
+  this.getWindow = function() {
+    window.test_window = this.$window;
+    return this.$window;
+  };
+
+  this.getDocument = function() {
+    return this.getWindow().document;
+  };
 
 
-NucleusEventManager.utils = {
   /**
    * Cross-browser scroll position
    * @returns {{x: number, y: number}}
    */
-  getBrowserScrollPosition: function () {
+  this.getBrowserScrollPosition = function () {
 
-    var $window   = getWindow();
-    var $document = getDocument();
+    var $window   = this.getWindow();
+    var $document = this.getDocument();
     var scrollX;
     var scrollY;
     var dElement = $document.documentElement;
@@ -41,74 +40,63 @@ NucleusEventManager.utils = {
   /**
    * @returns {{x: number, y: number}}
    */
-  getScrollSpace: function () {
-    var $document = getDocument();
+  this.getScrollSpace = function () {
+    var $document = this.getDocument();
     var dElement = $document.documentElement;
     var dBody    = $document.body;
     return {
       x: dBody.scrollHeight - dElement.clientWidth,
       y: dBody.scrollHeight - dElement.clientHeight
     };
-  },
+  };
+
   /**
    * @param tagName
    * @param elem
    * @returns {*|number}
    */
-  getElementIndex: function (tagName, elem) {
-    var $document = getDocument();
+  this.getElementIndex = function (tagName, elem) {
+    var $document = this.getDocument();
     var allElems = $document.getElementsByTagName(tagName);
     return Array.prototype.indexOf.call(allElems, elem);
-  },
+  };
+
   /**
    * Force Change event on radio & checkboxes (IE)
    */
-  forceChange: function (elem) {
+  this.forceChange = function (elem) {
     elem.blur();
     elem.focus();
-  },
+  };
+
   /**
    * @param elem
    * @returns {{tagName: (elem.tagName|*), index: *}}
    */
-  getElementData: function (elem) {
+  this.getElementData = function (elem) {
     var tagName = elem.tagName;
     var index   = this.getElementIndex(tagName, elem);
     return {
       tagName: tagName,
       index: index
     };
-  },
+  };
+
   /**
    * @param {string} tagName
    * @param {number} index
    */
-  getSingleElement: function (tagName, index) {
-    var $document = getDocument();
+  this.getSingleElement = function (tagName, index) {
+    var $document = this.getDocument();
     var elems = $document.getElementsByTagName(tagName);
     return elems[index];
-  },
+  };
+
   /**
    *
    */
-  getBody: function () {
-    var $document = getDocument();
+  this.getBody = function () {
+    var $document = this.getDocument();
     return $document.getElementsByTagName("body")[0];
-  },
-
-  //FIXME: we are not syncing any event which is caused by a script to avoid infinite ping-pong of events.
-  // But this also prevents any events triggered by scripts in users' app form getting synced too.
-  isOriginalClick: function(event) {
-    //this works because scripted click don't have mouse details
-    var scriptedEvent = event.clientX === 0
-          && event.clientY === 0
-          && event.layerX === 0
-          && event.layerY === 0;
-
-    return !scriptedEvent;
-  }
-
+  };
 };
-
-//for allowing users to check if their events are triggered from original clicks or if they are from virtual clicks
-NucleusClient.isOriginalClick = NucleusEventManager.utils.isOriginalClick;
