@@ -178,7 +178,7 @@ var _fixEvent = function (event, elem) {
     return false;
   }
 
-  var $window = elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow;
+  var $window = elem.ownerDocument ? elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow : elem;
   if (!event || !event.stopPropagation) {
     var old = event || $window.event;
     // Clone the old object so that we can modify the values
