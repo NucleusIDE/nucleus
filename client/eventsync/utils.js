@@ -2,7 +2,6 @@ EventUtils = function($window) {
   this.$window = $window;
 
   this.getWindow = function() {
-    window.test_window = this.$window;
     return this.$window;
   };
 

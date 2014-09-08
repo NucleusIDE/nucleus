@@ -1,22 +1,20 @@
-var EVENT_NAME = "scroll",
-    utils = NucleusEventManager.utils,
-    user = NucleusUser.me(),
-    event_recieving_app = user ? user.event_recieving_app : "app",
-    $window = NucleusClient.getWindow(event_recieving_app);
+Scroll = function($window) {
+  var EVENT_NAME = "scroll",
+      utils = NucleusEventManager.utils;
 
-var scroll = {
-  //this is used to avoid infinite ping-pong of events. We set it to false when we receive an event over the wire, and check while syncing the event.
-  // If it's false in syncEvent function, it means the event was triggered from within 'handle' function and we don't need to sync it. So we set it to
-  // true so the events start getting synced again
-  initialize: function () {
+  this.$window = $window;
+
+  this.initialize = function () {
     NucleusEventManager.addEvent($window, EVENT_NAME, this.syncEvent());
     // bs.socket.on(EVENT_NAME, exports.socketEvent());
-  },
-  tearDown: function () {
+  };
+
+  this.tearDown = function () {
     NucleusEventManager.removeEvent($window, EVENT_NAME, this.syncEvent());
     // bs.socket.on(EVENT_NAME, exports.socketEvent());
-  },
-  syncEvent: function (bs) {
+  };
+
+  this.syncEvent = function (bs) {
     return function () {
       var canEmit = NucleusEventManager.canEmitEvents;
 
@@ -33,9 +31,9 @@ var scroll = {
 
       NucleusEventManager.canEmitEvents = true;
     }.bind(this);
-  },
+  };
 
-  handleEvent: function (data) {
+  this.handleEvent = function (data) {
     NucleusEventManager.canEmitEvents = false;
 
     var scrollSpace = utils.getScrollSpace();
@@ -45,17 +43,17 @@ var scroll = {
     // } else {
     // return $window.scrollTo(0, data.position.raw);
     // }
-  },
+  };
 
-  getScrollPosition: function () {
+  this.getScrollPosition = function () {
     var pos = utils.getBrowserScrollPosition();
     return {
       raw: pos, // Get px of y axis of scroll
       proportional: this.getScrollTopPercentage(pos) // Get % of y axis of scroll
     };
-  },
+  };
 
-  getScrollPercentage: function (scrollSpace, scrollPosition) {
+  this.getScrollPercentage = function (scrollSpace, scrollPosition) {
     var x = scrollPosition.x / scrollSpace.x;
     var y = scrollPosition.y / scrollSpace.y;
 
@@ -63,13 +61,11 @@ var scroll = {
       x: x || 0,
       y: y
     };
-  },
+  };
 
-  getScrollTopPercentage: function (pos) {
+  this.getScrollTopPercentage = function (pos) {
     var scrollSpace = utils.getScrollSpace();
     var percentage  = this.getScrollPercentage(scrollSpace, pos);
     return percentage.y;
-  }
+  };
 };
-
-NucleusEventManager[EVENT_NAME] = scroll;

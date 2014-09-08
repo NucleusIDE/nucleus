@@ -12,6 +12,7 @@ var EventManager = function() {
 
     this.utils = new EventUtils($window);
     this.click = new Click($window.document);
+    this.scroll = new Scroll($window);
 
     //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
     // this is to bring everyone on same page.
@@ -19,7 +20,7 @@ var EventManager = function() {
     window.test_window = $window;
 
     this.click.initialize();
-    // this.scroll.initialize();
+    this.scroll.initialize();
     // this.forms.initialize();
     // this.location.initialize();
     // this.login.initialize();
@@ -28,10 +29,8 @@ var EventManager = function() {
   };
 
   this.tearDown = function() {
-    console.log("TEARING DOWN ON", $window);
-
-    this.click.tearDown();
-    // this.scroll.tearDown();
+    // NucleusEventManager.click.tearDown();
+    // NucleusEventManager.scroll.tearDown();
     // this.forms.tearDown();
     // this.location.tearDown();
     // this.login.tearDown();
@@ -48,7 +47,6 @@ var EventManager = function() {
 
     Deps.autorun(function(c) {
       var events = NucleusEvent.getNewEvents();
-      console.log("NEW EVENTS ARE", events);
 
       if(NucleusUser.me() && ! NucleusUser.me().isSyncingEvents()) return;
       if(this.stopRecievingEvents) c.stop();
@@ -73,7 +71,7 @@ var EventManager = function() {
     });
     onlineUsers = _.difference(onlineUsers, NucleusUser.me()._id);
 
-    if(onlineUsers.length === 0) {console.log("You are the first online event listener"); return false;}
+    if(onlineUsers.length === 0) {return false;}
 
     // last go event created by any logged in nucleus user
     var lastGoEvent = NucleusEvents.find({name: "location", originator: {$in: onlineUsers}}, {sort: {triggered_at: -1}, limit: 1}).fetch()[0];
