@@ -25,6 +25,9 @@ Scroll = function(appName) {
       //in case of nuclues, we set ace events instead of window events
       NucleusEditor.editor.session.off("changeScrollLeft", this.syncNucleusScroll);
       NucleusEditor.editor.session.off("changeScrollTop", this.syncNucleusScroll);
+
+      NucleusEditor.removeEvent("changeScrollLeft", this.syncNucleusScroll);
+      NucleusEditor.removeEvent("changeScrollTop", this.syncNucleusScroll);
     }
   };
 
