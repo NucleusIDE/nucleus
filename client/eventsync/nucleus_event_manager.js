@@ -26,7 +26,8 @@ var EventManager = function() {
     this.appUtils = new EventUtils($appWindow);
     var appClick = new Click("app"),
         appScroll = new Scroll("app"),
-        appLocation = new LocationEvent("app");
+        appLocation = new LocationEvent("app"),
+        appLogin = new LoginEvent("app");
 
     this.nucleus_initalized = false;
     this.nucleusUtils = new EventUtils($nucleusWindow);
@@ -42,6 +43,10 @@ var EventManager = function() {
     this.location = function(appName) {
       //we don't need location event in nucleus window for now. Making this function just to stay consistent.
       return appName === "app" ? appLocation : false;
+    };
+    this.login = function(appName) {
+      //this of course must not be synced in nucleus. But let's stay consistent
+      return appName === "app" ? appLogin : false;
     };
 
     //Sometimes it takes time for NucleusUser.me().syncing_*_events to come down the wire.
@@ -59,6 +64,7 @@ var EventManager = function() {
           this.click("app").initialize();
           this.scroll("app").initialize();
           this.location("app").initialize();
+          this.login("app").initialize();
 
           // this.forms.initialize();
           // this.login.initialize();

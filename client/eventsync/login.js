@@ -1,46 +1,53 @@
-var EVENT_NAME = 'login',
-    user = NucleusUser.me(),
-    event_recieving_app = user ? user.event_recieving_app : "app",
-    $window = NucleusClient.getWindow(event_recieving_app);
+LoginEvent = function(appName) {
+  var EVENT_NAME = 'login',
+      APP_NAME = appName,
+      $window = NucleusClient.getWindow(APP_NAME),
+      utils = NucleusEventManager.getUtils(APP_NAME);
 
-var login = {
-  initialize: function() {
+  this.initialize = function() {
+    console.log("INITALIZING LOGIN");
     this.overRideLoginWithPassword();
     this.overRideLogout();
-  },
-  tearDown: function() {
+  };
+
+  this.tearDown = function() {
     this.undoOverRideLoginWithPassword();
     this.undoOverRideLogout();
-  },
-  overRideLoginWithPassword: function() {
+  };
+
+  this.overRideLoginWithPassword = function() {
     if($window.Meteor.loginWithPassword) {
       $window.Meteor.loginWithPasswordOriginal = $window.Meteor.loginWithPassword;
       $window.Meteor.loginWithPassword = this.syncLogin;
     }
-  },
-  overRideLogout: function() {
+  };
+
+  this.overRideLogout = function() {
     if($window.Meteor.logout) {
       $window.Meteor.logoutOriginal = $window.Meteor.logout;
       $window.Meteor.logout = this.syncLogout;
     }
-  },
-  undoOverRideLoginWithPassword: function() {
+  };
+
+  this.undoOverRideLoginWithPassword = function() {
     if($window.Meteor.loginWithPassword)
       $window.Meteor.loginWithPassword = $window.Meteor.loginWithPasswordOriginal;
-  },
-  undoOverRideLogout: function() {
+  };
+
+  this.undoOverRideLogout = function() {
     if($window.Meteor.logout)
       $window.Meteor.logout = $window.Meteor.logoutOriginal;
-  },
-  syncLogin: function() {
+  };
+
+  this.syncLogin = function() {
     var args = Array.prototype.slice.call(arguments, 0);
-    console.log("LOGIN ARGS ARE", args);
     var ret = $window.Meteor.loginWithPasswordOriginal.apply($window.Meteor, args);
 
     if (NucleusEventManager.canEmitEvents) {
       var ev = new NucleusEvent();
 
       ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
       ev.args = args;
       ev.type = 'login';
       ev.broadcast();
@@ -49,8 +56,9 @@ var login = {
     }
 
     return ret;
-  },
-  syncLogout: function() {
+  };
+
+  this.syncLogout = function() {
     var args = Array.prototype.slice.call(arguments, 0);
     var ret = $window.Meteor.logoutOriginal.apply($window.Meteor, args);
 
@@ -58,6 +66,7 @@ var login = {
       var ev = new NucleusEvent();
 
       ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
       ev.args = args;
       ev.type = 'logout';
       ev.broadcast();
@@ -66,8 +75,9 @@ var login = {
     }
 
     return ret;
-  },
-  handleEvent: function(event) {
+  };
+
+  this.handleEvent = function(event) {
     NucleusEventManager.canEmitEvents = false;
 
     var args = event.args;
@@ -77,7 +87,5 @@ var login = {
     }
 
     return $window.Meteor.loginWithPasswordOriginal.apply($window.Meteor, args);
-  }
+  };
 };
-
-NucleusEventManager[EVENT_NAME] = login;
