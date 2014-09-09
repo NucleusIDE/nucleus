@@ -1,17 +1,16 @@
 Click = function(app) {
-  this.APP_NAME = app;
-
-  this.$document = NucleusClient.getWindow(this.APP).document;
-  this.EVENT_NAME  = "click";
-  this.utils = NucleusEventManager.getUtils(this.APP_NAME);
+  var EVENT_NAME  = "click",
+      APP_NAME = app,
+      $document = NucleusClient.getWindow(this.APP).document,
+      utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
-    console.log("Initializing CLICK for", app);
-    NucleusEventManager.addEvent(this.$document.body, this.EVENT_NAME, this.syncBrowserEvent.bind(this));
+    console.log("Initializing CLICK for", APP_NAME);
+    NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent.bind(this));
   };
 
   this.tearDown = function() {
-    NucleusEventManager.removeEvent(this.$document.body, this.EVENT_NAME, this.syncBrowserEvent.bind(this));
+    NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent.bind(this));
   };
 
   this.triggerClick = function (elem) {
@@ -21,13 +20,13 @@ Click = function(app) {
       $(elem).click();
 
     // var evObj;
-    // if (this.$document.createEvent) {
-    //     evObj = this.$document.createEvent("MouseEvents");
+    // if ($document.createEvent) {
+    //     evObj = $document.createEvent("MouseEvents");
     //     evObj.initEvent("click", true, true);
     //     elem.dispatchEvent(evObj);
     // } else {
-    //     if (this.$document.createEventObject) {
-    //         evObj = this.$document.createEventObject();
+    //     if ($document.createEventObject) {
+    //         evObj = $document.createEventObject();
     //         evObj.cancelBubble = true;
     //         elem.fireEvent("on" + "click", evObj);
     //     }
@@ -38,19 +37,18 @@ Click = function(app) {
     var canEmit = NucleusEventManager.canEmitEvents;
 
     if (canEmit) {
-      var user = NucleusUser.me();
-      if(! user.isSyncingEvents(user.event_recieving_app)) return;
-
       var elem = event.target || event.srcElement;
       if (elem.type === "checkbox" || elem.type === "radio") {
-        this.utils.forceChange(elem);
+        utils.forceChange(elem);
         return;
       }
-      //below line should put the event in mongodb
+
       var ev = new NucleusEvent();
-      ev.setName(this.EVENT_NAME);
-      ev.setAppName(this.APP_NAME);
-      ev.setTarget(this.utils.getElementData(elem));
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.setTarget(utils.getElementData(elem));
+      console.log("CLICKED IN APP", APP_NAME);
+      console.log("GOING TO BROADCAST", ev);
       ev.broadcast();
     }
     else NucleusEventManager.canEmitEvents = true;
@@ -60,9 +58,9 @@ Click = function(app) {
     NucleusEventManager.canEmitEvents = false;
 
     var target = event.getTarget();
-    var elem = this.utils.getSingleElement(target.tagName, target.index);
+    var elem = utils.getSingleElement(target.tagName, target.index);
     if (elem) {
       this.triggerClick(elem);
-    }
+    } else console.log("ELEMENT CLICKED ON OTHER CLIENT NOT FOUND");
   };
 };

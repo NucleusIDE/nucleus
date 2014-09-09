@@ -2,6 +2,7 @@ var showLabelOnMouseMove = function(e) {
   var mousePos = [e.clientX,e.clientY];
 
   var getRectangleForElem = function(elem) {
+    if(!elem) return;
     var boundingRect = elem.getBoundingClientRect(),
         topLeft = [boundingRect.left, boundingRect.top],
         bottomRight = [boundingRect.right, boundingRect.bottom];

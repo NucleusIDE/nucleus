@@ -47,15 +47,18 @@ NucleusUser.extend({
 
     var is_syncing_events = shouldRecieve || app === "app" ? !this.syncing_app_events : !this.syncing_nucleus_events;
 
-    if (is_syncing_events) {
-      NucleusClient.getWindow(app).eval("NucleusEventManager.initialize()");
-    }
-    else NucleusClient.getAppWindow(app).eval("NucleusEventManager.tearDown()");
-
     if(app === "app")
       this.update({syncing_app_events: is_syncing_events});
     else
       this.update({syncing_nucleus_events: is_syncing_events});
+
+    if (is_syncing_events) {
+      NucleusClient.getWindow(app).eval("NucleusEventManager.initialize()");
+    }
+    else {
+      NucleusClient.getAppWindow(app).eval("NucleusEventManager.tearDown()");
+    }
+
   },
 
   isSyncingEvents: function(app) {

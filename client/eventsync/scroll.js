@@ -21,8 +21,6 @@ Scroll = function(appName) {
       var canEmit = NucleusEventManager.canEmitEvents;
 
       if(canEmit) {
-        if(! NucleusUser.me().isSyncingEvents()) return;
-
         var ev = new NucleusEvent();
         ev.setName(EVENT_NAME);
         ev.position = this.getScrollPosition();

@@ -6,6 +6,9 @@ var EventManager = function() {
   };
 
   this.handleEvent = function(event) {
+    console.log("HANDELING", event);
+    //below line is supposed to turn into something like:
+    // this.appClick.handleEvent(event)
     this[event.getName()](event.getAppName()).handleEvent(event);
   };
 
@@ -22,11 +25,12 @@ var EventManager = function() {
         $appWindow = NucleusClient.getWindow("app"),
         $nucleusWindow = NucleusClient.getWindow("nucleus");
 
-
+    this.app_initalized = false;
     this.appUtils = new EventUtils($appWindow);
     var appClick = new Click("app"),
         appScroll = new Scroll("app");
 
+    this.nucleus_initalized = false;
     this.nucleusUtils = new EventUtils($nucleusWindow);
     var nucleusClick = new Click("nucleus"),
         nucleusScroll = new Scroll("scroll");
@@ -38,26 +42,30 @@ var EventManager = function() {
       return appName === "app" ? appScroll : nucleusScroll;
     };
 
-    Deps.autorun(function() {
-      if(NucleusUser.me().syncing_app_events) {
-        //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
-        // this is to bring everyone on same page.
-        if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
+    if(NucleusUser.me().syncing_app_events && !this.app_initialized) {
+      //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
+      // this is to bring everyone on same page.
+      if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
 
-        this.click("app").initialize();
-        this.scroll("app").initialize();
-        // this.forms.initialize();
-        // this.location.initialize();
-        // this.login.initialize();
+      this.click("app").initialize();
+      this.scroll("app").initialize();
+      this.forms.initialize();
+      this.location.initialize();
+      this.login.initialize();
 
-        this.startRecievingEvents();
-      }
+      this.app_initialized = true;
 
-      if(NucleusUser.me().syncing_nucleus_events) {
-        this.click("nucleus").initialize();
-        this.scroll("nucleus").initialize();
-      }
-    }.bind(this));
+      this.startRecievingEvents();
+    }
+
+    if(NucleusUser.me().syncing_nucleus_events  && !this.nucleus_initalized) {
+      this.click("nucleus").initialize();
+      this.scroll("nucleus").initialize();
+
+      this.nucleus_initialized = true;
+
+      this.startRecievingEvents();
+    }
   };
 
   this.tearDown = function() {
@@ -79,10 +87,7 @@ var EventManager = function() {
 
     Deps.autorun(function(c) {
       var events = NucleusEvent.getNewEvents();
-
-      if(NucleusUser.me() && ! NucleusUser.me().isSyncingEvents()) return;
       if(this.stopRecievingEvents) c.stop();
-
       NucleusEventManager.playEvents(events);
     });
   };
@@ -93,6 +98,7 @@ var EventManager = function() {
       if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
 
       event.markDoneForMe();
+      console.log("INCOMING EVENT:", event);
       NucleusEventManager.handleEvent(event);
     });
   };

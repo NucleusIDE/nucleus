@@ -55,6 +55,7 @@ NucleusEvent.extend({
     this.users_done = [userId];
     this.originator = userId;
     this.triggered_at = moment().toDate().getTime();
+    console.log("BROADCASTING ", this);
     this.save();
   }
 });
