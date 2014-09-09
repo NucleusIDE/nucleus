@@ -10,7 +10,7 @@
  *
  * value                        String (for form inputs)
  *
- * type                         String (used for location: popstate or null, login: login or logout, form-data: forms)
+ * type                         String (used for location: popstate or null, login: login or logout, form-data: forms, scroll: editorScroll (for nucleus editor scroll))
  */
 
 NucleusEvents = new Meteor.Collection('nucleus_events');
@@ -55,7 +55,6 @@ NucleusEvent.extend({
     this.users_done = [userId];
     this.originator = userId;
     this.triggered_at = moment().toDate().getTime();
-    console.log("BROADCASTING ", this);
     this.save();
   }
 });

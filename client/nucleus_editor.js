@@ -45,6 +45,8 @@ var NucleusEditorFactory = function() {
   this.editor = null;
   this.extraCursors = {};
   this.addedStyleRules = {};
+  //when refactoring this code, if possible use Object.keys instead of this.allEvents
+  this.allEvents = [];
   this.aceModesForExts = {
     'html': "handlebars",
     'css': 'css',
@@ -56,7 +58,8 @@ var NucleusEditorFactory = function() {
     cursorMovement: [],
     mouseMove: [
       showLabelOnMouseMove
-    ]
+    ],
+    scroll: []
   };
   this.Range = ace.require('ace/range').Range;
 
@@ -120,7 +123,18 @@ var NucleusEditorFactory = function() {
     }.bind(this));
   };
 
+  this.addEvent = function(eventName, fn) {
+    if(!this.events.eventName) {
+      this.events[eventName] = [];
+      this.allEvents.push(eventName);
+    }
+
+    this.events[eventName].push(fn);
+  };
+
   this.registerAllEvents = function(invert) {
+    var ed = this;
+
     if(! this.getEditor()) {
       var interval = Meteor.setInterval(function() {
         if(this.getEditor()) {
@@ -147,7 +161,18 @@ var NucleusEditorFactory = function() {
     _.each(mouseMoveEvents, function(action) {
       this.editor[binder]("mousemove", action);
     }.bind(this));
+
+    //for all other events. cursorEvents and mouseMoveEvents should be turned to use this on refactor
+    _.each(ed.allEvents, function(event) {
+      _.each(ed.events[event], function(action) {
+        //some events need to be set on session, editor or some other property of ace editor
+        //FIXME: make this choice dynamic
+        ed.editor.session[binder](event, action);
+      });
+    });
+
   };
+
   this.unregisterAllEvents = function() {
     this.registerAllEvents(true);
   };

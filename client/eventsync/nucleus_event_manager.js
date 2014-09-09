@@ -34,7 +34,7 @@ var EventManager = function() {
     this.nucleus_initalized = false;
     this.nucleusUtils = new EventUtils($nucleusWindow);
     var nucleusClick = new Click("nucleus"),
-        nucleusScroll = new Scroll("scroll"),
+        nucleusScroll = new Scroll("nucleus"),
         nucleusForms = new FormsEvent("nucleus");
 
     this.click = function(appName) {

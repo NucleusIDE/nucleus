@@ -8,33 +8,70 @@ Scroll = function(appName) {
 
   this.initialize = function () {
     NucleusEventManager.addEvent($window, EVENT_NAME, this.syncEvent());
-    // bs.socket.on(EVENT_NAME, exports.socketEvent());
+
+    console.log("INITIALIZING SCROLL FOR", APP_NAME);
+    if (APP_NAME === 'nucleus') {
+      //in case of nuclues, we set ace events instead of window events
+      //we need to use below api because events on ace are undone when document changes. NucleusEditor handles that
+      NucleusEditor.addEvent("changeScrollTop", this.syncNucleusScroll);
+      NucleusEditor.addEvent("changeScrollLeft", this.syncNucleusScroll);
+    }
   };
 
   this.tearDown = function () {
     NucleusEventManager.removeEvent($window, EVENT_NAME, this.syncEvent());
     // bs.socket.on(EVENT_NAME, exports.socketEvent());
+    if (APP_NAME === 'nucleus') {
+      //in case of nuclues, we set ace events instead of window events
+      NucleusEditor.editor.session.off("changeScrollLeft", this.syncNucleusScroll);
+      NucleusEditor.editor.session.off("changeScrollTop", this.syncNucleusScroll);
+    }
   };
 
-  this.syncEvent = function (bs) {
+  this.syncEvent = function () {
     return function () {
       var canEmit = NucleusEventManager.canEmitEvents;
 
       if(canEmit) {
         var ev = new NucleusEvent();
         ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
         ev.position = this.getScrollPosition();
-        //we use broadcast instead of save() to do some preprocessing. We could override model.save() but apparently we need to
-        // do some re-factoring in StupidModel. They set the methods provided by Model.extend() higher up the prototype chain
         ev.broadcast();
-      }
-
-      NucleusEventManager.canEmitEvents = true;
+      } else
+        NucleusEventManager.canEmitEvents = true;
     }.bind(this);
+  };
+
+  this.syncNucleusScroll =  function () {
+    console.log("NUCLEUS SCROLL CHANGED");
+    var canEmit = NucleusEventManager.canEmitEvents;
+
+    if(canEmit) {
+      var ev = new NucleusEvent();
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.type = "editorScroll";
+      //in case of nucleus, we just sync scroll in the editor window with API provided by ace
+      ev.position = {
+        x: NucleusEditor.editor.session.getScrollLeft(),
+        y: NucleusEditor.editor.session.getScrollTop()
+      };
+
+      ev.broadcast();
+    } else
+      NucleusEventManager.canEmitEvents = true;
   };
 
   this.handleEvent = function (data) {
     NucleusEventManager.canEmitEvents = false;
+
+    if(data.getAppName() === "nucleus" && data.type === "editorScroll") {
+      //in case of nucleus, we just sync scroll in the editor window with API provided by ace
+      NucleusEditor.editor.session.setScrollLeft(data.position.x);
+      NucleusEditor.editor.session.setScrollTop(data.position.y);
+      return;
+    }
 
     var scrollSpace = utils.getScrollSpace();
     //I couldn't understand the meaning of below lines for code from browser-sync
