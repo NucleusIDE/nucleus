@@ -1,19 +1,21 @@
-var EVENT_NAME = 'location',
-    user = NucleusUser.me(),
-    event_recieving_app = user ? user.event_recieving_app : "app",
-    $window = NucleusClient.getWindow(event_recieving_app);
+LocationEvent = function(appName) {
+  var EVENT_NAME = 'location',
+      APP_NAME = appName,
+      $window = NucleusClient.getWindow(APP_NAME),
+      utils = NucleusEventManager.getUtils(APP_NAME);
 
-
-var location = {
-  initialize: function() {
+  this.initialize = function() {
+    console.log("INITIALIZING LOCATION");
     this.overRideGoCalls();
     NucleusEventManager.addEvent($window, 'popstate', this.syncGoPushstate());
-  },
-  tearDown: function() {
+  };
+
+  this.tearDown = function() {
     this.undoGoCallOverRide();
     NucleusEventManager.removeEvent($window, 'popstate', this.syncGoPushstate());
-  },
-  overRideGoCalls: function() {
+  };
+
+  this.overRideGoCalls = function() {
     if($window.Router) {
       $window.Router.originalGo = $window.Router.go;
       $window.Router.go = this.syncGoCall('Router');
@@ -22,14 +24,16 @@ var location = {
       $window.MobiRouter.originalGo = $window.MobiRouter.go;
       $window.MobiRouter.go = this.syncGoCall('MobiRouter');
     }
-  },
-  undoGoCallOverRide: function() {
+  };
+
+  this.undoGoCallOverRide = function() {
     if($window.Router)
       $window.Router.go = $window.Router.originalGo;
     if($window.MobiRouter)
       $window.MobiRouter.go = $window.MobiRouter.originalGo;
-  },
-  syncGoCall: function(router) {
+  };
+
+  this.syncGoCall = function(router) {
     return function() {
       var args = Array.prototype.slice.call(arguments, 0);
       var ret = $window[router].originalGo.apply($window[router], args);
@@ -39,6 +43,7 @@ var location = {
         var ev = new NucleusEvent();
 
         ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
         ev.router = router;
         ev.args = args;
         ev.broadcast();
@@ -48,11 +53,11 @@ var location = {
 
       return ret;
     }.bind(this);
-  },
+  };
 
-  history: ['/'],
-  curIndex: 0,
-  syncGoPushstate: function() {
+  this.history = ['/'];
+  this.curIndex = 0;
+  this.syncGoPushstate = function() {
     var loc = this;
 
     var movedDirection = function(list, url, cursor) {
@@ -69,7 +74,7 @@ var location = {
         var ev = new NucleusEvent();
         ev.setName(EVENT_NAME);
         ev.type = 'popstate';
-
+        ev.setAppName(APP_NAME);
 
         if(movedDirection(hist, url, cursor) === 'back') {
           cursor = cursor - 1;
@@ -91,8 +96,9 @@ var location = {
         NucleusEventManager.canEmitEvents = true;
       }
     };
-  },
-  pushHistory: function(item, cursor) {
+  };
+
+  this.pushHistory = function(item, cursor) {
     item = item || $window.location.pathname;
     cursor = cursor || this.curIndex;
 
@@ -119,8 +125,9 @@ var location = {
     this.history = history;
     cursor += 1;
     this.curIndex = cursor;
-  },
-  handleEvent: function(event) {
+  };
+
+  this.handleEvent = function(event) {
     NucleusEventManager.canEmitEvents = false;
 
     if(event.type === 'popstate') {
@@ -139,7 +146,5 @@ var location = {
         args = event.args;
 
     return $window[router].go.apply($window[router], args);
-  }
+  };
 };
-
-NucleusEventManager[EVENT_NAME] = location;
