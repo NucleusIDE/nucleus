@@ -1,16 +1,17 @@
-Click = function(app) {
+Click = function(appName) {
   var EVENT_NAME  = "click",
-      APP_NAME = app,
-      $document = NucleusClient.getWindow(this.APP).document,
+      APP_NAME = appName,
+      $document = NucleusClient.getWindow(APP_NAME).document,
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
     console.log("Initializing CLICK for", APP_NAME);
-    NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent.bind(this));
+    console.log("$document.body is", $document.body);
+    NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
   };
 
   this.tearDown = function() {
-    NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent.bind(this));
+    NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
   };
 
   this.triggerClick = function (elem) {
@@ -33,25 +34,30 @@ Click = function(app) {
     // }
   };
 
-  this.syncBrowserEvent = function (event) {
-    var canEmit = NucleusEventManager.canEmitEvents;
+  this.syncBrowserEvent = function() {
+    return function (event) {
+      console.log("CALLING syncBrowserEvent");
+      var canEmit = NucleusEventManager.canEmitEvents;
 
-    if (canEmit) {
-      var elem = event.target || event.srcElement;
-      if (elem.type === "checkbox" || elem.type === "radio") {
-        utils.forceChange(elem);
-        return;
+      if (canEmit) {
+        var elem = event.target || event.srcElement;
+        if (elem.type === "checkbox" || elem.type === "radio") {
+          utils.forceChange(elem);
+          return;
+        }
+
+        console.log("ELEMENT CLICKED IS", elem);
+
+        var ev = new NucleusEvent();
+        ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
+        ev.setTarget(utils.getElementData(elem));
+        console.log("CLICKED IN APP", APP_NAME);
+        console.log("GOING TO BROADCAST", ev);
+        ev.broadcast();
       }
-
-      var ev = new NucleusEvent();
-      ev.setName(EVENT_NAME);
-      ev.setAppName(APP_NAME);
-      ev.setTarget(utils.getElementData(elem));
-      console.log("CLICKED IN APP", APP_NAME);
-      console.log("GOING TO BROADCAST", ev);
-      ev.broadcast();
-    }
-    else NucleusEventManager.canEmitEvents = true;
+      else NucleusEventManager.canEmitEvents = true;
+    };
   };
 
   this.handleEvent = function (event) {
