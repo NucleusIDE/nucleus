@@ -1,18 +1,19 @@
-var EVENT_NAME  = "input:text",
-    user = NucleusUser.me(),
-    event_recieving_app = user ? user.event_recieving_app : "app",
-    $document = NucleusClient.getWindow(event_recieving_app).document;
+InputTextEvent = function(appName) {
+  var EVENT_NAME  = "input:text",
+      APP_NAME = appName,
+      $document = NucleusClient.getWindow(APP_NAME).document,
+      utils = NucleusEventManager.getUtils(APP_NAME);
 
-
-var input_text = {
-  initialize: function () {
+  this.initialize = function () {
+    console.log("INITIALIZING FORM INPUT on app", APP_NAME);
     NucleusEventManager.addEvent($document.body, "keyup", this.syncBrowserEvent());
-  },
-  tearDown: function () {
-    NucleusEventManager.removeEvent($document.body, "keyup", this.syncBrowserEvent());
-  },
+  };
 
-  syncBrowserEvent: function () {
+  this.tearDown = function () {
+    NucleusEventManager.removeEvent($document.body, "keyup", this.syncBrowserEvent());
+  };
+
+  this.syncBrowserEvent = function () {
     return function (event) {
       var elem = event.target || event.srcElement;
 
@@ -22,7 +23,9 @@ var input_text = {
 
           var ev = new NucleusEvent();
           ev.setName(EVENT_NAME);
-          ev.setTarget(NucleusEventManager.utils.getElementData(elem));
+          ev.setAppName(APP_NAME);
+          ev.type = 'forms';
+          ev.setTarget(utils.getElementData(elem));
           ev.setValue(value);
           ev.broadcast();
         }
@@ -30,20 +33,17 @@ var input_text = {
         NucleusEventManager.canEmitEvents = true;
       }
     };
-  },
+  };
 
-  handleEvent: function (event) {
+  this.handleEvent = function (event) {
     var data = event.getTarget();
     NucleusEventManager.canEmitEvents = false;
 
-    var elem = NucleusEventManager.utils.getSingleElement(data.tagName, data.index);
+    var elem = utils.getSingleElement(data.tagName, data.index);
     if (elem) {
       elem.value = event.value;
       return elem;
     }
     return false;
-  }
+  };
 };
-
-NucleusEventManager.forms[EVENT_NAME] = input_text;
-NucleusEventManager[EVENT_NAME] = input_text;

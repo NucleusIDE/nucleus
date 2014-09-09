@@ -10,7 +10,7 @@
  *
  * value                        String (for form inputs)
  *
- * type                         String (used for location (popstate or null) and login (login or logout))
+ * type                         String (used for location: popstate or null, login: login or logout, form-data: forms)
  */
 
 NucleusEvents = new Meteor.Collection('nucleus_events');

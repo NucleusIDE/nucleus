@@ -6,9 +6,10 @@ var EventManager = function() {
   };
 
   this.handleEvent = function(event) {
-    //below line is supposed to turn into something like:
-    // this.appClick.handleEvent(event)
-    this[event.getName()](event.getAppName()).handleEvent(event);
+    if (event.type === "forms") {
+      this.forms(event.getAppName())[event.getName()].handleEvent(event);
+    } else
+      this[event.getName()](event.getAppName()).handleEvent(event);
   };
 
   this.getUtils = function(appName) {
@@ -27,12 +28,14 @@ var EventManager = function() {
     var appClick = new Click("app"),
         appScroll = new Scroll("app"),
         appLocation = new LocationEvent("app"),
-        appLogin = new LoginEvent("app");
+        appLogin = new LoginEvent("app"),
+        appForms = new FormsEvent("app");
 
     this.nucleus_initalized = false;
     this.nucleusUtils = new EventUtils($nucleusWindow);
     var nucleusClick = new Click("nucleus"),
-        nucleusScroll = new Scroll("scroll");
+        nucleusScroll = new Scroll("scroll"),
+        nucleusForms = new FormsEvent("nucleus");
 
     this.click = function(appName) {
       return appName === "app" ? appClick : nucleusClick;
@@ -47,6 +50,9 @@ var EventManager = function() {
     this.login = function(appName) {
       //this of course must not be synced in nucleus. But let's stay consistent
       return appName === "app" ? appLogin : false;
+    };
+    this.forms = function(appName) {
+      return appName === "app" ? appForms : nucleusForms;
     };
 
     //Sometimes it takes time for NucleusUser.me().syncing_*_events to come down the wire.
@@ -65,9 +71,9 @@ var EventManager = function() {
           this.scroll("app").initialize();
           this.location("app").initialize();
           this.login("app").initialize();
+          this.forms("app").initialize();
 
           // this.forms.initialize();
-          // this.login.initialize();
 
           this.app_initialized = true;
 
@@ -77,6 +83,7 @@ var EventManager = function() {
         if(user.syncing_nucleus_events  && !this.nucleus_initalized) {
           this.click("nucleus").initialize();
           this.scroll("nucleus").initialize();
+          this.forms("nucleus").initialize();
 
           this.nucleus_initialized = true;
 

@@ -1,39 +1,43 @@
-var EVENT_NAME  = "form:submit",
-    user = NucleusUser.me(),
-    event_recieving_app = user ? user.event_recieving_app : "app",
-    $document = NucleusClient.getWindow(event_recieving_app).document;
+FormSubmitEvent = function(appName) {
+  var EVENT_NAME  = "input:text",
+      APP_NAME = appName,
+      $document = NucleusClient.getWindow(APP_NAME).document,
+      utils = NucleusEventManager.getUtils(APP_NAME);
 
-var form_submit = {
-  initialize: function () {
+  this.initialize = function () {
     var browserEvent = this.syncBrowserEvent();
     NucleusEventManager.addEvent($document.body, "submit", browserEvent);
     NucleusEventManager.addEvent($document.body, "reset", browserEvent);
-  },
-  tearDown: function () {
+  };
+
+  this.tearDown = function () {
     var browserEvent = this.syncBrowserEvent();
     NucleusEventManager.removeEvent($document.body, "submit", browserEvent);
     NucleusEventManager.removeEvent($document.body, "reset", browserEvent);
-  },
+  };
 
-  syncBrowserEvent: function () {
+  this.syncBrowserEvent = function () {
     return function (event) {
       if (NucleusEventManager.canEmitEvents) {
         var elem = event.target || event.srcElement;
-        var data = NucleusEventManager.utils.getElementData(elem);
+        var data = utils.getElementData(elem);
         data.type = event.type;
 
         var ev = new NucleusEvent();
         ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
+        ev.type = 'forms';
         ev.setTarget(data);
         ev.broadcast();
       } else {
         NucleusEventManager.canEmitEvents = true;
       }
     };
-  },
-  handleEvent: function (event) {
+  };
+
+  this.handleEvent = function (event) {
     var data = JSON.parse(event.target);
-    var elem = NucleusEventManager.utils.getSingleElement(data.tagName, data.index);
+    var elem = utils.getSingleElement(data.tagName, data.index);
     NucleusEventManager.canEmitEvents = false;
 
     if (elem && data.type === "submit") {
@@ -46,8 +50,5 @@ var form_submit = {
     }
 
     return false;
-  }
+  };
 };
-
-NucleusEventManager.forms[EVENT_NAME] = form_submit;
-NucleusEventManager[EVENT_NAME] = form_submit;
