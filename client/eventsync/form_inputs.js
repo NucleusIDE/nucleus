@@ -5,7 +5,6 @@ InputTextEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
-    console.log("INITIALIZING FORM INPUT on app", APP_NAME);
     NucleusEventManager.addEvent($document.body, "keyup", this.syncBrowserEvent());
   };
 

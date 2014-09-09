@@ -5,7 +5,6 @@ LoginEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function() {
-    console.log("INITALIZING LOGIN");
     this.overRideLoginWithPassword();
     this.overRideLogout();
   };

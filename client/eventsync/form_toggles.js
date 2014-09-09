@@ -42,7 +42,6 @@ InputToggleEvent = function(appName) {
 
   this.handleEvent = function (event) {
     var data = JSON.parse(event.target);
-    console.log("HANDLING EVENT DATA", data);
     NucleusEventManager.canEmitEvents = false;
 
     var elem = utils.getSingleElement(data.tagName, data.index);

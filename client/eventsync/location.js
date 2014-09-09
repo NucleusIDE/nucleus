@@ -5,7 +5,6 @@ LocationEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function() {
-    console.log("INITIALIZING LOCATION");
     this.overRideGoCalls();
     NucleusEventManager.addEvent($window, 'popstate', this.syncGoPushstate());
   };
@@ -132,7 +131,6 @@ LocationEvent = function(appName) {
 
     if(event.type === 'popstate') {
       var action = event.value;
-      console.log('GOING ',action);
 
       //let's not go back if user is on first page
       if (action === 'back' && $window.history.state.initial) {
