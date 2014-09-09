@@ -6,7 +6,6 @@ var EventManager = function() {
   };
 
   this.handleEvent = function(event) {
-    console.log("HANDELING", event);
     //below line is supposed to turn into something like:
     // this.appClick.handleEvent(event)
     this[event.getName()](event.getAppName()).handleEvent(event);
@@ -17,8 +16,6 @@ var EventManager = function() {
   };
 
   this.initialize = function() {
-    console.log("INITIALIZING EVENT MANAGER");
-
     var user = NucleusUser.me(),
         syncing_app_events = user.syncing_app_events,
         syncing_nucleus_events = user.syncing_nucleus_events,
@@ -42,30 +39,40 @@ var EventManager = function() {
       return appName === "app" ? appScroll : nucleusScroll;
     };
 
-    if(NucleusUser.me().syncing_app_events && !this.app_initialized) {
-      //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
-      // this is to bring everyone on same page.
-      if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
+    //Sometimes it takes time for NucleusUser.me().syncing_*_events to come down the wire.
+    //Let's run an interval to initialize the events properly when event manager is initalized
+    var initInterval = Meteor.setInterval(function() {
+      var user = NucleusUser.me();
+      if (user.syncing_nucleus_events || user.syncing_app_events) {
+        Meteor.clearInterval(initInterval);
 
-      this.click("app").initialize();
-      this.scroll("app").initialize();
-      this.forms.initialize();
-      this.location.initialize();
-      this.login.initialize();
+        if(user.syncing_app_events && !this.app_initialized) {
+          //if someone is already logged in before joining sync, let's log them out so their login state won't interfere with others
+          // this is to bring everyone on same page.
+          if($appWindow.Meteor.logout) $appWindow.Meteor.logout();
 
-      this.app_initialized = true;
+          this.click("app").initialize();
+          this.scroll("app").initialize();
+          this.forms.initialize();
+          this.location.initialize();
+          this.login.initialize();
 
-      this.startRecievingEvents();
-    }
+          this.app_initialized = true;
 
-    if(NucleusUser.me().syncing_nucleus_events  && !this.nucleus_initalized) {
-      this.click("nucleus").initialize();
-      this.scroll("nucleus").initialize();
+          this.startRecievingEvents();
+        }
 
-      this.nucleus_initialized = true;
+        if(user.syncing_nucleus_events  && !this.nucleus_initalized) {
+          this.click("nucleus").initialize();
+          this.scroll("nucleus").initialize();
 
-      this.startRecievingEvents();
-    }
+          this.nucleus_initialized = true;
+
+          this.startRecievingEvents();
+        }
+      }
+    }.bind(this));
+
   };
 
   this.tearDown = function() {
@@ -98,7 +105,6 @@ var EventManager = function() {
       if(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) return;
 
       event.markDoneForMe();
-      console.log("INCOMING EVENT:", event);
       NucleusEventManager.handleEvent(event);
     });
   };
