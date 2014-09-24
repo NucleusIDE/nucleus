@@ -461,9 +461,15 @@ html, body {
   background: #2F3129;
 }
 .button-group {
-  float: right;
   margin-top: 3px;
   margin-right: 5px;  
+}
+.button-group-right {
+  float: right;
+}
+.button-group-left {
+  margin-left: 10px;
+  float: left;
 }
 .btn-topbar {
   border: 1px solid #63655F;
@@ -487,3 +493,20 @@ html, body {
   border: 1px solid #AA3737;
 }
 /* end topbar */
+
+/* nucleus terminal */
+.nucleus_terminal {
+  height: auto;
+  position: fixed;
+  z-index: 9;
+  left: 0;
+  right: 0;
+  bottom: 0;  
+}
+#shell-panel {
+  background: rgba(30, 33, 44, 0.82) !important;
+}
+.terminal .cmd {
+  background: rgba(30, 33, 44, 0.92);
+}
+/* end nucleus terminal */

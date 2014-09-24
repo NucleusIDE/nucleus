@@ -1,5 +1,6 @@
 <template name="nucleus">
   {{> nucleus_nick_prompt}}
+  {{> nucleus_terminal}}
   {{> sidebar}}
   {{> nucleus_topbar}}
   {{> editor}}
@@ -18,7 +19,12 @@
 
 <template name="nucleus_topbar">
   <div id="nucleus_topbar">
-    <div class="button-group">
+    <div class="button-group button-group-left">
+      <a id="nucleus_show_terminal" class="btn-custom btn-topbar " href="#">
+        <i class="fa fa-terminal"></i>
+      </a>
+    </div>
+    <div class="button-group button-group-right">
       <a id="nucleus_save_file" class="btn-custom btn-topbar {{file_dirty 'save'}}" href="">Save</a>
       <a id="nucleus_discard_file" class="btn-custom btn-topbar {{file_dirty 'discard'}}" href="">Discard</a>
     </div>
@@ -147,3 +153,14 @@
     {{/each}}
   </ul>
 </template>
+
+
+<template name="nucleus_terminal">
+  {{#if show_terminal}}
+  <div class="nucleus_terminal">
+    {{> terminal}}
+  </div>
+  {{/if}}
+</template>
+
+

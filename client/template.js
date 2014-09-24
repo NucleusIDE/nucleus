@@ -349,8 +349,25 @@ Template.nucleus_topbar.events({
 
     console.log("DISCARDING CHANGES");
     NucleusClient.editFile(selectedFile, true);
+  },
+  "click #nucleus_show_terminal": function() {
+    var showTerminal = Session.get("nucleus_show_terminal") || false;
+    Session.set("nucleus_show_terminal", !showTerminal);
   }
 });
 ////////////////
 // END TOPBAR //
 ////////////////
+
+
+////////////////////
+// START TERMINAL //
+////////////////////
+Template.nucleus_terminal.helpers({
+  show_terminal: function() {
+    return Session.get("nucleus_show_terminal");
+  }
+});
+//////////////////
+// END TERMINAL //
+//////////////////
