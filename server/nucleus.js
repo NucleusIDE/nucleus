@@ -105,7 +105,7 @@ NucleusFactory = function() {
   this.pullChanges = function(projectDir) {
     projectDir = projectDir || this.config.projectDir;
     var fut = new Future();
-    child.exec("cd " + projectDir + " && git pull nucleus nucleus", function(err, stdout, stderr) {
+    child.exec("cd " + projectDir + " && git pull origin master", function(err, stdout, stderr) {
       if (err) {console.log(err); fut.return(-1); }
       else {
         if(stdout.search(/Already up-to-date/) >= 0)
@@ -124,7 +124,7 @@ NucleusFactory = function() {
     projectDir = projectDir || this.config.projectDir;
     var fut = new Future();
 
-    child.exec("cd " + projectDir + " && git push nucleus nucleus", function(err, stdout, stderr) {
+    child.exec("cd " + projectDir + " && git push origin master", function(err, stdout, stderr) {
       if (err) {
         console.log(err);
         fut.return(-1);
@@ -169,12 +169,12 @@ NucleusFactory = function() {
 
     var nucleusDirExists = fs.existsSync(nucleusDir);
     var repoAlreadyCloned = fs.existsSync(projectDir);
-
+    var command = "cd " + nucleusDir + " && git clone " + git + " " + project + " && cd " + project +" && git checkout -b nucleus  && git remote add nucleus " + git;
 
     if (!nucleusDirExists) fs.mkdirSync(path.join(homeDir, ".nucleus"));
 
     if (!repoAlreadyCloned) {
-      child.exec("cd " + nucleusDir + " && git clone " + git + " " + project + " && cd " + project +" && git checkout -b nucleus  && git remote add nucleus " + git, function(err, stdout, stderr) {
+      child.exec(command, function(err, stdout, stderr) {
         if (err) {console.log(err); return;}
         console.log(stdout, stderr);
       });
