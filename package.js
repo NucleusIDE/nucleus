@@ -1,8 +1,12 @@
 Package.describe({
   summary: "Realtime collaborative development for the web",
-  version: "0.0.1",
+  version: "0.0.2",
   name: "channikhabra:nucleus",
   git: 'https://github.com/channikhabra/meteor-nucleus'
+});
+
+Npm.depends({
+  'fibers': '1.0.2'
 });
 
 Package.on_use(function (api, where) {
