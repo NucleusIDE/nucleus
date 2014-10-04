@@ -91,14 +91,8 @@ NucleusFactory = function() {
       return false;
     }
 
-    var fut = new Future();
-    fs.readFile(filepath, {encoding: 'utf-8'}, function(err, contents) {
-      if (err) {
-        console.log(err);
-      }
-      fut['return'](contents);
-    });
-    return fut.wait();
+    var contents = fs.readFileSync(filepath, 'utf-8');
+    return contents;
   };
 
 
