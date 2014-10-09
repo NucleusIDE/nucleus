@@ -29,10 +29,6 @@
       "1.0.0"
     ],
     [
-      "channikhabra:sharejs-clone",
-      "0.6.3"
-    ],
-    [
       "channikhabra:stupid-models",
       "0.0.3"
     ],
@@ -107,6 +103,10 @@
     [
       "minimongo",
       "1.0.3"
+    ],
+    [
+      "mizzao:sharejs",
+      "0.6.1"
     ],
     [
       "mongo",

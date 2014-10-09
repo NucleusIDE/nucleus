@@ -2,8 +2,7 @@ fs = Npm.require('fs'),
 path = Npm.require('path'),
 child = Npm.require('child_process'),
 // ShareJs = Npm.require('share').server,
-Future = Npm.require('fibers/Future');
-
+Future = Npm.require('fibers/future');
 
 
 NucleusFactory = function() {
