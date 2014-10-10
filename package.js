@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Realtime collaborative development for the web",
-  version: "0.0.9",
+  version: "0.1.0",
   name: "channikhabra:nucleus",
   git: 'https://github.com/channikhabra/meteor-nucleus'
 });
@@ -15,7 +15,7 @@ Package.on_use(function (api, where) {
            'mrt:moment@2.8.1',
            'channikhabra:stupid-models@0.0.3',
            'mizzao:sharejs@0.6.1',
-           'channikhabra:terminal@0.1.0',
+           'channikhabra:terminal@0.1.1',
            'mrt:flash-messages@0.2.4']);
 
   api.add_files([
