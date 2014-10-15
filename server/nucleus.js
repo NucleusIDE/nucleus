@@ -1,3 +1,8 @@
+/**
+ * # Nucleus
+ */
+
+
 fs = Npm.require('fs'),
 path = Npm.require('path'),
 child = Npm.require('child_process'),
