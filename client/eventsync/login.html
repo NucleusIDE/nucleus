@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/login</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/login"><meta name="groc-project-path" content="client/eventsync/login.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/login.js">client/eventsync/login.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">LoginEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+  <span class="hljs-keyword">var</span> EVENT_NAME = <span class="hljs-string">'login'</span>,
+      APP_NAME = appName,
+      $window = NucleusClient.getWindow(APP_NAME),
+      utils = NucleusEventManager.getUtils(APP_NAME);
+
+  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">this</span>.overRideLoginWithPassword();
+    <span class="hljs-keyword">this</span>.overRideLogout();
+  };
+
+  <span class="hljs-keyword">this</span>.tearDown = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">this</span>.undoOverRideLoginWithPassword();
+    <span class="hljs-keyword">this</span>.undoOverRideLogout();
+  };
+
+  <span class="hljs-keyword">this</span>.overRideLoginWithPassword = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span>($window.Meteor.loginWithPassword) {
+      $window.Meteor.loginWithPasswordOriginal = $window.Meteor.loginWithPassword;
+      $window.Meteor.loginWithPassword = <span class="hljs-keyword">this</span>.syncLogin;
+    }
+  };
+
+  <span class="hljs-keyword">this</span>.overRideLogout = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span>($window.Meteor.logout) {
+      $window.Meteor.logoutOriginal = $window.Meteor.logout;
+      $window.Meteor.logout = <span class="hljs-keyword">this</span>.syncLogout;
+    }
+  };
+
+  <span class="hljs-keyword">this</span>.undoOverRideLoginWithPassword = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span>($window.Meteor.loginWithPassword)
+      $window.Meteor.loginWithPassword = $window.Meteor.loginWithPasswordOriginal;
+  };
+
+  <span class="hljs-keyword">this</span>.undoOverRideLogout = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span>($window.Meteor.logout)
+      $window.Meteor.logout = $window.Meteor.logoutOriginal;
+  };
+
+  <span class="hljs-keyword">this</span>.syncLogin = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">0</span>);
+    <span class="hljs-keyword">var</span> ret = $window.Meteor.loginWithPasswordOriginal.apply($window.Meteor, args);
+
+    <span class="hljs-keyword">if</span> (NucleusEventManager.canEmitEvents) {
+      <span class="hljs-keyword">var</span> ev = <span class="hljs-keyword">new</span> NucleusEvent();
+
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.args = args;
+      ev.type = <span class="hljs-string">'login'</span>;
+      ev.broadcast();
+    } <span class="hljs-keyword">else</span> {
+      NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
+    }
+
+    <span class="hljs-keyword">return</span> ret;
+  };
+
+  <span class="hljs-keyword">this</span>.syncLogout = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">0</span>);
+    <span class="hljs-keyword">var</span> ret = $window.Meteor.logoutOriginal.apply($window.Meteor, args);
+
+    <span class="hljs-keyword">if</span> (NucleusEventManager.canEmitEvents) {
+      <span class="hljs-keyword">var</span> ev = <span class="hljs-keyword">new</span> NucleusEvent();
+
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.args = args;
+      ev.type = <span class="hljs-string">'logout'</span>;
+      ev.broadcast();
+    } <span class="hljs-keyword">else</span> {
+      NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
+    }
+
+    <span class="hljs-keyword">return</span> ret;
+  };
+
+  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
+    NucleusEventManager.canEmitEvents = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">var</span> args = event.args;
+
+    <span class="hljs-keyword">if</span>(event.type === <span class="hljs-string">'logout'</span>) {
+      <span class="hljs-keyword">return</span> $window.Meteor.logout.apply($window.Meteor, args);
+    }
+
+    <span class="hljs-keyword">return</span> $window.Meteor.loginWithPasswordOriginal.apply($window.Meteor, args);
+  };
+};</div></div></div></div></body></html>

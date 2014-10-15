@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/utils</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/utils"><meta name="groc-project-path" content="client/eventsync/utils.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/utils.js">client/eventsync/utils.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">EventUtils = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($window)</span> {</span>
+  <span class="hljs-keyword">this</span>.$window = $window;
+
+  <span class="hljs-keyword">this</span>.getWindow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.$window;
+  };
+
+  <span class="hljs-keyword">this</span>.getDocument = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getWindow().document;
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Cross-browser scroll position</p>
+<p><strong>Returns a {x: number, y: number</strong><br/>(})</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getBrowserScrollPosition = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+    <span class="hljs-keyword">var</span> $window   = <span class="hljs-keyword">this</span>.getWindow();
+    <span class="hljs-keyword">var</span> $document = <span class="hljs-keyword">this</span>.getDocument();
+    <span class="hljs-keyword">var</span> scrollX;
+    <span class="hljs-keyword">var</span> scrollY;
+    <span class="hljs-keyword">var</span> dElement = $document.documentElement;
+    <span class="hljs-keyword">var</span> dBody    = $document.body;
+
+    <span class="hljs-keyword">if</span> ($window.pageYOffset !== <span class="hljs-literal">undefined</span>) {
+      scrollX = $window.pageXOffset;
+      scrollY = $window.pageYOffset;
+    } <span class="hljs-keyword">else</span> {
+      scrollX = dElement.scrollLeft || dBody.scrollLeft || <span class="hljs-number">0</span>;
+      scrollY = dElement.scrollTop || dBody.scrollTop || <span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-keyword">return</span> {
+      x: scrollX,
+      y: scrollY
+    };
+  },</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><strong>Returns a {x: number, y: number</strong><br/>(})</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getScrollSpace = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> $document = <span class="hljs-keyword">this</span>.getDocument();
+    <span class="hljs-keyword">var</span> dElement = $document.documentElement;
+    <span class="hljs-keyword">var</span> dBody    = $document.body;
+    <span class="hljs-keyword">return</span> {
+      x: dBody.scrollHeight - dElement.clientWidth,
+      y: dBody.scrollHeight - dElement.clientHeight
+    };
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><strong>Returns a * or a number</strong></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getElementIndex = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(tagName, elem)</span> {</span>
+    <span class="hljs-keyword">var</span> $document = <span class="hljs-keyword">this</span>.getDocument();
+    <span class="hljs-keyword">var</span> allElems = $document.getElementsByTagName(tagName);
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.prototype.indexOf.call(allElems, elem);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Force Change event on radio &amp; checkboxes (IE)</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.forceChange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(elem)</span> {</span>
+    elem.blur();
+    elem.focus();
+  };</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p><strong>Returns a {tagName: (elem.tagName or a <em>), index: </em></strong><br/>(})</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getElementData = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(elem)</span> {</span>
+    <span class="hljs-keyword">var</span> tagName = elem.tagName;
+    <span class="hljs-keyword">var</span> index   = <span class="hljs-keyword">this</span>.getElementIndex(tagName, elem);
+    <span class="hljs-keyword">return</span> {
+      tagName: tagName,
+      index: index
+    };
+  };</div></div></div><div class="segment"><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getSingleElement = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(tagName, index)</span> {</span>
+    <span class="hljs-keyword">var</span> $document = <span class="hljs-keyword">this</span>.getDocument();
+    <span class="hljs-keyword">var</span> elems = $document.getElementsByTagName(tagName);
+    <span class="hljs-keyword">return</span> elems[index];
+  };</div></div></div><div class="segment"><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getBody = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> $document = <span class="hljs-keyword">this</span>.getDocument();
+    <span class="hljs-keyword">return</span> $document.getElementsByTagName(<span class="hljs-string">"body"</span>)[<span class="hljs-number">0</span>];
+  };
+};</div></div></div></div></body></html>

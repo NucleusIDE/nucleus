@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/form_toggles</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/form_toggles"><meta name="groc-project-path" content="client/eventsync/form_toggles.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/form_toggles.js">client/eventsync/form_toggles.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">InputToggleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+  <span class="hljs-keyword">var</span> EVENT_NAME  = <span class="hljs-string">"input:toggles"</span>,
+      APP_NAME = appName,
+      $document = NucleusClient.getWindow(APP_NAME).document,
+      utils = NucleusEventManager.getUtils(APP_NAME);
+
+  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> browserEvent = <span class="hljs-keyword">this</span>.syncBrowserEvent();
+    <span class="hljs-keyword">this</span>.addEvents(NucleusEventManager, browserEvent);
+  };
+
+  <span class="hljs-keyword">this</span>.tearDown = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> browserEvent = <span class="hljs-keyword">this</span>.syncBrowserEvent();
+    <span class="hljs-keyword">this</span>.removeEvents(NucleusEventManager, browserEvent);
+  };
+
+  <span class="hljs-keyword">this</span>.syncBrowserEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
+
+      <span class="hljs-keyword">if</span> (NucleusEventManager.canEmitEvents) {
+        <span class="hljs-keyword">var</span> elem = event.target || event.srcElement;
+        <span class="hljs-keyword">var</span> data;
+        <span class="hljs-keyword">if</span> (elem.type === <span class="hljs-string">"radio"</span> || elem.type === <span class="hljs-string">"checkbox"</span> || elem.tagName === <span class="hljs-string">"SELECT"</span>) {
+          <span class="hljs-keyword">var</span> ev = <span class="hljs-keyword">new</span> NucleusEvent();
+
+          data = utils.getElementData(elem);
+          ev.setName(EVENT_NAME);
+          ev.setAppName(APP_NAME);
+          ev.type = <span class="hljs-string">'forms'</span>;
+          data.type = elem.type;
+          data.checked = elem.checked;
+          ev.setTarget(data);
+          ev.setValue(elem.value);
+          ev.broadcast();
+        }
+      } <span class="hljs-keyword">else</span> {
+        NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
+      }
+
+    };
+  };
+
+  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
+    <span class="hljs-keyword">var</span> data = <span class="hljs-built_in">JSON</span>.parse(event.target);
+    NucleusEventManager.canEmitEvents = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">var</span> elem = utils.getSingleElement(data.tagName, data.index);
+
+    <span class="hljs-keyword">if</span> (elem) {
+      <span class="hljs-keyword">if</span> (data.type === <span class="hljs-string">"radio"</span>) {
+        elem.checked = <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">if</span> (data.type === <span class="hljs-string">"checkbox"</span>) {
+        elem.checked = data.checked;
+      }
+      <span class="hljs-keyword">if</span> (data.tagName === <span class="hljs-string">"SELECT"</span>) {
+        elem.value = event.value;
+      }
+      <span class="hljs-keyword">return</span> elem;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  };
+
+  <span class="hljs-keyword">this</span>.addEvents = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(eventManager, event)</span> {</span>
+
+    <span class="hljs-keyword">var</span> elems   = $document.getElementsByTagName(<span class="hljs-string">"select"</span>);
+    <span class="hljs-keyword">var</span> inputs  = $document.getElementsByTagName(<span class="hljs-string">"input"</span>);
+
+    addEvents(elems);
+    addEvents(inputs);
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addEvents</span><span class="hljs-params">(domElems)</span> {</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = domElems.length; i &lt; n; i += <span class="hljs-number">1</span>) {
+        eventManager.addEvent(domElems[i], <span class="hljs-string">"change"</span>, event);
+      }
+    }
+  };
+
+  <span class="hljs-keyword">this</span>.removeEvents = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(eventManager, event)</span> {</span>
+    <span class="hljs-keyword">var</span> elems   = $document.getElementsByTagName(<span class="hljs-string">"select"</span>);
+    <span class="hljs-keyword">var</span> inputs  = $document.getElementsByTagName(<span class="hljs-string">"input"</span>);
+
+    addEvents(elems);
+    addEvents(inputs);
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addEvents</span><span class="hljs-params">(domElems)</span> {</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, n = domElems.length; i &lt; n; i += <span class="hljs-number">1</span>) {
+        eventManager.removeEvent(domElems[i], <span class="hljs-string">"change"</span>, event);
+      }
+    }
+  };
+};</div></div></div></div></body></html>

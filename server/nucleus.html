@@ -1,0 +1,303 @@
+<!DOCTYPE html><html lang="en"><head><title>server/nucleus</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="server/nucleus"><meta name="groc-project-path" content="server/nucleus.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/server/nucleus.js">server/nucleus.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleus">Nucleus</h1></div></div></div><div class="segment"><div class="code"><div class="wrapper">fs = Npm.require(<span class="hljs-string">'fs'</span>),
+path = Npm.require(<span class="hljs-string">'path'</span>),
+child = Npm.require(<span class="hljs-string">'child_process'</span>),
+Future = Npm.require(<span class="hljs-string">'fibers/future'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p> It defines <code>Nucleus</code> on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file  contents for editing etc. Most of the methods here are synchronous. I don&#39;t exactly remember what the issue was for which I chose synchronous over async. My initial approach was to use async flow in here, but I opted for sync shortly after starting.</p></div></div><div class="code"><div class="wrapper">NucleusFactory = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> homeDir = process.env.HOME,
+      nucleusDir = path.join(homeDir, <span class="hljs-string">".nucleus"</span>);
+
+  <span class="hljs-keyword">this</span>.config = {
+    git: <span class="hljs-string">''</span>,
+    project: <span class="hljs-string">''</span>
+  };
+
+  <span class="hljs-keyword">this</span>.getFileExtension = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">return</span> path.extname(filepath).replace(<span class="hljs-string">"."</span>, <span class="hljs-string">""</span>);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configure Nucleus on server. Following options are accepted for configuration:</p>
+<ul>
+<li>git :     Remote git url</li>
+<li>project:  Name of the project. A folder with this name is created in <code>Nucleus.config.projectDir</code> (&#39;~/.nucleus&#39;) and <code>Nucleus.config.git</code> url is cloned in it.
+It also sets the <code>Nucleus.config.projectDir</code> which is not configurable by user.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.configure = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(config)</span> {</span>
+    _.extend(Nucleus.config, config);
+    Nucleus.config.projectDir = path.join(homeDir, <span class="hljs-string">".nucleus/"</span>,Nucleus.config.project);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method is called on nucleus initialization on the server (in the app).</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">this</span>.nucleusCloneRepo();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the <code>Nucleus.config.projectDir</code>
+Accepts an object <code>options</code> as argument. <code>options</code> can have following properties:</p>
+<ul>
+<li>rootDir - directory which should be converted to JSON</li>
+<li>parent - parent node for the first node in JSON produced. In jstree, <code>#</code> represents root node</li>
+<li>traverseSymlinks - shall we traverse symlinks?</li>
+<li>includeHidden - shall we include hidden files in the produced tree? (hidden files/directories are those whose name start with <code>.</code>)</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getDirTree = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span> {</span>
+    options = options || {};
+    <span class="hljs-keyword">var</span>  dirTree= <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options)</span> {</span>
+      <span class="hljs-keyword">var</span> filename = options.rootDir || Nucleus.config.projectDir,
+          parent = options.parent || <span class="hljs-string">"#"</span>,
+          traverseSymlinks = options.traverseSymlinks || <span class="hljs-literal">false</span>,
+          includeHidden = options.includeHidden || <span class="hljs-literal">false</span>,
+
+          stats = fs.lstatSync(filename),
+          projectDir = Nucleus.config.projectDir,
+          info = {
+            path: filename,
+            parent: parent,
+            name: path.basename(filename)
+          };
+
+      <span class="hljs-keyword">if</span>(! includeHidden &amp;&amp; info.name.indexOf(<span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>)
+        <span class="hljs-keyword">return</span>;
+
+      <span class="hljs-keyword">if</span> (stats.isDirectory()) {
+        info.type = <span class="hljs-string">"folder"</span>;
+        info.children = fs.readdirSync(filename).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> {</span>
+          <span class="hljs-keyword">return</span> dirTree({rootDir: filename + <span class="hljs-string">'/'</span> + child, parent: filename, traverseSymlinks: traverseSymlinks, includeHidden: includeHidden});
+        });
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ( stats.isSymbolicLink()) {
+        info.type = <span class="hljs-string">"symlink"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>below is for traversing symlinks (packages etc)</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">if</span>(traverseSymlinks) {
+          <span class="hljs-keyword">var</span> link = fs.readlinkSync(filename);
+          <span class="hljs-keyword">if</span> (link.indexOf(<span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
+
+          <span class="hljs-keyword">if</span>(fs.lstatSync(link).isDirectory()) {
+            info.children = fs.readdirSync(link).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> {</span>
+              <span class="hljs-keyword">return</span> dirTree({rootDir: filename + <span class="hljs-string">'/'</span> + child, parent: filename, traverseSymlinks: traverseSymlinks, includeHidden: includeHidden});
+            });
+          }
+        }
+      } <span class="hljs-keyword">else</span> {
+        info.type = <span class="hljs-string">"file"</span>;
+      }
+      <span class="hljs-keyword">return</span> info;
+    };
+
+    <span class="hljs-keyword">var</span> removeEmptyChildren = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tree)</span> {</span>
+      tree.children = _.compact(tree.children);
+      _.each(tree.children, removeEmptyChildren);
+    };
+
+
+    <span class="hljs-keyword">var</span> tree = dirTree(options);
+    <span class="hljs-keyword">if</span> (! options.includeHidden) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Double check for hidden files.</p></div></div><div class="code"><div class="wrapper">      removeEmptyChildren(tree);
+    }
+    <span class="hljs-keyword">return</span> tree;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the contents of a single file.</p>
+<ul>
+<li><strong>filepath</strong> - absolute path of the file whose contents are required
+<em>filepath</em> can be <code>*scratch*</code>. <code>*scratch*</code> in nucleus represents the limbo in the ace editor when user has just logged in and have no file opened. Emacs has a <code>*scratch*</code> buffer, so you know.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getFileContents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">if</span> (filepath === <span class="hljs-string">'*scratch*'</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> filepath !== <span class="hljs-string">'string'</span> || fs.lstatSync(filepath).isDirectory()) {
+      console.log(<span class="hljs-string">"FILE PATH TYPE"</span>, <span class="hljs-keyword">typeof</span> filepath);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+
+    <span class="hljs-keyword">var</span> contents = fs.readFileSync(filepath, <span class="hljs-string">'utf-8'</span>);
+    <span class="hljs-keyword">return</span> contents;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><code>git pull</code> changes from the remote git. These git methods are used behind the git UI in nucleus. I am in favor of using a terminal based UI instead of buttons.
+Button based git flow is holy-grail of unknown errors that might occur in the app
+All the git methods assume <code>master</code> to be the branch and <code>origin</code> to be the remote. These need to be made configurable configurable in future when we&#39;ll aim for anonymous users of the app to make changes. My idea is that anonymous users could change the app and when they push the changes, those changes will be saved in a new git repo in user&#39;s github, or in a different branch in app owner&#39;s github.
+Returns</p>
+<ul>
+<li><code>0</code> - No new changes created by function</li>
+<li><code>1</code> - Pulled new changes</li>
+<li><code>-1</code> - Error occured</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.pullChanges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(projectDir)</span> {</span>
+    projectDir = projectDir || <span class="hljs-keyword">this</span>.config.projectDir;
+    <span class="hljs-keyword">var</span> fut = <span class="hljs-keyword">new</span> Future();
+    child.exec(<span class="hljs-string">"cd "</span> + projectDir + <span class="hljs-string">" &amp;&amp; git pull origin master"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) {console.log(err); fut.return(-<span class="hljs-number">1</span>); }
+      <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span>(stdout.search(<span class="hljs-regexp">/Already up-to-date/</span>) &gt;= <span class="hljs-number">0</span>)
+          fut.return(<span class="hljs-number">0</span>);
+        <span class="hljs-keyword">else</span>
+          fut.return(<span class="hljs-number">1</span>);
+
+        console.log(<span class="hljs-string">"STDOUT:"</span>, stdout);
+        console.log(<span class="hljs-string">"STDERR"</span>, stderr);
+      }
+    });
+    <span class="hljs-keyword">return</span> fut.wait();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Push new  changes to <code>master</code> branch of <code>origin</code> remote in <code>Nucleus.config.projectDir</code>.
+Returns</p>
+<ul>
+<li><code>0</code> - No new commits to push.</li>
+<li><code>1</code> - Pushed new changes</li>
+<li><code>-1</code> - Error occured</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.pushChanges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(projectDir)</span> {</span>
+    projectDir = projectDir || <span class="hljs-keyword">this</span>.config.projectDir;
+    <span class="hljs-keyword">var</span> fut = <span class="hljs-keyword">new</span> Future();
+
+    child.exec(<span class="hljs-string">"cd "</span> + projectDir + <span class="hljs-string">" &amp;&amp; git push origin master"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) {
+        console.log(err);
+        fut.return(-<span class="hljs-number">1</span>);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stderr.search(<span class="hljs-regexp">/Everything up-to-date/</span>) &gt;= <span class="hljs-number">0</span>)
+        fut.return(<span class="hljs-number">0</span>);
+      <span class="hljs-keyword">else</span>
+        fut.return(<span class="hljs-number">1</span>);
+
+      console.log(<span class="hljs-string">"STDOUT:"</span>, stdout, <span class="hljs-string">"STDERR:"</span>, stderr);
+    });
+    <span class="hljs-keyword">return</span> fut.wait();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Commit new  changes in <code>master</code> branch in <code>Nucleus.config.projectDir</code>.
+Accepts:</p>
+<ul>
+<li><strong>message</strong> - commit message
+Returns</li>
+<li><code>0</code> - No new changes to commit.</li>
+<li><code>1</code> - Committed new changes with message <code>message</code></li>
+<li><code>-1</code> - Error occurred</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.commitChanges = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(message)</span> {</span>
+    <span class="hljs-keyword">var</span> projectDir = <span class="hljs-keyword">this</span>.config.projectDir;
+    message = message || <span class="hljs-string">"Changes from nucleus."</span>;
+    <span class="hljs-keyword">var</span> fut = <span class="hljs-keyword">new</span> Future();
+    child.exec(<span class="hljs-string">'cd '</span> + projectDir + <span class="hljs-string">' &amp;&amp; git add . --all &amp;&amp; git commit -m "'</span> + message +<span class="hljs-string">'"'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) {
+        <span class="hljs-keyword">if</span> (err.killed === <span class="hljs-literal">false</span> &amp;&amp; err.code === <span class="hljs-number">1</span> &amp;&amp; err.signal === <span class="hljs-literal">null</span>) {
+          fut.return(<span class="hljs-number">0</span>);
+
+        } <span class="hljs-keyword">else</span> {
+          console.log(err);
+          fut.return(-<span class="hljs-number">1</span>);
+        }
+      } <span class="hljs-keyword">else</span> {
+        console.log(stdout, stderr);
+        fut.return(<span class="hljs-number">1</span>);
+      }
+    });
+    <span class="hljs-keyword">return</span> fut.wait();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clone the <code>git</code> remote repo in <code>Nucleus.config.projectDir</code>. It won&#39;t attempt to clone the repo if <code>Nucleus.config.projectDir</code> already exists. If the <code>Nucleus.config.projectDir</code> already exists, it attempts to pull new changes instead.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.nucleusCloneRepo = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(git, project)</span> {</span>
+    git = git || Nucleus.config.git;
+    project = project || Nucleus.config.project;
+    <span class="hljs-keyword">var</span> projectDir = <span class="hljs-keyword">this</span>.config.projectDir = path.join(homeDir, <span class="hljs-string">".nucleus/"</span>,project);
+
+    <span class="hljs-keyword">if</span> (! git) <span class="hljs-keyword">return</span>;
+
+    <span class="hljs-keyword">var</span> nucleusDirExists = fs.existsSync(nucleusDir);
+    <span class="hljs-keyword">var</span> repoAlreadyCloned = fs.existsSync(projectDir);
+    <span class="hljs-keyword">var</span> command = <span class="hljs-string">"cd "</span> + nucleusDir + <span class="hljs-string">" &amp;&amp; git clone "</span> + git + <span class="hljs-string">" "</span> + project + <span class="hljs-string">" &amp;&amp; cd "</span> + project +<span class="hljs-string">" &amp;&amp; git checkout -b nucleus  &amp;&amp; git remote add nucleus "</span> + git;
+
+    <span class="hljs-keyword">if</span> (!nucleusDirExists) fs.mkdirSync(path.join(homeDir, <span class="hljs-string">".nucleus"</span>));
+
+    <span class="hljs-keyword">if</span> (!repoAlreadyCloned) {
+      child.exec(command, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span>
+        <span class="hljs-keyword">if</span> (err) {console.log(err); <span class="hljs-keyword">return</span>;}
+        console.log(stdout, stderr);
+      });
+    }
+
+    <span class="hljs-keyword">if</span> (nucleusDirExists &amp;&amp; repoAlreadyCloned)
+      <span class="hljs-keyword">this</span>.pullChanges(projectDir);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method is obsolete. We use this method to get the latest CSS from the filesystem, and manually push it into the app. But since we have started running meteor in dev mode on the nucleus server, it is no longer needed as meteor itself live-push all the CSS. Note that this method is faster than meteor&#39;s, but it won&#39;t load packages&#39;</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getAllCSS = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span> {</span>
+    <span class="hljs-keyword">var</span> tree = <span class="hljs-keyword">this</span>.getDirTree(),
+        packagesToInclude = options &amp;&amp; options.packagesToInclude,
+        cssFiles = [],
+        collectedCss = <span class="hljs-string">''</span>;
+
+    <span class="hljs-keyword">var</span> collectCSSFiles = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filetree)</span> {</span>
+      <span class="hljs-keyword">if</span> (filetree.name.indexOf(<span class="hljs-string">"."</span>) !== <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">if</span> (path.extname(filetree.path).replace(<span class="hljs-string">"."</span>, <span class="hljs-string">""</span>) === <span class="hljs-string">'css'</span>)
+          cssFiles.push(filetree.path);
+
+        _.each(filetree.children, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(node)</span> {</span>
+          collectCSSFiles(node);
+        });
+      }
+    };
+    <span class="hljs-keyword">var</span> collectCSSFilesFromPackages = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(packages)</span> {</span>
+      packages = packages || [];
+      _.each(packages, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(package)</span> {</span>
+        <span class="hljs-keyword">var</span> packageDir = path.join(<span class="hljs-keyword">this</span>.config.projectDir, <span class="hljs-string">"packages/"</span>+package);
+        <span class="hljs-keyword">var</span> tree = <span class="hljs-keyword">this</span>.getDirTree({rootDir: packageDir, parent: <span class="hljs-string">"#"</span>, traverseSymlinks: <span class="hljs-literal">true</span>});
+        collectCSSFiles(tree);
+      }.bind(<span class="hljs-keyword">this</span>));
+    }.bind(<span class="hljs-keyword">this</span>);
+
+    collectCSSFilesFromPackages(packagesToInclude);
+    collectCSSFiles(tree); <span class="hljs-comment">//populates cssFiles with filepath of all CSS files</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO: make this better and more meteor like</p></div></div><div class="code"><div class="wrapper">    _.each(cssFiles, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cssfile)</span> {</span>
+      <span class="hljs-keyword">var</span> contents = <span class="hljs-keyword">this</span>.getFileContents(cssfile);
+      console.log(<span class="hljs-string">"FETCHING : "</span>, cssfile);
+      collectedCss += contents;
+    }.bind(<span class="hljs-keyword">this</span>));
+
+
+    <span class="hljs-keyword">return</span> collectedCss;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let&#39;s keep mup deploy here until we have a clear/bigger deployment strategy</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.mupDeploy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(mup_setup)</span> {</span>
+    <span class="hljs-keyword">var</span> projectDir = <span class="hljs-keyword">this</span>.config.projectDir;
+    <span class="hljs-keyword">var</span> fut = <span class="hljs-keyword">new</span> Future();
+
+    <span class="hljs-keyword">var</span> commmand = <span class="hljs-string">"cd "</span> + projectDir + (mup_setup ? <span class="hljs-string">" &amp;&amp; mup setup "</span> : <span class="hljs-string">""</span>)  + <span class="hljs-string">" &amp;&amp; mup deploy"</span>;
+
+    child.exec(command, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) {console.log(err); fut.return(-<span class="hljs-number">1</span>); }
+      <span class="hljs-keyword">else</span> {
+        fut.return(<span class="hljs-number">1</span>);
+
+        console.log(<span class="hljs-string">"STDOUT:"</span>, stdout);
+        console.log(<span class="hljs-string">"STDERR"</span>, stderr);
+      }
+    });
+    <span class="hljs-keyword">return</span> fut.wait();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create a new file on the server
+Arguments:</p>
+<ul>
+<li><code>filepath</code> {<em>string</em>} : Absolute or relative path of the file to be created. Relative to <code>Nucleus.config.projectDir</code></li>
+<li><code>directory</code> {<em>boolean</em>}: Is the file to be created a directory?</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.createNewFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath, directory)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check whether the <code>filepath</code> is absolute or relative</p></div></div><div class="code"><div class="wrapper">    filepath = filepath.indexOf(<span class="hljs-string">"/"</span>) === <span class="hljs-number">0</span> ? filepath : <span class="hljs-keyword">this</span>.config.projectDir + <span class="hljs-string">"/"</span> + filepath;
+    <span class="hljs-keyword">var</span> fileName = path.basename(filepath);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If a file with <code>filename</code> is already present, rename it to a unique name.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> renameUnique = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+      <span class="hljs-keyword">var</span> count = <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">var</span> newPath = filepath + <span class="hljs-string">"_"</span> + count;
+
+      <span class="hljs-keyword">while</span>(fs.existsSync(newPath)) {
+        newPath = filepath + <span class="hljs-string">"_"</span> + count++;
+      }
+
+      <span class="hljs-keyword">return</span> newPath;
+    };
+
+    <span class="hljs-keyword">if</span> (fs.existsSync(filepath))
+      filepath = renameUnique(filepath);
+
+    <span class="hljs-keyword">if</span>(!directory) {
+      fs.openSync(filepath, <span class="hljs-string">'w'</span>);
+      <span class="hljs-keyword">return</span> filepath;
+    }
+
+    fs.mkdirSync(filepath);
+    <span class="hljs-keyword">return</span> filepath;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Delete the file at <code>filepath</code>
+Arguments:
+<code>filepath</code> <em>{string}</em>
+If the file represented by <code>filepath</code> is a directory, it deletes the directory recursively.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.deleteFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">if</span> (!fs.existsSync(filepath)) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">var</span> stat = fs.statSync(filepath);
+
+    <span class="hljs-keyword">var</span> fut = <span class="hljs-keyword">new</span> Future();
+
+    <span class="hljs-keyword">if</span> (stat.isDirectory())
+      child.exec(<span class="hljs-string">"rm -rf "</span>+filepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+        fut.return(res);
+      });
+    <span class="hljs-keyword">else</span>
+      fut.return(fs.unlinkSync(filepath));
+
+    <span class="hljs-keyword">return</span> fut.wait();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Rename <code>oldpath</code> to <code>newpath</code></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.renameFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(oldpath, newpath)</span> {</span>
+    <span class="hljs-keyword">if</span> (!fs.existsSync(oldpath)) {
+      <span class="hljs-keyword">return</span>;
+    }
+
+    <span class="hljs-keyword">return</span> fs.renameSync(oldpath, newpath);
+  }
+
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Publishes all the collections required by nucleus with no limits or checks</p></div></div><div class="code"><div class="wrapper">Meteor.publish(<span class="hljs-string">"nucleusPublisher"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">return</span> [
+    NucleusDocuments.find({}),
+    ShareJsDocs.find({}),
+    NucleusUsers.find({}),
+    NucleusEvents.find({})
+  ];
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Creat server side global <code>Nucleus</code> using the above constructor</p></div></div><div class="code"><div class="wrapper">Nucleus = <span class="hljs-keyword">new</span> NucleusFactory();</div></div></div></div></body></html>

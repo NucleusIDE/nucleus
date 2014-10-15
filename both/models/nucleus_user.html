@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="en"><head><title>both/models/nucleus_user</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="both/models/nucleus_user"><meta name="groc-project-path" content="both/models/nucleus_user.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/both/models/nucleus_user.js">both/models/nucleus_user.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleususer">NucleusUser</h1>
+<h2 id="attributes">Attributes</h2>
+<ul>
+<li>_id :                          MONGO ID</li>
+<li>nick :                        STRING (Nickname)</li>
+<li>cwd :                         MONGO ID (Current Working Document)</li>
+<li>current_filepath :                     STRING</li>
+<li>color :                        STRING</li>
+<li>cursor_pos :                  ARRAY [row, col]</li>
+<li>syncing_nucleus_events :       BOOLEAN</li>
+<li>syncing_app_events :       BOOLEAN</li>
+</ul>
+<h2 id="why">Why?</h2>
+<p>We are not using meteor&#39;s password based auth, or any kind of auth for nucleus. We have our own user system. Users log in by providing a nick. That nick sets a session variable and a cookie which are removed <code>onbeforeunload</code> of <code>window</code>.</p></div></div><div class="code"><div class="wrapper">NucleusUsers = <span class="hljs-keyword">new</span> Meteor.Collection(<span class="hljs-string">'nucleus_users'</span>);
+NucleusUser = Model(NucleusUsers);
+
+NucleusUser.extend({
+  getCwd: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.cwd;
+  },
+  setCwd: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(docId)</span> {</span>
+    <span class="hljs-keyword">this</span>.update({cwd: docId});
+  },
+
+  getNick: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">if</span>(NucleusUser.me() &amp;&amp; <span class="hljs-keyword">this</span>._id === NucleusUser.me()._id) <span class="hljs-keyword">return</span> <span class="hljs-string">"Me"</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.nick;
+  },
+  getCursor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.cursor_pos;
+  },
+  setCursor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(row, col)</span> {</span>
+    <span class="hljs-keyword">this</span>.update({cursor_pos: [row, col]});
+  },
+
+  getColor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.color;
+  },
+
+  getCurrentFilepath: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.currentFilepath || <span class="hljs-string">'*scratch*'</span>;
+  },
+  setCurrentFilepath: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">this</span>.update({currentFilepath: filepath});
+  },
+
+  toggleEventSync: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app, shouldRecieve)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Toggle events for the <code>app</code>, or sets it to <code>shouldRecieve</code> if given.</p>
+<p>Arguments:</p>
+<ul>
+<li><code>app</code> <em>{String}</em>: App for which to toggle events. Could be <code>app</code> (the app window) or <code>nucleus</code> (the nucleus editor window)</li>
+<li><code>shouldRecieve</code> <em>{Boolean}</em>: If provided, sets the event sync status to this instead of toggling it</li>
+</ul></div></div><div class="code"><div class="wrapper">    app = app || <span class="hljs-string">"app"</span>;
+
+    <span class="hljs-keyword">var</span> is_syncing_events = shouldRecieve || app === <span class="hljs-string">"app"</span> ? !<span class="hljs-keyword">this</span>.syncing_app_events : !<span class="hljs-keyword">this</span>.syncing_nucleus_events;
+
+    <span class="hljs-keyword">if</span>(app === <span class="hljs-string">"app"</span>)
+      <span class="hljs-keyword">this</span>.update({syncing_app_events: is_syncing_events});
+    <span class="hljs-keyword">else</span>
+      <span class="hljs-keyword">this</span>.update({syncing_nucleus_events: is_syncing_events});
+
+    <span class="hljs-keyword">if</span> (is_syncing_events) {
+      NucleusClient.getWindow(app).eval(<span class="hljs-string">"NucleusEventManager.initialize()"</span>);
+    }
+    <span class="hljs-keyword">else</span> {
+      NucleusClient.getAppWindow(app).eval(<span class="hljs-string">"NucleusEventManager.tearDown()"</span>);
+    }
+
+  },
+
+  isSyncingEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app)</span> {</span>
+    app = app || <span class="hljs-string">"app"</span>;
+    <span class="hljs-keyword">return</span> app === <span class="hljs-string">"app"</span> ? <span class="hljs-keyword">this</span>.syncing_app_events : <span class="hljs-keyword">this</span>.syncing_nucleus_events;
+  },
+
+  <span class="hljs-keyword">delete</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Deletes the user. It would work and should be used only on client since Session or cookie won&#39;t be available on server.</p></div></div><div class="code"><div class="wrapper">    NucleusUsers.remove({_id: <span class="hljs-keyword">this</span>._id});
+    <span class="hljs-keyword">if</span> (Meteor.isServer) {
+      <span class="hljs-keyword">return</span>;
+    }
+    $.cookie(<span class="hljs-string">"nucleus_user"</span>, <span class="hljs-literal">null</span>);
+    Session.set(<span class="hljs-string">"nucleus_user"</span>, <span class="hljs-literal">null</span>);
+  },
+
+  sendChat: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(message)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Broadcast chat message from this user. Group chat is the only kind of chat supported in Nucleus.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> nick = <span class="hljs-keyword">this</span>.nick;
+    <span class="hljs-keyword">var</span> chat = <span class="hljs-keyword">new</span> ChatMessage();
+    chat.broadcast(nick, message);
+  }
+});
+
+NucleusUser.me = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get currently logged in user.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span>(Meteor.isServer) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Client only method"</span>);
+  <span class="hljs-keyword">var</span> nucUserId = Session.get(<span class="hljs-string">'nucleus_user'</span>) || $.cookie(<span class="hljs-string">"nucleus_user"</span>);
+
+  <span class="hljs-keyword">return</span> NucleusUsers.findOne(nucUserId);
+};
+
+NucleusUser.new = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nick)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create new user. Creating new nucleus user involve setting session var and a cookie. Either one of these would work, access to current user is always through <code>Nucleususer.me()</code> so it shouldn&#39;t be a problem when we change the user creation to a proper auth system.</p>
+<p>This should always be the method used for creating new <code>NucleusUser</code>s</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> existingUser = NucleusUsers.findOne({nick: nick});
+  <span class="hljs-keyword">if</span> (existingUser) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+  <span class="hljs-keyword">var</span> newUser = <span class="hljs-keyword">new</span> NucleusUser();
+  newUser.nick = nick;
+  newUser.setCwd(NucleusClient.getScratchDoc());
+  newUser.color = Utils.getRandomColor();
+  newUser.save();
+
+  $.cookie(<span class="hljs-string">"nucleus_user"</span>, newUser._id);
+  Session.set(<span class="hljs-string">"nucleus_user"</span>, newUser._id);
+  <span class="hljs-keyword">return</span> newUser;
+};</div></div></div></div></body></html>

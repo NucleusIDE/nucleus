@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><title>server/methods</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="server/methods"><meta name="groc-project-path" content="server/methods.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/server/methods.js">server/methods.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="meteormethods">Meteor.methods</h1>
+<p>In meteor, methods are the easiest way of interaction b/w client and server. Most of these methods are simply proxies for functions in <code>Nucleus</code> and which are not should</p></div></div><div class="code"><div class="wrapper">Meteor.methods({
+  nucleusGetFileList: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.getDirTree({rootDir: Nucleus.config.projectDir, parent: <span class="hljs-string">"#"</span>});
+  },
+
+  nucleusGetFileContents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Has equivalent <code>Nucleus.getFileContents(filepath)</code>. Shall be replaced with it in next refactoring.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> filepath !== <span class="hljs-string">'string'</span> || fs.lstatSync(filepath).isDirectory()) <span class="hljs-keyword">return</span>;
+
+    <span class="hljs-keyword">var</span> fut = <span class="hljs-keyword">new</span> Future();
+    fs.readFile(filepath, {encoding: <span class="hljs-string">'utf-8'</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, contents)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) {
+        console.log(err);
+      }
+      fut[<span class="hljs-string">'return'</span>](contents);
+    });
+    <span class="hljs-keyword">return</span> fut.wait();
+  },
+
+  nucleusSaveDocToDisk: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(docId)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Saves the doc (the changes made in the ace editor) back to the filesystem. Like any other method containing any code in this file, this should be moved to <code>Nucleus</code></p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Flush the doc. Sharejs keeps the changes in memory without actually persisting them to the database for as long as it can. This flushes the changes to the database</p></div></div><div class="code"><div class="wrapper">    ShareJS.model.flush();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>when trying to save scratch pad</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span>(!docId) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">var</span> doc = ShareJsDocs.findOne(docId),
+        filepath = NucleusDocuments.findOne({doc_id: docId}).filepath,
+        newContents = doc.data.snapshot,
+        fut = <span class="hljs-keyword">new</span> Future();
+
+
+    fs.readFile(filepath, {encoding: <span class="hljs-string">'utf-8'</span>}, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, contents)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>check if the new changes have been made in the editor or user is just being a dick</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (_.isEqual(contents, newContents)) {
+        console.log(<span class="hljs-string">"NO NEW CHANGES TO SAVE"</span>);
+        fut.return(<span class="hljs-number">0</span>);
+        <span class="hljs-keyword">return</span> fut.wait();
+      }
+
+      fs.writeFile(filepath, newContents, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err)</span> {</span>
+        <span class="hljs-keyword">if</span>(err) {
+          console.log(<span class="hljs-string">"ERROR OCCURED WHEN WRITING FILE"</span>,err);
+          fut.return(-<span class="hljs-number">1</span>);
+        }
+        <span class="hljs-keyword">else</span> {
+          console.log(<span class="hljs-string">"FILE SAVED SUCCESSFULLY"</span>);
+          fut.return(<span class="hljs-number">1</span>);
+        }
+      });
+    });
+
+    <span class="hljs-keyword">return</span> fut.wait();
+  },
+
+  nucleusSetupFileForEditting: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath, forceRefresh)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sets up <code>filepath</code> for editing. It would fetch the contents of the file from the filesystem and put them in a sharejs doc and return the <code>docId</code> of newly created doc.
+If a doc corresponding to the <code>filepath</code> already exists, it would simply return the <code>docId</code>. <code>forceRefresh</code> should be truthy to force it fetching contents from the fiesystem</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>filepath</code> <em>{string}</em></li>
+<li><code>forceRefresh</code> <em>{boolean}</em>: Force it to fetch contents from the filesystem. Used when discarding unsaved changes to the doc.</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> nucDoc = NucleusDocuments.findOne({filepath: filepath}),
+        fileContents = Nucleus.getFileContents(filepath),
+        docId = nucDoc &amp;&amp; nucDoc.doc_id;
+
+    <span class="hljs-keyword">if</span>(forceRefresh) {
+      ShareJS.model.flush();
+
+      <span class="hljs-keyword">var</span> doc = ShareJsDocs.findOne(docId);
+      <span class="hljs-keyword">var</span> ver = doc.data.v;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We can&#39;t just remove the <code>doc</code> to force fetch new contents from the filesystem.
+Sharejs would load the file from the memory, or play back the ops or something but even on deleting the doc, it will somehow get all the changes back.</p>
+<p>To solve this, we need to manually apply an operation (op) on the doc.
+We need to apply two operatins; delete everything and insert content from disk; to refresh the doc and discard all ops changes</p></div></div><div class="code"><div class="wrapper">      ShareJS.model.applyOp(
+        docId,
+        {
+          op: [{d: doc.data.snapshot, p: <span class="hljs-number">0</span>}, {i: fileContents, p: <span class="hljs-number">0</span>}],
+          v: ver,
+          meta: <span class="hljs-literal">null</span>
+        },
+        <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+          <span class="hljs-keyword">if</span>(err) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(err);
+        });
+
+      <span class="hljs-keyword">return</span> docId;
+    }
+
+    <span class="hljs-keyword">if</span> (docId) {
+      ShareJsDocs.update({_id: docId}, {$set: {<span class="hljs-string">"data.snapshot"</span>: fileContents}});
+      <span class="hljs-keyword">return</span> docId;
+    } <span class="hljs-keyword">else</span> {
+      docId = ShareJsDocs.insert({
+        data: {
+          <span class="hljs-string">"snapshot"</span>: fileContents,
+          <span class="hljs-string">"v"</span>: <span class="hljs-number">0</span>,
+          <span class="hljs-string">"type"</span>: <span class="hljs-string">"text"</span>
+        }
+      });
+      <span class="hljs-keyword">var</span> nucleusDocId = NucleusDocuments.insert({
+        doc_id: docId,
+        filepath: filepath
+      });
+    }
+    <span class="hljs-keyword">return</span> docId;
+  },
+  nucleusCommitAllChanges: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(message)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.commitChanges(message);
+  },
+  nucleusPushChanges: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.pushChanges();
+  },
+  nucleusPullChanges: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.pullChanges();
+  },
+  nucleusGetAllCSS: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(options)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.getAllCSS(options);
+  },
+  nucleusMupDeploy: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(mup_setup)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.mupDeploy(mup_setup);
+  },
+  nucleusCreateNewFile: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.createNewFile(filepath);
+  },
+  nucleusCreateNewFolder: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.createNewFile(filepath, <span class="hljs-literal">true</span>);
+  },
+  nucleusDeleteFile: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.deleteFile(filepath);
+  },
+  nucleusRenameFile: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(oldpath, newpath)</span> {</span>
+    <span class="hljs-keyword">return</span> Nucleus.renameFile(oldpath, newpath);
+  }
+});</div></div></div></div></body></html>

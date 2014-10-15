@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="en"><head><title>chat/both/chat_model</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="chat/both/chat_model"><meta name="groc-project-path" content="chat/both/chat_model.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/chat/both/chat_model.js">chat/both/chat_model.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><p>sender_name                          String
+message                              String
+sent_at                              Unix Timestamp</p></div></div><div class="code"><div class="wrapper">ChatMessages = <span class="hljs-keyword">new</span> Meteor.Collection(<span class="hljs-string">'chats'</span>);
+
+ChatMessage = Model(ChatMessages);
+
+ChatMessage.extend({
+    broadcast: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(sender_name, message)</span> {</span>
+        <span class="hljs-keyword">this</span>.sender_name = sender_name;
+        <span class="hljs-keyword">this</span>.message = message;
+        <span class="hljs-keyword">this</span>.sent_at = moment().toDate().getTime();
+        <span class="hljs-keyword">this</span>.save();
+    }
+});</div></div></div></div></body></html>

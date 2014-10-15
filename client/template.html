@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="en"><head><title>client/template</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/template"><meta name="groc-project-path" content="client/template.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/template.js">client/template.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">Template.sidebar.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  $(<span class="hljs-string">"#sidebar"</span>).height($(window).height());
+};
+Template.nucleus_tree_widget.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  $(<span class="hljs-string">"#nucleus_file_tree"</span>).css({maxHeight: ($(window).height()*<span class="hljs-number">50</span>)/<span class="hljs-number">100</span>});
+};
+Template.nucleus_nick_prompt.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success</p></div></div><div class="code"><div class="wrapper">  $(<span class="hljs-string">"#nick"</span>).css({
+    boxShadow: <span class="hljs-string">"0 0 29px 0px rgba(17,153,230, 0.9)"</span>,
+    border: <span class="hljs-string">"1px solid rgba(17,153,230,0.5)"</span>
+  });
+  $(<span class="hljs-string">"#nick"</span>).focus();
+};
+
+
+Template.nucleus_nick_prompt.helpers({
+  no_nuc_user: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> ! NucleusUser.me();
+  }
+});
+
+Template.nucleus_nick_prompt.events({
+  <span class="hljs-string">"blur #nick"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    $(<span class="hljs-string">"#nick"</span>).focus();
+  },
+  <span class="hljs-string">"keyup #nick"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    e.preventDefault();
+    <span class="hljs-keyword">var</span> $<span class="hljs-keyword">in</span> = $(<span class="hljs-string">"#nick"</span>),
+        nick = $<span class="hljs-keyword">in</span>.val(),
+        validNick = nick.length &gt; <span class="hljs-number">3</span> &amp;&amp; ! NucleusUsers.findOne({nick: $<span class="hljs-keyword">in</span>.val()}) &amp;&amp; nick.indexOf(<span class="hljs-string">" "</span>) &lt; <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">if</span>($<span class="hljs-keyword">in</span>.val() === <span class="hljs-string">""</span>) {
+      $(<span class="hljs-string">"#nick"</span>).css({
+        boxShadow: <span class="hljs-string">"0 0 29px 0px rgba(17,153,230, 0.9)"</span>,
+        border: <span class="hljs-string">"1px solid rgba(17,153,230,0.5)"</span>
+      });
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (!validNick) {
+      $(<span class="hljs-string">"#nick"</span>).css({
+        boxShadow: <span class="hljs-string">"0 0 29px 0px rgba(218, 61, 66, 0.9)"</span>,
+        border: <span class="hljs-string">"1px solid rgba(218, 61, 66,0.5)"</span>
+      });
+    } <span class="hljs-keyword">else</span> {
+      $(<span class="hljs-string">"#nick"</span>).css({
+        boxShadow: <span class="hljs-string">"0 0 29px 0px rgba(17, 230, 179, 0.9)"</span>,
+        border: <span class="hljs-string">"1px solid rgba(17, 230, 179, 0.5)"</span>
+      });
+    }
+
+    <span class="hljs-keyword">if</span> (e.keyCode === <span class="hljs-number">13</span> &amp;&amp; validNick) {
+      <span class="hljs-keyword">var</span> nucUser = NucleusUser.new(nick);
+    }
+  }
+});
+
+Template.nucleus_tree_widget.helpers({
+  tree: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> treeId = <span class="hljs-string">"nucleus_file_tree"</span>;
+
+    <span class="hljs-keyword">var</span> treeInterval = Meteor.setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">if</span>(document.getElementById(treeId).childElementCount &gt;= <span class="hljs-number">1</span>) {
+        NucleusClient.jsTree = NucleusSidebar.initializeJsTree(treeId);
+        Meteor.clearInterval(treeInterval);
+      }
+    }, <span class="hljs-number">300</span>);
+
+    <span class="hljs-keyword">return</span> NucleusClient.getJstreeHTML();
+  }
+});
+
+Template.editor.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  $(<span class="hljs-string">"#nucleus_editor"</span>).height($(window).height());
+  $(<span class="hljs-string">"#nucleus_editor"</span>).css({maxHeight: $(window).height()});
+};
+
+Template.editor.config = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span>
+    NucleusEditor.initilize(editor);
+  };
+};
+
+Template.editor.setMode = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span>
+    <span class="hljs-keyword">var</span> selectedFile = Session.get(<span class="hljs-string">"nucleus_selected_file"</span>),
+        extRe = <span class="hljs-regexp">/(?:\.([^.]+))?$/</span>,
+        ext = extRe.exec(selectedFile)[<span class="hljs-number">1</span>];
+    NucleusEditor.setModeForExt(ext);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>events get unregistered on filechange</p></div></div><div class="code"><div class="wrapper">    NucleusEditor.registerAllEvents();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we need to re-assign the window height on document change otherwise editor falls back to height given in css.
+sharejs does dom overwrite may be</p></div></div><div class="code"><div class="wrapper">    Meteor.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      $(<span class="hljs-string">"#nucleus_editor"</span>).height($(window).height());
+    }, <span class="hljs-number">200</span>);
+  };
+};
+
+Template.editor.helpers({
+  docid: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> Session.get(<span class="hljs-string">'nucleus_selected_doc_id'</span>) || <span class="hljs-string">'scratch'</span>;
+  }
+});
+
+Template.nucleus_toolbar.helpers({
+  recievingEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app)</span> {</span>
+    <span class="hljs-keyword">if</span> (NucleusUser.me())
+      <span class="hljs-keyword">return</span>  NucleusUser.me().isSyncingEvents(app) ? <span class="hljs-string">'btn-dark-active'</span>: <span class="hljs-string">''</span>;
+  },
+  fa_recievingEvents: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app)</span> {</span>
+    <span class="hljs-keyword">if</span> (NucleusUser.me())
+      <span class="hljs-keyword">return</span>  NucleusUser.me().isSyncingEvents(app) ? <span class="hljs-string">'fa-chain'</span>: <span class="hljs-string">'fa-chain-broken'</span>;
+  }
+});
+
+Template.nucleus_toolbar.events({
+  <span class="hljs-string">"click #commit_changes"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    <span class="hljs-keyword">var</span> commitMessage = $(<span class="hljs-string">".sidebar-commit-message"</span>).val();
+    <span class="hljs-keyword">if</span>(!commitMessage) { FlashMessages.sendError(<span class="hljs-string">"Please Enter Commit Message"</span>); <span class="hljs-keyword">return</span>;}
+
+    Meteor.call(<span class="hljs-string">"nucleusCommitAllChanges"</span>, commitMessage, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span> (res === <span class="hljs-number">1</span>) FlashMessages.sendSuccess(<span class="hljs-string">"Changes Committed Successfully"</span>);
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (res === <span class="hljs-number">0</span>) FlashMessages.sendWarning(<span class="hljs-string">"Nothing to Commit"</span>);
+      <span class="hljs-keyword">else</span> FlashMessages.sendError(<span class="hljs-string">"Something Went Wrong with Git Commit"</span>);
+
+      $(<span class="hljs-string">".sidebar-commit-message"</span>).val(<span class="hljs-string">""</span>);
+    });
+  },
+  <span class="hljs-string">"click #push_changes"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    Meteor.call(<span class="hljs-string">"nucleusPushChanges"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span> (res === <span class="hljs-number">1</span>) FlashMessages.sendSuccess(<span class="hljs-string">"Changes Pushed Successfully"</span>);
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (res === <span class="hljs-number">0</span>) FlashMessages.sendWarning(<span class="hljs-string">"Nothing To Push"</span>);
+      <span class="hljs-keyword">else</span> FlashMessages.sendError(<span class="hljs-string">"Something Went Wrong With Git Push"</span>);
+    });
+  },
+  <span class="hljs-string">"click #pull_changes"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    Meteor.call(<span class="hljs-string">"nucleusPullChanges"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span> (res === <span class="hljs-number">1</span>) FlashMessages.sendSuccess(<span class="hljs-string">"New Changes Pulled Successfully"</span>);
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (res === <span class="hljs-number">0</span>) FlashMessages.sendWarning(<span class="hljs-string">"Already Up-to-date"</span>);
+      <span class="hljs-keyword">else</span> FlashMessages.sendError(<span class="hljs-string">"Something Went Wrong While Pulling Changes"</span>);
+    });
+  },
+  <span class="hljs-string">"click #mup_deploy"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    e.preventDefault();
+    <span class="hljs-keyword">var</span> should_mup_setup = <span class="hljs-literal">true</span>;
+    Meteor.call(<span class="hljs-string">"nucleusMupDeploy"</span>, should_mup_setup, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span> (res === <span class="hljs-number">1</span>) FlashMessages.sendSuccess(<span class="hljs-string">"Deployed Successfully"</span>);
+      <span class="hljs-keyword">else</span> FlashMessages.sendError(<span class="hljs-string">"Something Went Wrong While Deploying. Please make sure you have mup.json in project root and it has correct settings."</span>);
+    });
+  },
+  <span class="hljs-string">"click #sync_app_events"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    e.preventDefault();
+    NucleusUser.me().toggleEventSync(<span class="hljs-string">"app"</span>);
+  },
+  <span class="hljs-string">"click #sync_nucleus_events"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    e.preventDefault();
+    NucleusUser.me().toggleEventSync(<span class="hljs-string">"nucleus"</span>);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>autorun to set file for editing when user clicks on a file in sidebar</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> selectedFile = Session.get(<span class="hljs-string">"nucleus_selected_file"</span>);
+  <span class="hljs-keyword">if</span> (!selectedFile) <span class="hljs-keyword">return</span>;
+
+  NucleusClient.editFile(selectedFile);
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>autorun to update sidebar user state boxes and cursor position for different users</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> users = NucleusClient.getOnlineUsers().fetch();
+  NucleusClient.clearDeadUsers(users);
+
+  _.each(users, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+    NucleusSidebar.updateUserStatusBox(user);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>below function should execute only When NucleusEditor is initialized with ace instance</p></div></div><div class="code"><div class="wrapper">    NucleusEditor.getEditor() &amp;&amp; NucleusEditor.userAreOnSameFile(NucleusUser.me(), user) &amp;&amp; NucleusEditor.updateCursorForUser(user);
+  });
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>////////
+Chat //
+////////</p></div></div><div class="code"><div class="wrapper">Template.chatbox.events({
+  <span class="hljs-string">'keyup .chat_input'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    e.preventDefault();
+
+    <span class="hljs-keyword">var</span> msg = $(<span class="hljs-string">".chat_input"</span>).val().trim();
+    <span class="hljs-keyword">if</span> (msg === <span class="hljs-string">''</span>)
+      <span class="hljs-keyword">return</span>;
+
+    <span class="hljs-keyword">if</span> (e.keyCode === <span class="hljs-number">13</span>) {
+      NucleusUser.me().sendChat(msg);
+      $(<span class="hljs-string">".chat_input"</span>).val(<span class="hljs-string">""</span>);
+    }
+  }
+});
+<span class="hljs-keyword">var</span> chatCache = [];
+<span class="hljs-keyword">var</span> populateChatBox = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> {</span>
+  <span class="hljs-keyword">var</span> html = Blaze.toHTML(Blaze.With({nick: msg.sender_name, message: msg.message}, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">return</span> Template.chat_message; }));
+  <span class="hljs-keyword">var</span> elemReadyInterval = Meteor.setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> elem = document.getElementsByClassName(<span class="hljs-string">"chat_history"</span>)[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">if</span> (elem) {
+      $(<span class="hljs-string">".chat_history"</span>).append(html);
+      elem.scrollTop = elem.scrollHeight;
+      Meteor.clearInterval(elemReadyInterval);
+    }
+  }, <span class="hljs-number">300</span>);
+};
+
+Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">var</span> chatMessages = ChatMessages.find({}).fetch();
+  <span class="hljs-keyword">var</span> chatIds = _.map(chatMessages, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> {</span>
+    <span class="hljs-keyword">return</span> msg._id;
+  });
+
+  <span class="hljs-keyword">var</span> newMsgIds = _.difference(chatIds, chatCache);
+
+  _.each(newMsgIds, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span> {</span>
+    chatCache.push(id);
+  });
+
+  _.each(newMsgIds, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span> {</span>
+    <span class="hljs-keyword">var</span> msg = ChatMessages.findOne(id);
+    populateChatBox(msg);
+  });
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>////////////
+Chat End //
+////////////</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/////////////////////////
+START footer-control  //
+/////////////////////////</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> hideFooterPopup = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  $(<span class="hljs-string">".footer_controls .active-box"</span>).removeClass(<span class="hljs-string">"active-box"</span>);
+  $(<span class="hljs-string">".footer_popup"</span>).hide();
+  Session.set(<span class="hljs-string">"footer_controls_template"</span>, <span class="hljs-literal">null</span>);
+};
+
+Template.footer_controls.helpers({
+  footer_popup_template: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> template = Session.get(<span class="hljs-string">"footer_controls_template"</span>) || <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">if</span>(!template) {
+      hideFooterPopup();
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">return</span> Template[template];
+  },
+  activeBox: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(box)</span> {</span>
+    <span class="hljs-keyword">var</span> curTemplate = <span class="hljs-keyword">typeof</span> Session.get(<span class="hljs-string">"footer_controls_template"</span>) ===<span class="hljs-string">'undefined'</span> ? <span class="hljs-string">'chatbox'</span>: Session.get(<span class="hljs-string">"footer_controls_template"</span>);
+    <span class="hljs-keyword">return</span> box === curTemplate ? <span class="hljs-string">'active-box'</span> : <span class="hljs-string">''</span>;
+  }
+});
+
+
+Template.footer_controls.events({
+  <span class="hljs-string">"click .show_chatbox"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> curTemplate = Session.get(<span class="hljs-string">"footer_controls_template"</span>);
+    <span class="hljs-keyword">if</span>(curTemplate === <span class="hljs-string">'chatbox'</span> || <span class="hljs-keyword">typeof</span> curTemplate === <span class="hljs-string">'undefined'</span>) {
+      hideFooterPopup();
+      <span class="hljs-keyword">return</span>;
+    }
+
+    ChatMessages.find({}).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> {</span>
+      populateChatBox(msg);
+    });
+    $(<span class="hljs-string">".footer_popup"</span>).show();
+    Session.set(<span class="hljs-string">"footer_controls_template"</span>, <span class="hljs-string">"chatbox"</span>);
+  },
+  <span class="hljs-string">"click .show_buddy_list"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> curTemplate = Session.get(<span class="hljs-string">"footer_controls_template"</span>);
+    <span class="hljs-keyword">if</span>(curTemplate === <span class="hljs-string">'buddy_list'</span>) {
+      hideFooterPopup();
+      <span class="hljs-keyword">return</span>;
+    }
+
+    $(<span class="hljs-string">".footer_popup"</span>).show();
+    Session.set(<span class="hljs-string">"footer_controls_template"</span>, <span class="hljs-string">"buddy_list"</span>);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>///////////////////////
+END footer-control  //
+///////////////////////</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>////////////////////
+START BUDDY_LIST //
+////////////////////</p></div></div><div class="code"><div class="wrapper">Template.buddy_list.helpers({
+  buddies: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> users = NucleusClient.getOnlineUsers();
+    <span class="hljs-keyword">return</span> users.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+      <span class="hljs-keyword">var</span> filepath = user.getCurrentFilepath();
+
+      <span class="hljs-keyword">var</span> nick = user.getNick()+<span class="hljs-string">'('</span>+filepath+<span class="hljs-string">')'</span>;
+      nick = Utils.shortenText(nick, <span class="hljs-number">25</span>);
+
+      <span class="hljs-keyword">return</span> {
+        filepath: filepath,
+        nick: nick,
+        statusBoxStyle: <span class="hljs-string">"background: "</span>+user.getColor()
+      };
+    });
+  }
+});
+
+Template.buddy_list.events({
+  <span class="hljs-string">'click .buddy_detail'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+    e.preventDefault();
+    Session.set(<span class="hljs-string">"nucleus_selected_file"</span>, <span class="hljs-keyword">this</span>.filepath);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>//////////////////
+END BUDDY_LIST //
+//////////////////</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>////////////////
+START TOPBAR //
+////////////////</p></div></div><div class="code"><div class="wrapper">Template.nucleus_topbar.helpers({
+  file_dirty: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(btnType)</span> {</span>
+    <span class="hljs-keyword">if</span>(btnType === <span class="hljs-string">'save'</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">"btn-save"</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-string">"btn-discard"</span>;
+  }
+});
+
+Template.nucleus_topbar.events({
+  <span class="hljs-string">"click #nucleus_save_file"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    NucleusClient.saveSelectedFileToDisk();
+  },
+  <span class="hljs-string">"click #nucleus_discard_file"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> selectedFile = Session.get(<span class="hljs-string">"nucleus_selected_file"</span>);
+    <span class="hljs-keyword">if</span> (!selectedFile) <span class="hljs-keyword">return</span>;
+
+    console.log(<span class="hljs-string">"DISCARDING CHANGES"</span>);
+    NucleusClient.editFile(selectedFile, <span class="hljs-literal">true</span>);
+  },
+  <span class="hljs-string">"click #nucleus_show_terminal"</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> showTerminal = Session.get(<span class="hljs-string">"nucleus_show_terminal"</span>) || <span class="hljs-literal">false</span>;
+    Session.set(<span class="hljs-string">"nucleus_show_terminal"</span>, !showTerminal);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>//////////////
+END TOPBAR //
+//////////////</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>//////////////////
+START TERMINAL //
+//////////////////</p></div></div><div class="code"><div class="wrapper">Template.nucleus_terminal.helpers({
+  show_terminal: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> Session.get(<span class="hljs-string">"nucleus_show_terminal"</span>);
+  }
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>////////////////
+END TERMINAL //
+////////////////</p></div></div></div></div></body></html>

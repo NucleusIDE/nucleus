@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/form_inputs</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/form_inputs"><meta name="groc-project-path" content="client/eventsync/form_inputs.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/form_inputs.js">client/eventsync/form_inputs.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">InputTextEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+  <span class="hljs-keyword">var</span> EVENT_NAME  = <span class="hljs-string">"input:text"</span>,
+      APP_NAME = appName,
+      $document = NucleusClient.getWindow(APP_NAME).document,
+      utils = NucleusEventManager.getUtils(APP_NAME);
+
+  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    NucleusEventManager.addEvent($document.body, <span class="hljs-string">"keyup"</span>, <span class="hljs-keyword">this</span>.syncBrowserEvent());
+  };
+
+  <span class="hljs-keyword">this</span>.tearDown = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    NucleusEventManager.removeEvent($document.body, <span class="hljs-string">"keyup"</span>, <span class="hljs-keyword">this</span>.syncBrowserEvent());
+  };
+
+  <span class="hljs-keyword">this</span>.syncBrowserEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
+      <span class="hljs-keyword">var</span> elem = event.target || event.srcElement;
+
+      <span class="hljs-keyword">if</span> (NucleusEventManager.canEmitEvents) {
+        <span class="hljs-keyword">if</span> (elem.tagName === <span class="hljs-string">"INPUT"</span> || elem.tagName === <span class="hljs-string">"TEXTAREA"</span>) {
+          <span class="hljs-keyword">var</span> value = elem.value;
+
+          <span class="hljs-keyword">var</span> ev = <span class="hljs-keyword">new</span> NucleusEvent();
+          ev.setName(EVENT_NAME);
+          ev.setAppName(APP_NAME);
+          ev.type = <span class="hljs-string">'forms'</span>;
+          ev.setTarget(utils.getElementData(elem));
+          ev.setValue(value);
+          ev.broadcast();
+        }
+      } <span class="hljs-keyword">else</span> {
+        NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
+      }
+    };
+  };
+
+  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
+    <span class="hljs-keyword">var</span> data = event.getTarget();
+    NucleusEventManager.canEmitEvents = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">var</span> elem = utils.getSingleElement(data.tagName, data.index);
+    <span class="hljs-keyword">if</span> (elem) {
+      elem.value = event.value;
+      <span class="hljs-keyword">return</span> elem;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  };
+};</div></div></div></div></body></html>

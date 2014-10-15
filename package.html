@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en"><head><title>package</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="package"><meta name="groc-project-path" content="package.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/package.js">package.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">Package.describe({
+  summary: <span class="hljs-string">"Realtime collaborative development for the web"</span>,
+  version: <span class="hljs-string">"0.1.0"</span>,
+  name: <span class="hljs-string">"channikhabra:nucleus"</span>,
+  git: <span class="hljs-string">'https://github.com/channikhabra/meteor-nucleus'</span>
+});
+
+Npm.depends({
+  <span class="hljs-string">'fibers'</span>: <span class="hljs-string">'1.0.2'</span>
+});
+
+Package.on_use(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(api, where)</span> {</span>
+  api.versionsFrom(<span class="hljs-string">"METEOR@0.9.1"</span>);
+  api.use([<span class="hljs-string">'ui'</span>, <span class="hljs-string">'spacebars'</span>,<span class="hljs-string">'blaze'</span>, <span class="hljs-string">'jquery'</span>, <span class="hljs-string">'deps'</span>, <span class="hljs-string">'templating'</span>, <span class="hljs-string">'underscore'</span>, <span class="hljs-string">'session'</span>,
+           <span class="hljs-string">'mrt:moment@2.8.1'</span>,
+           <span class="hljs-string">'channikhabra:stupid-models@0.0.3'</span>,
+           <span class="hljs-string">'mizzao:sharejs@0.6.1'</span>,
+           <span class="hljs-string">'channikhabra:terminal@0.1.1'</span>,
+           <span class="hljs-string">'mrt:flash-messages@0.2.4'</span>]);
+
+  api.add_files([
+    <span class="hljs-string">'global_overrides.js'</span>
+  ], <span class="hljs-string">'client'</span>);
+
+  api.add_files([
+    <span class="hljs-string">'both/utilities.js'</span>,
+    <span class="hljs-string">'both/nucleus.js'</span>,
+    <span class="hljs-string">'chat/both/chat_model.js'</span>,
+    <span class="hljs-string">'both/models/nucleus_user.js'</span>,
+    <span class="hljs-string">'both/models/nucleus_event_model.js'</span>,
+  ], [<span class="hljs-string">'client'</span>, <span class="hljs-string">'server'</span>]);
+
+  api.add_files([
+    <span class="hljs-string">'client/lib/cookie.js'</span>,
+    <span class="hljs-string">'client/lib/jstree/jstree.js'</span>,
+    <span class="hljs-string">'client/lib/jstree/themes/default/style.css'</span>,
+
+    <span class="hljs-string">'client/lib/font-awesome/css/font-awesome.css'</span>,
+    <span class="hljs-string">'client/lib/hint.css'</span>,
+
+    <span class="hljs-string">'client/nucleus.js'</span>,
+    <span class="hljs-string">'client/nucleus_editor.js'</span>,
+    <span class="hljs-string">'client/nucleus_sidebar.js'</span>,
+
+    <span class="hljs-string">'client/template.css'</span>,
+    <span class="hljs-string">'client/template.html'</span>,
+    <span class="hljs-string">'client/template.js'</span>,
+
+    <span class="hljs-string">'client/eventsync/nucleus_event_manager.js'</span>,
+    <span class="hljs-string">'client/eventsync/utils.js'</span>,
+    <span class="hljs-string">'client/eventsync/clicks.js'</span>,
+    <span class="hljs-string">'client/eventsync/scroll.js'</span>,
+
+    <span class="hljs-string">'client/eventsync/forms.js'</span>,
+    <span class="hljs-string">'client/eventsync/form_inputs.js'</span>,
+    <span class="hljs-string">'client/eventsync/form_toggles.js'</span>,
+    <span class="hljs-string">'client/eventsync/form_submit.js'</span>,
+
+    <span class="hljs-string">'client/eventsync/location.js'</span>,
+    <span class="hljs-string">'client/eventsync/login.js'</span>,
+
+    <span class="hljs-string">'chat/client/chat.js'</span>
+  ], [<span class="hljs-string">'client'</span>]);
+
+  api.add_files([
+    <span class="hljs-string">'client/lib/jstree/themes/default/32px.png'</span>,
+    <span class="hljs-string">'client/lib/jstree/themes/default/40px.png'</span>,
+    <span class="hljs-string">'client/lib/jstree/themes/default/throbber.gif'</span>,
+
+    <span class="hljs-string">'client/lib/font-awesome/fonts/FontAwesome.otf'</span>,
+    <span class="hljs-string">'client/lib/font-awesome/fonts/fontawesome-webfont.woff'</span>,
+    <span class="hljs-string">'client/lib/font-awesome/fonts/fontawesome-webfont.ttf'</span>,
+    <span class="hljs-string">'client/lib/font-awesome/fonts/fontawesome-webfont.svg'</span>,
+    <span class="hljs-string">'client/lib/font-awesome/fonts/fontawesome-webfont.eot'</span>,
+  ], <span class="hljs-string">'client'</span>, {isAsset: <span class="hljs-literal">true</span>});
+
+  api.add_files([
+    <span class="hljs-string">'server/nucleus.js'</span>,
+    <span class="hljs-string">'server/methods.js'</span>,
+    <span class="hljs-string">'chat/server/chat.js'</span>,
+  ], [<span class="hljs-string">'server'</span>]);
+
+  api.export &amp;&amp; api.export([<span class="hljs-string">'NucleusUser'</span>], [<span class="hljs-string">'server'</span>, <span class="hljs-string">'client'</span>]);
+  api.export &amp;&amp; api.export([<span class="hljs-string">'Nucleus'</span>], [<span class="hljs-string">'server'</span>]);
+  api.export &amp;&amp; api.export([<span class="hljs-string">'NucleusClient'</span>, <span class="hljs-string">'NucleusEditor'</span>, <span class="hljs-string">'NucleusEventManager'</span>], [<span class="hljs-string">'client'</span>]);
+});</div></div></div></div></body></html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="en"><head><title>structure</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="structure"><meta name="groc-project-path" content="structure.md"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/structure.md">structure.md</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="code-structure">Code structure</h1>
+<p>This is very initial version of nucleus and code structure might need refactoring. Till now, objective was to quickly get to the working-version as soon as possible.</p>
+<p>Note that we use similar app structure as regular meteor apps in nucleus package, but meteor doesn&#39;t interact with packages the same way it does with the apps. The directory structure by itself has no meaning to the app, and which files are loaded where and in which order is marked in <code>package.js</code> file.  Code is broadly divided into three directories:</p>
+<ul>
+<li><p><strong>global_overrides.js</strong><br>This code must be executed prior to any other on client. It contains (as of yet) the overrides for meteor&#39;s core methods (<code>Collection.insert</code>)  </p>
+</li>
+<li><p><strong>client</strong><br>This directory contains code that should be used on client side.</p>
+<ul>
+<li><strong>eventsync</strong><br>This directory contains code which does the event sync. Most of this code is ported from <a href="https://github.com/shakyShane/browser-sync-client">browser-sync-client</a><ul>
+<li><strong>nucleus_event_manager.js</strong><br>Creates <code>NucleusEventManager</code> which is the centralized place to handle events.</li>
+<li><strong>utils.js</strong><br>Utilities required for managing events. Ported from <a href="https://github.com/shakyShane/browser-sync-client">browser-sync-client</a></li>
+<li><strong>clicks.js</strong><br>Sync click events. </li>
+<li><strong>form_submit.js</strong><br>Sync form submit.</li>
+<li><strong>form_inputs.js</strong><br>Sync form input events.</li>
+<li><strong>form_toggles.js</strong><br>Sync form toggle events i.e check-box, radio button and select toggle.</li>
+<li><strong>forms.js</strong><br>Centralized place for all form events.</li>
+<li><strong>login.js</strong><br>Sync login and logout events.</li>
+<li><strong>scroll.js</strong>
+Sync scroll events.</li>
+<li><strong>location.js</strong><br>Sync route change.      </li>
+</ul>
+</li>
+<li><strong>lib</strong><br>External libraries</li>
+<li>nucleus.js<br>Here we define <code>NucleusClient</code> which has all the methods required for interaction with <code>Nuclues</code> on the client.</li>
+<li>nucleus_editor.js<br>It is an abstraction over the sharejs-ace editor for centralizing interaction with the editor. </li>
+<li>nucleus_sidebar.js<br>Centralizing the control and interaction with the sidebar. It mostly contains code for handling the file-tree.</li>
+<li>template.css
+Styles for templates.</li>
+<li>template.html
+All the templates are in single file for now. </li>
+<li>template.js<br>All the helpers and events on the templates. It also contains the autoruns for updating the currently editing file, user status boxes etc. Of course these need to be put in their own file or something.</li>
+</ul>
+</li>
+<li><strong>server</strong><br>Code to be used on server.<ul>
+<li>nucleus.js<br>It defines <code>Nucleus</code> on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file contents for editing etc.</li>
+<li>permissions.js<br>Most users have <code>insecure</code> package removed, so we have to provide <code>allow</code> rules for collections we explicitly create.</li>
+<li>methods.js<br>In meteor, methods are the easiest way of interaction b/w client and server. Most of these methods are simply proxies for functions in <code>Nucleus</code> and which are not should be moved to <code>Nucleus</code> on next refactoring.</li>
+</ul>
+</li>
+<li><p><strong>both</strong><br>Code to be used both on server and client.</p>
+<ul>
+<li>models<br>Here we define the collections and models which we need for working with nucleus. We use <code>channikhabra:stupid-models</code> package for creating models.<ul>
+<li>nucleus_event_model.js<br>This models/collection is for storing/broadcasting events to all the connected clients. </li>
+<li>nucleus_user.js<br>We don&#39;t user meteor&#39;s users for identifying people on nucleus. We have our own simplistic version of users which don&#39;t need signup etc. Users are identified with their nicks and are destroyed as soon as they close the window.</li>
+</ul>
+</li>
+<li>collections.js<br>This file creates collections for the mongo collections which are not created within the Nucleus. These are mainly sharejs <code>docs</code> and <code>ops</code> collections, and a <code>nucleus_documents</code> collection we create for keeping track of docs in <code>docs</code>.</li>
+<li>utilities.js<br>Utilities which can be used on both client and server.</li>
+</ul>
+</li>
+<li><p><strong>chat</strong><br>This directory contains the implementation of simplistic chat feature we use in nucleus. This is to be moved to its own package, but it relies on <code>NucleusUser</code> so it is sitting in here. When we move nucleus to better user system (possibly login with github), this shall be moved to its own package. </p>
+</li>
+<li><p><strong>docs</strong><br>Documentation</p>
+</li>
+</ul></div></div></div></div></body></html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><title>Read Me</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="index"><meta name="groc-project-path" content="README.md"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/README.md">README.md</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleus">Nucleus</h1>
+<pre><code class="lang-sh">chmod ugo=+w /www/meteor</code></pre>
+<p>Nucleus is meant to be a bigger project, this package here is first attempt to implementing the meteor-only version of Nucleus. In this file all the references to <strong>Nucleus</strong> means this meteor-only version of it.  </p>
+<h2 id="vision">Vision</h2>
+<p>With Nucleus, we are aiming to make the web writable. Web for most parts is free for reading to anyone, what we want to achieve it is make it writable as well. Nucleus aims to allow making web apps writable by masses.</p>
+<h2 id="what-it-does">What it does?</h2>
+<p>Nucleus enables meteor apps to provide an interface to allow changing the source code of the app from within the web browser while providing modern tools for collaborative development.</p>
+<h2 id="what-it-offers">What it offers?</h2>
+<p>With nucleus you get controls to say have a <strong>Make me with Nucleus</strong> badge (like <em>Fork me on Github</em>) clicking on which users get a web based editor which has all the code for the web app. The code for the web app is obtained from git url which is provided in the configuration by the site owner.<br>This editor has following tools:  </p>
+<ul>
+<li><strong>Realtime Development</strong><br>Multiple developers can edit in the same session and work in a Google docs like collaborative environment.  </li>
+<li><strong>Event Sync</strong><br>Nucleus allow developers to sync events with each other. Developers who enable this option in their Nucleus sessions get events from other developers (who has this option enabled) played in their browsers. That means when one developer clicks a button in their browser, it gets clicked in other developers&#39; browsers too, same with form filling, route changing etc. </li>
+<li><strong>Buddy follow</strong><br>Developers can follow other developers in Nucleus editor and see who is where in the app and what they are doing. This feature is great for those who are new to a project and want to see how the old developers working with the code etc. This feature can also be great for new developers to learn by seeing the pros working. </li>
+<li><strong>Chat</strong><br>Of course a simplistic chat feature is present.</li>
+<li><strong>Web based terminal</strong><br>Nucleus uses <code>channikhabra:terminal</code> package for a simple web based terminal to allow sending commands to the web server hosting your nucleus enabled app.</li>
+<li><strong>Git controls</strong><br>Nucleus also has simple git controls for you to make commits and push changes to your github which you can then pull back on your HD to work locally.</li>
+<li><strong>One click deploy</strong><br>Nucleus uses <code>meteor-up</code> to allow one-click production deploy so you can deploy from within the Nucleus.</li>
+</ul>
+<h2 id="warning">WARNING</h2>
+<p>Nucleus is in very early stage. I am trying to keep it modular dividing it in multiple packages, and almost all of them are in their early stages. We haven&#39;t even started testing it yet. You are of course free to play with it, try locally or whatever. I have given you my warning, now go fuck with it :)</p>
+<h2 id="how-to-use">How to use?</h2>
+<h3 id="install">Install</h3>
+<pre><code class="lang-sh">meteor add channikhabra:nucleus</code></pre>
+<h3 id="configuration">Configuration</h3>
+<p>Nucleus need be configured on both client and server.</p>
+<h3 id="client-side-configuration">Client side configuration</h3>
+<pre><code class="lang-javascript">NucleusClient.configure({
+  clientDir: <span class="hljs-string">'client'</span>, 
+  nucleusUrl: <span class="hljs-string">'/nucleus'</span>
+});</code></pre>
+<p><strong>clientDir</strong>: It is preferred to keep your client code in &quot;client&quot; dir. We have planned a feature to live update client side code when developing nucleus. It&#39;s not implemented yet though.<br><strong>nucleusUrl</strong>: Using iron-router is a pre-requisite for using nucleus for now. This is the url where nucleus editor window will load. It&#39;s possible and easy to not have this requirement and simply open a popup with Nucleus,  </p>
+<h4 id="opening-the-nucleus-window">Opening the nucleus window</h4>
+<p><code>nucleusUrl</code> setting is provided because at the moment we don&#39;t have any other authentication mechanism. I thought this way we can use iron-router&#39;s for prohibiting unwanted users from accessing nucleus. But you are not supposed to be using <code>nucleus</code> route directly. To open the nucleus window, have a badge or button or anything, and no user interacting, call <code>NucleusClient.initialize()</code>.</p>
+<h3 id="server-side-configuration">Server side configuration</h3>
+<pre><code class="lang-javascript">    Nucleus.configure({
+        project: <span class="hljs-string">'test'</span>,
+        git: <span class="hljs-string">'/Users/channi/Desktop/nucleus-demo/.git'</span>
+    });
+    Nucleus.initialize();</code></pre>
+<ul>
+<li><strong>project</strong> : This is the name of the project under which this app will be cloned in <code>~/.nucleus/</code> directory</li>
+<li><strong>git</strong>: This is the remote git url of your project. This url is cloned and source code is provided in nucleus editor for editing. Note that this same url is used to push changes back, so it&#39;s advised to put your auth creds here as for now nucleus doesn&#39;t have option to have different git creds for different users. We have login with github planned for a future phase, so this is a temporary hitch. </li>
+</ul></div></div></div></div></body></html>

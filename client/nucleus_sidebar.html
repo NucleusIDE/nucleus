@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="en"><head><title>client/nucleus_sidebar</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/nucleus_sidebar"><meta name="groc-project-path" content="client/nucleus_sidebar.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/nucleus_sidebar.js">client/nucleus_sidebar.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">NucleusSidebar = {
+    redrawJsTree: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elemId)</span> {</span>
+        $(<span class="hljs-string">"#"</span>+elemId).html(NucleusClient.getJstreeHTML());
+        NucleusClient.jsTree.destroy(<span class="hljs-literal">true</span>);
+
+        <span class="hljs-keyword">var</span> treeInterval = Meteor.setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            NucleusClient.jsTree = NucleusSidebar.initializeJsTree(elemId);
+
+            <span class="hljs-keyword">if</span>(<span class="hljs-built_in">Object</span>.getPrototypeOf(NucleusClient.jsTree) !== <span class="hljs-built_in">Object</span>.getPrototypeOf($(document))) {
+                Meteor.clearInterval(treeInterval);
+            }
+        }, <span class="hljs-number">300</span>);
+
+    },
+    initializeJsTree: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elemId)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>set events on jstree</p></div></div><div class="code"><div class="wrapper">        $(<span class="hljs-string">'#'</span>+elemId).on(<span class="hljs-string">"select_node.jstree"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e,data)</span> {</span>
+            <span class="hljs-keyword">if</span>(document.getElementById(data.node.id).getAttribute(<span class="hljs-string">"data-type"</span>) === <span class="hljs-string">'folder'</span>) {
+                <span class="hljs-keyword">if</span>(data.node.state.opened)
+                    NucleusClient.jsTree.close_node(data.node);
+                <span class="hljs-keyword">else</span>
+                    NucleusClient.jsTree.open_node(data.node);
+            }
+            <span class="hljs-keyword">if</span>(document.getElementById(data.node.id).getAttribute(<span class="hljs-string">"data-type"</span>) === <span class="hljs-string">'file'</span>) {
+                Session.set(<span class="hljs-string">"nucleus_selected_file"</span>, data.selected[<span class="hljs-number">0</span>]);
+            }
+        });
+
+        <span class="hljs-keyword">return</span> $(<span class="hljs-string">'#'</span>+elemId).jstree({
+            <span class="hljs-string">"plugins"</span> : [ <span class="hljs-string">"themes"</span>, <span class="hljs-string">"contextmenu"</span>, <span class="hljs-string">"sort"</span>],
+            <span class="hljs-string">'core'</span> : {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>&#39;data&#39; : NucleusClient.getJstreeJSON(), //this doesn&#39;t work when jstree.js is kept in meteor package</p></div></div><div class="code"><div class="wrapper">                <span class="hljs-string">'check_callback'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(operation, node, node_parent, newname, more)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>operation can be &#39;create_node&#39;, &#39;rename_node&#39;, &#39;delete_node&#39;, &#39;move_node&#39; or &#39;copy_node&#39;
+in case of &#39;rename_node&#39; node_position is filled with the new node name</p></div></div><div class="code"><div class="wrapper">                    <span class="hljs-keyword">if</span> (operation === <span class="hljs-string">'rename_node'</span>) {
+                        <span class="hljs-keyword">var</span> oldpath = node.id;
+                        <span class="hljs-keyword">var</span> path = node.id.split(<span class="hljs-string">"/"</span>);
+                        path.splice(-<span class="hljs-number">1</span>);
+                        <span class="hljs-keyword">var</span> newpath = path.join(<span class="hljs-string">"/"</span>)+<span class="hljs-string">"/"</span>+newname;
+
+                        console.log(<span class="hljs-string">"OLD PATH"</span>, oldpath);
+                        console.log(<span class="hljs-string">"NEW PATH"</span>, newpath);
+
+                        NucleusClient.renameFile(oldpath, newpath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+                            <span class="hljs-keyword">if</span> (err) {
+                                FlashMessages.sendError(<span class="hljs-string">"Failed to rename file. "</span> + err);
+                                <span class="hljs-keyword">return</span>;
+                            }
+                            FlashMessages.sendSuccess(<span class="hljs-string">"File Renamed successfully."</span>);
+                            NucleusClient.jsTree.set_id(node, newpath);
+                        });
+                    }
+
+                    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                },
+                <span class="hljs-string">'themes'</span>: {
+                    icons: <span class="hljs-literal">false</span>,
+                    stripes: <span class="hljs-literal">false</span>,
+                    responsive: <span class="hljs-literal">true</span>,
+                    dots: <span class="hljs-literal">false</span>
+                }
+            },
+            sort: <span class="hljs-number">1</span>,
+            contextmenu: {
+                select_node: <span class="hljs-literal">false</span>,
+                items : {
+                    <span class="hljs-string">"create"</span> : {
+                        <span class="hljs-string">"separator_before"</span>	: <span class="hljs-literal">false</span>,
+                        <span class="hljs-string">"separator_after"</span>	: <span class="hljs-literal">true</span>,
+                        <span class="hljs-string">"_disabled"</span>			: <span class="hljs-literal">false</span>, <span class="hljs-comment">//(this.check("create_node", data.reference, {}, "last")),</span>
+                        <span class="hljs-string">"label"</span>				: <span class="hljs-string">"New"</span>,
+                        <span class="hljs-string">"submenu"</span> : {
+                            <span class="hljs-string">"file"</span> : {
+                                <span class="hljs-string">"separator_before"</span>	: <span class="hljs-literal">false</span>,
+                                <span class="hljs-string">"separator_after"</span>	: <span class="hljs-literal">false</span>,
+                                <span class="hljs-string">"label"</span>				: <span class="hljs-string">"File"</span>,
+                                <span class="hljs-string">"action"</span>			: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> {</span>
+                                    <span class="hljs-keyword">var</span> inst = $.jstree.reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                    <span class="hljs-keyword">var</span> isRootNode = (obj.parents.length === <span class="hljs-number">1</span>);
+
+                                    console.log(<span class="hljs-string">"OBJ"</span>, obj);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>create a node as a child or sibling</p></div></div><div class="code"><div class="wrapper">                                    <span class="hljs-keyword">var</span> parentId = inst.get_parent(obj);
+                                    <span class="hljs-keyword">var</span> parent = inst.get_node(parentId);
+
+                                    <span class="hljs-keyword">if</span>(document.getElementById(obj.id).getAttribute(<span class="hljs-string">'data-type'</span>) === <span class="hljs-string">'folder'</span>) {
+                                        parent = obj;
+                                        parentId = obj.id;
+                                    }
+
+                                    <span class="hljs-keyword">var</span> newNodeId = inst.create_node(parent, {}, <span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(new_node)</span> {</span>});
+                                    <span class="hljs-keyword">var</span> newNode = inst.get_node(newNodeId);
+                                    <span class="hljs-keyword">var</span> filename = <span class="hljs-string">"untitled"</span>;
+                                    <span class="hljs-keyword">var</span> newFilepath = parentId === <span class="hljs-string">"#"</span> ? filename : parentId + <span class="hljs-string">"/"</span> + filename;
+
+                                    NucleusClient.createNewFile(newFilepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+                                        <span class="hljs-keyword">if</span>(err) {<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"FILE CREATION ERROR"</span>, err);}
+                                        console.log(<span class="hljs-string">"NEW FILE NAME IS"</span>, res);
+                                        <span class="hljs-keyword">var</span> newFilename = res.split(<span class="hljs-string">"/"</span>)[res.split(<span class="hljs-string">"/"</span>).length - <span class="hljs-number">1</span>];
+                                        inst.set_text(newNode, newFilename);
+                                        inst.set_id(newNode, res);
+                                        document.getElementById(res).setAttribute(<span class="hljs-string">"data-type"</span>, <span class="hljs-string">"file"</span>);
+                                    });
+                                }
+                            },
+                            <span class="hljs-string">"folder"</span> : {
+                                <span class="hljs-string">"separator_before"</span>	: <span class="hljs-literal">false</span>,
+                                <span class="hljs-string">"icon"</span>				: <span class="hljs-literal">false</span>,
+                                <span class="hljs-string">"separator_after"</span>	: <span class="hljs-literal">false</span>,
+                                <span class="hljs-string">"label"</span>				: <span class="hljs-string">"Folder"</span>,
+                                <span class="hljs-string">"action"</span>			: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> {</span>
+                                    <span class="hljs-keyword">var</span> inst = $.jstree.reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                    <span class="hljs-keyword">var</span> isRootNode = (obj.parents.length === <span class="hljs-number">1</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>create a node as a child or sibling</p></div></div><div class="code"><div class="wrapper">                                    <span class="hljs-keyword">var</span> parentId = inst.get_parent(obj);
+                                    <span class="hljs-keyword">var</span> parent = inst.get_node(parentId);
+
+                                    <span class="hljs-keyword">if</span>(document.getElementById(obj.id).getAttribute(<span class="hljs-string">'data-type'</span>) === <span class="hljs-string">'folder'</span>) {
+                                        parent = obj;
+                                        parentId = obj.id;
+                                    }
+
+                                    <span class="hljs-keyword">var</span> newNodeId = inst.create_node(parent, {}, <span class="hljs-number">1</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(new_node)</span> {</span>});
+                                    <span class="hljs-keyword">var</span> newNode = inst.get_node(newNodeId);
+                                    <span class="hljs-keyword">var</span> filename = <span class="hljs-string">"untitled_folder"</span>;
+                                    <span class="hljs-keyword">var</span> newFilepath = parentId === <span class="hljs-string">"#"</span> ? filename : parentId + <span class="hljs-string">"/"</span> + filename;
+
+                                    NucleusClient.createNewFolder(newFilepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+                                        <span class="hljs-keyword">if</span>(err) {<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"FILE CREATION ERROR"</span>, err);}
+                                        console.log(<span class="hljs-string">"NEW FOLDER NAME IS"</span>, res);
+                                        <span class="hljs-keyword">var</span> newFilename = res.split(<span class="hljs-string">"/"</span>)[res.split(<span class="hljs-string">"/"</span>).length - <span class="hljs-number">1</span>];
+                                        inst.set_text(newNode, newFilename);
+                                        inst.set_id(newNode, res);
+                                        document.getElementById(res).setAttribute(<span class="hljs-string">"data-type"</span>, <span class="hljs-string">"folder"</span>);
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    <span class="hljs-string">"rename"</span> : {
+                        <span class="hljs-string">"separator_before"</span>	: <span class="hljs-literal">false</span>,
+                        <span class="hljs-string">"separator_after"</span>	: <span class="hljs-literal">false</span>,
+                        <span class="hljs-string">"_disabled"</span>			: <span class="hljs-literal">false</span>, <span class="hljs-comment">//(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),</span>
+                        <span class="hljs-string">"label"</span>				: <span class="hljs-string">"Rename"</span>,
+                        <span class="hljs-string">"action"</span>			: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> {</span>
+                            <span class="hljs-keyword">var</span> inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            inst.edit(obj);
+                        }
+                    },
+                    <span class="hljs-string">"remove"</span> : {
+                        <span class="hljs-string">"separator_before"</span>	: <span class="hljs-literal">false</span>,
+                        <span class="hljs-string">"icon"</span>				: <span class="hljs-literal">false</span>,
+                        <span class="hljs-string">"separator_after"</span>	: <span class="hljs-literal">false</span>,
+                        <span class="hljs-string">"_disabled"</span>			: <span class="hljs-literal">false</span>, <span class="hljs-comment">//(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),</span>
+                        <span class="hljs-string">"label"</span>				: <span class="hljs-string">"Delete"</span>,
+                        <span class="hljs-string">"action"</span>			: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> {</span>
+                            <span class="hljs-keyword">var</span> inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            <span class="hljs-keyword">var</span> filepath = obj.id;
+                            NucleusClient.deleteFile(filepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+                                <span class="hljs-keyword">if</span>(err) { FlashMessages.sendError(err); <span class="hljs-keyword">return</span>; }
+
+                                inst.delete_node(obj);
+
+                                <span class="hljs-keyword">var</span> filename = filepath.split(<span class="hljs-string">"/"</span>)[filepath.split(<span class="hljs-string">"/"</span>).length - <span class="hljs-number">1</span>];
+                                FlashMessages.sendSuccess(filename + <span class="hljs-string">" Successfully Deleted."</span>);
+                            });
+                        }
+                    },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>&quot;ccp&quot; : {
+    &quot;separator_before&quot;    : true,
+    &quot;icon&quot;                : false,
+    &quot;separator_after&quot;    : false,
+    &quot;label&quot;                : &quot;Edit&quot;,
+    &quot;action&quot;            : false,
+    &quot;submenu&quot; : {
+        &quot;cut&quot; : {
+            &quot;separator_before&quot;    : false,
+            &quot;separator_after&quot;    : false,
+            &quot;label&quot;                : &quot;Cut&quot;,
+            &quot;action&quot;            : function (data) {
+                var inst = $.jstree.reference(data.reference),
+                    obj = inst.get_node(data.reference);
+                if(inst.is_selected(obj)) {
+                    inst.cut(inst.get_selected());
+                }
+                else {
+                    inst.cut(obj);
+                }
+            }
+        },
+        &quot;copy&quot; : {
+            &quot;separator_before&quot;    : false,
+            &quot;icon&quot;                : false,
+            &quot;separator_after&quot;    : false,
+            &quot;label&quot;                : &quot;Copy&quot;,
+            &quot;action&quot;            : function (data) {
+                var inst = $.jstree.reference(data.reference),
+                    obj = inst.get_node(data.reference);
+                if(inst.is_selected(obj)) {
+                    inst.copy(inst.get_selected());
+                }
+                else {
+                    inst.copy(obj);
+                }
+            }
+        },
+        &quot;paste&quot; : {
+            &quot;separator_before&quot;    : false,
+            &quot;icon&quot;                : false,
+            &quot;_disabled&quot;            : function (data) {
+                return !$.jstree.reference(data.reference).can_paste();
+            },
+            &quot;separator_after&quot;    : false,
+            &quot;label&quot;                : &quot;Paste&quot;,
+            &quot;action&quot;            : function (data) {
+                var inst = $.jstree.reference(data.reference),
+                    obj = inst.get_node(data.reference);
+                inst.paste(obj);
+            }
+        }
+    }</p></div></div><div class="code"><div class="wrapper">                    <span class="hljs-comment">// </span>
+                }
+            },
+            <span class="hljs-string">'multiple'</span>: <span class="hljs-literal">false</span>
+        });
+    },
+    updateUserStatusBox: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+        <span class="hljs-keyword">var</span> $currNickNode = $(<span class="hljs-string">"[data-user-nick="</span>+user.getNick()+<span class="hljs-string">"]"</span>),
+            currentFile = $currNickNode.parent().attr(<span class="hljs-string">"id"</span>);
+
+        <span class="hljs-keyword">if</span> (user &amp;&amp; user.getCurrentFilepath() === currentFile) {
+            <span class="hljs-keyword">return</span>;
+        } <span class="hljs-keyword">else</span> {
+            $currNickNode.remove();
+        }
+
+        <span class="hljs-keyword">var</span> interval = Meteor.setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            <span class="hljs-keyword">var</span> li = document.getElementById(user.getCurrentFilepath());
+            <span class="hljs-keyword">if</span> (li) {
+                Meteor.clearInterval(interval);
+                <span class="hljs-keyword">var</span> i = document.createElement(<span class="hljs-string">"i"</span>);
+                i.className = <span class="hljs-string">"user-status-box hint--left"</span>;
+                i.style.cssText = <span class="hljs-string">"background:"</span> + user.getColor();
+                i.setAttribute(<span class="hljs-string">'data-user-nick'</span>, user.getNick());
+                i.setAttribute(<span class="hljs-string">'data-hint'</span>, user.getNick());
+                li.appendChild(i);
+                i.style.opacity = <span class="hljs-number">0</span>;
+                window.getComputedStyle(i).opacity; <span class="hljs-comment">//this is so the transition b/w opacity of i work</span>
+                i.style.opacity = <span class="hljs-number">1</span>;
+            }
+        },<span class="hljs-number">100</span>);
+    }
+};</div></div></div></div></body></html>

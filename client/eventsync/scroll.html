@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/scroll</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/scroll"><meta name="groc-project-path" content="client/eventsync/scroll.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/scroll.js">client/eventsync/scroll.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">Scroll = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+  <span class="hljs-keyword">var</span> EVENT_NAME = <span class="hljs-string">"scroll"</span>,
+      APP_NAME = appName,
+      $window = NucleusClient.getWindow(APP_NAME),
+      utils = NucleusEventManager.getUtils(APP_NAME);
+
+  <span class="hljs-keyword">this</span>.$window = $window;
+
+  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    NucleusEventManager.addEvent($window, EVENT_NAME, <span class="hljs-keyword">this</span>.syncEvent());
+
+    console.log(<span class="hljs-string">"INITIALIZING SCROLL FOR"</span>, APP_NAME);
+    <span class="hljs-keyword">if</span> (APP_NAME === <span class="hljs-string">'nucleus'</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>in case of nuclues, we set ace events instead of window events
+we need to use below api because events on ace are undone when document changes. NucleusEditor handles that</p></div></div><div class="code"><div class="wrapper">      NucleusEditor.addEvent(<span class="hljs-string">"changeScrollTop"</span>, <span class="hljs-keyword">this</span>.syncNucleusScroll);
+      NucleusEditor.addEvent(<span class="hljs-string">"changeScrollLeft"</span>, <span class="hljs-keyword">this</span>.syncNucleusScroll);
+    }
+  };
+
+  <span class="hljs-keyword">this</span>.tearDown = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    NucleusEventManager.removeEvent($window, EVENT_NAME, <span class="hljs-keyword">this</span>.syncEvent());</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>bs.socket.on(EVENT_NAME, exports.socketEvent());</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (APP_NAME === <span class="hljs-string">'nucleus'</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>in case of nuclues, we set ace events instead of window events</p></div></div><div class="code"><div class="wrapper">      NucleusEditor.editor.session.off(<span class="hljs-string">"changeScrollLeft"</span>, <span class="hljs-keyword">this</span>.syncNucleusScroll);
+      NucleusEditor.editor.session.off(<span class="hljs-string">"changeScrollTop"</span>, <span class="hljs-keyword">this</span>.syncNucleusScroll);
+
+      NucleusEditor.removeEvent(<span class="hljs-string">"changeScrollLeft"</span>, <span class="hljs-keyword">this</span>.syncNucleusScroll);
+      NucleusEditor.removeEvent(<span class="hljs-string">"changeScrollTop"</span>, <span class="hljs-keyword">this</span>.syncNucleusScroll);
+    }
+  };
+
+  <span class="hljs-keyword">this</span>.syncEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> canEmit = NucleusEventManager.canEmitEvents;
+
+      <span class="hljs-keyword">if</span>(canEmit) {
+        <span class="hljs-keyword">var</span> ev = <span class="hljs-keyword">new</span> NucleusEvent();
+        ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
+        ev.position = <span class="hljs-keyword">this</span>.getScrollPosition();
+        ev.broadcast();
+      } <span class="hljs-keyword">else</span>
+        NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
+    }.bind(<span class="hljs-keyword">this</span>);
+  };
+
+  <span class="hljs-keyword">this</span>.syncNucleusScroll =  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    console.log(<span class="hljs-string">"NUCLEUS SCROLL CHANGED"</span>);
+    <span class="hljs-keyword">var</span> canEmit = NucleusEventManager.canEmitEvents;
+
+    <span class="hljs-keyword">if</span>(canEmit) {
+      <span class="hljs-keyword">var</span> ev = <span class="hljs-keyword">new</span> NucleusEvent();
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.type = <span class="hljs-string">"editorScroll"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>in case of nucleus, we just sync scroll in the editor window with API provided by ace</p></div></div><div class="code"><div class="wrapper">      ev.position = {
+        x: NucleusEditor.editor.session.getScrollLeft(),
+        y: NucleusEditor.editor.session.getScrollTop()
+      };
+
+      ev.broadcast();
+    } <span class="hljs-keyword">else</span>
+      NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
+  };
+
+  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> {</span>
+    NucleusEventManager.canEmitEvents = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">if</span>(data.getAppName() === <span class="hljs-string">"nucleus"</span> &amp;&amp; data.type === <span class="hljs-string">"editorScroll"</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>in case of nucleus, we just sync scroll in the editor window with API provided by ace</p></div></div><div class="code"><div class="wrapper">      NucleusEditor.editor.session.setScrollLeft(data.position.x);
+      NucleusEditor.editor.session.setScrollTop(data.position.y);
+      <span class="hljs-keyword">return</span>;
+    }
+
+    <span class="hljs-keyword">var</span> scrollSpace = utils.getScrollSpace();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>I couldn&#39;t understand the meaning of below lines for code from browser-sync
+if (bs.opts &amp;&amp; bs.opts.scrollProportionally) {</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> $window.scrollTo(<span class="hljs-number">0</span>, scrollSpace.y * data.position.proportional); <span class="hljs-comment">// % of y axis of scroll to px</span>
+    <span class="hljs-comment">//  else {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>return $window.scrollTo(0, data.position.raw);</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-comment">// </span>
+  };
+
+  <span class="hljs-keyword">this</span>.getScrollPosition = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> pos = utils.getBrowserScrollPosition();
+    <span class="hljs-keyword">return</span> {
+      raw: pos, <span class="hljs-comment">// Get px of y axis of scroll</span>
+      proportional: <span class="hljs-keyword">this</span>.getScrollTopPercentage(pos) <span class="hljs-comment">// Get % of y axis of scroll</span>
+    };
+  };
+
+  <span class="hljs-keyword">this</span>.getScrollPercentage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(scrollSpace, scrollPosition)</span> {</span>
+    <span class="hljs-keyword">var</span> x = scrollPosition.x / scrollSpace.x;
+    <span class="hljs-keyword">var</span> y = scrollPosition.y / scrollSpace.y;
+
+    <span class="hljs-keyword">return</span> {
+      x: x || <span class="hljs-number">0</span>,
+      y: y
+    };
+  };
+
+  <span class="hljs-keyword">this</span>.getScrollTopPercentage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(pos)</span> {</span>
+    <span class="hljs-keyword">var</span> scrollSpace = utils.getScrollSpace();
+    <span class="hljs-keyword">var</span> percentage  = <span class="hljs-keyword">this</span>.getScrollPercentage(scrollSpace, pos);
+    <span class="hljs-keyword">return</span> percentage.y;
+  };
+};</div></div></div></div></body></html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><title>both/models/nucleus_event_model</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="both/models/nucleus_event_model"><meta name="groc-project-path" content="both/models/nucleus_event_model.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/both/models/nucleus_event_model.js">both/models/nucleus_event_model.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleusevents">NucleusEvents</h1>
+<h2 id="attributes">Attributes</h2>
+<ul>
+<li>name:                         String</li>
+<li>app_name:                     String (app or nucleus)</li>
+<li>triggered_at:                 Date</li>
+<li>users_done:                   Array (of mongo_ids) <em>This is the list of users which have played this event already</em></li>
+<li><p>originator:                  mongo_id (user who triggered the event in first place)</p>
+</li>
+<li><p>target:                       Object <code>{tagName: &#39;DIV&#39;, index: 0}</code> (can have extra params &#39;type&#39; and &#39;checked&#39; for checkbox/selec/radio)</p>
+</li>
+<li><p>position:                     Object (for scroll)</p>
+</li>
+<li><p>value:                        String (for form inputs)</p>
+</li>
+<li><p>type:                         String (used for</p>
+<ul>
+<li>location: popstate or null,</li>
+<li>login: login or logout,</li>
+<li>form-data: forms,</li>
+<li>scroll: editorScroll (for nucleus editor scroll))</li>
+</ul>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">NucleusEvents = <span class="hljs-keyword">new</span> Meteor.Collection(<span class="hljs-string">'nucleus_events'</span>);
+NucleusEvent = Model(NucleusEvents);
+
+NucleusEvent.extend({
+  setTarget: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(target)</span> {</span>
+    <span class="hljs-keyword">this</span>.target = <span class="hljs-built_in">JSON</span>.stringify(target);
+  },
+  getTarget: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-keyword">this</span>.target);
+  },
+  setName: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+    <span class="hljs-keyword">this</span>.name = name;
+  },
+  getName: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.name;
+  },
+
+  setAppName: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> {</span>
+    <span class="hljs-keyword">this</span>.app_name = name;
+  },
+  getAppName: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.app_name;
+  },
+
+  setValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span>
+    <span class="hljs-keyword">this</span>.value = val;
+  },
+
+  getDoneUsers: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.users_done;
+  },
+  markDoneForMe: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Mark this event done for currently logged in user.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> userId = NucleusUser.me()._id;
+    <span class="hljs-keyword">this</span>.users_done.push(userId);
+    <span class="hljs-keyword">this</span>.save();
+  },
+  broadcast: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method should be called in place of <code>this.save()</code>. Because of a bug in <code>channikhabra:stupid-models</code> it wasn&#39;t possible to override <code>this.save()</code> because the methods in this block are piled up the prototype chain.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> userId = NucleusUser.me()._id;
+    <span class="hljs-keyword">this</span>.users_done = [userId];
+    <span class="hljs-keyword">this</span>.originator = userId;
+    <span class="hljs-keyword">this</span>.triggered_at = moment().toDate().getTime();
+    <span class="hljs-keyword">this</span>.save();
+  }
+});
+
+NucleusEvent.getNewEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get events which are</p>
+<ul>
+<li>emitted at most 10 seconds ago</li>
+<li>aren&#39;t created by the current user</li>
+<li>aren&#39;t already played for current user</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> userId = NucleusUser.me()._id;
+  <span class="hljs-keyword">var</span> events = NucleusEvents.find({triggered_at: {$gt: moment()-<span class="hljs-number">10</span>*<span class="hljs-number">1000</span>}, originator: {$ne: userId}}).map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
+    <span class="hljs-keyword">if</span> (! _.contains(event.users_done, userId))
+      <span class="hljs-keyword">return</span> event;
+  });
+  <span class="hljs-keyword">return</span> _.compact(events);
+};</div></div></div></div></body></html>

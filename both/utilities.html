@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><title>both/utilities</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="both/utilities"><meta name="groc-project-path" content="both/utilities.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/both/utilities.js">both/utilities.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="utils">Utils</h1>
+<p>Generic utility methods which can be used on both client and server.</p></div></div><div class="code"><div class="wrapper">Utils = {
+  getItems: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Returns array of all the items/values in the <code>obj</code></p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> _.map(<span class="hljs-built_in">Object</span>.keys(obj), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> {</span>
+      <span class="hljs-keyword">return</span> obj[key];
+    });
+  },
+
+  getRandomColor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Generates a random color. Used for getting colors for new users.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> letters = <span class="hljs-string">'0123456789ABCDEF'</span>.split(<span class="hljs-string">''</span>);
+    <span class="hljs-keyword">var</span> color = <span class="hljs-string">'#'</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">6</span>; i++ ) {
+      color += letters[<span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">16</span>)];
+    }
+    <span class="hljs-keyword">return</span> color;
+  },
+  getComplementoryColor: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(color_in_hex)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Returns complementary color for <code>color_in_hex</code>. This is used to get color for the text to be shown in the label in the ace editor.
+It returns color which would be visible with <code>color_in_hex</code> background.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>color_in_hex</code>: Color in hex (like #f3f) whose complementary color is needed</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span>(color_in_hex.length === <span class="hljs-number">4</span>) {
+      <span class="hljs-keyword">var</span> hex = color_in_hex;
+      color_in_hex = <span class="hljs-string">'#'</span> + hex[<span class="hljs-number">1</span>] + hex[<span class="hljs-number">1</span>] + hex[<span class="hljs-number">2</span>] + hex[<span class="hljs-number">2</span>] + hex[<span class="hljs-number">3</span>] + hex[<span class="hljs-number">3</span>];
+    }
+
+    <span class="hljs-keyword">var</span> rgbToHex = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(r, g, b)</span> {</span>
+      <span class="hljs-keyword">var</span> componentToHex = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(c)</span> {</span>
+        <span class="hljs-keyword">var</span> hex = c.toString(<span class="hljs-number">16</span>);
+        <span class="hljs-keyword">return</span> hex.length == <span class="hljs-number">1</span> ? <span class="hljs-string">"0"</span> + hex : hex;
+      };
+
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"#"</span> + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    };
+
+    <span class="hljs-keyword">var</span> hexToRgb = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(hex)</span> {</span>
+      <span class="hljs-keyword">var</span> result = <span class="hljs-regexp">/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i</span>.exec(hex);
+      <span class="hljs-keyword">return</span> result ? {
+        r: <span class="hljs-built_in">parseInt</span>(result[<span class="hljs-number">1</span>], <span class="hljs-number">16</span>),
+        g: <span class="hljs-built_in">parseInt</span>(result[<span class="hljs-number">2</span>], <span class="hljs-number">16</span>),
+        b: <span class="hljs-built_in">parseInt</span>(result[<span class="hljs-number">3</span>], <span class="hljs-number">16</span>)
+      } : <span class="hljs-literal">null</span>;
+    };
+
+    <span class="hljs-keyword">var</span> rgb2hsv = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(rgb)</span> {</span>
+      <span class="hljs-keyword">var</span> hsv = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Object</span>(),
+          max=max3(rgb.r,rgb.g,rgb.b),
+          dif=max-min3(rgb.r,rgb.g,rgb.b);
+
+      hsv.saturation=(max==<span class="hljs-number">0.0</span>)?<span class="hljs-number">0</span>:(<span class="hljs-number">100</span>*dif/max);
+
+      <span class="hljs-keyword">if</span> (hsv.saturation==<span class="hljs-number">0</span>)
+        hsv.hue=<span class="hljs-number">0</span>;
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">if</span> (rgb.r==max) hsv.hue=<span class="hljs-number">60.0</span>*(rgb.g-rgb.b)/dif;
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">if</span> (rgb.g==max) hsv.hue=<span class="hljs-number">120.0</span>+<span class="hljs-number">60.0</span>*(rgb.b-rgb.r)/dif;
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">if</span> (rgb.b==max) hsv.hue=<span class="hljs-number">240.0</span>+<span class="hljs-number">60.0</span>*(rgb.r-rgb.g)/dif;
+      <span class="hljs-keyword">if</span> (hsv.hue&lt;<span class="hljs-number">0.0</span>)
+        hsv.hue+=<span class="hljs-number">360.0</span>;
+
+      hsv.value=<span class="hljs-built_in">Math</span>.round(max*<span class="hljs-number">100</span>/<span class="hljs-number">255</span>);
+      hsv.hue=<span class="hljs-built_in">Math</span>.round(hsv.hue);
+      hsv.saturation=<span class="hljs-built_in">Math</span>.round(hsv.saturation);
+
+      <span class="hljs-keyword">return</span> hsv;
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>rgb2hsv and hsv2rgb are based on Color Match Remix [<a href="http://color.twysted.net/">http://color.twysted.net/</a>]
+which is based on or copied from ColorMatch 5K [<a href="http://colormatch.dk/">http://colormatch.dk/</a>]</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> hsv2rgb = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(hsv)</span> {</span>
+      <span class="hljs-keyword">var</span> rgb=<span class="hljs-keyword">new</span> <span class="hljs-built_in">Object</span>();
+
+      <span class="hljs-keyword">if</span> (hsv.saturation==<span class="hljs-number">0</span>) {
+        rgb.r=rgb.g=rgb.b=<span class="hljs-built_in">Math</span>.round(hsv.value*<span class="hljs-number">2.55</span>);
+      } <span class="hljs-keyword">else</span> {
+        hsv.hue/=<span class="hljs-number">60</span>;
+        hsv.saturation/=<span class="hljs-number">100</span>;
+        hsv.value/=<span class="hljs-number">100</span>;
+
+        <span class="hljs-keyword">var</span> i=<span class="hljs-built_in">Math</span>.floor(hsv.hue),
+            f=hsv.hue-i,
+            p=hsv.value*(<span class="hljs-number">1</span>-hsv.saturation),
+            q=hsv.value*(<span class="hljs-number">1</span>-hsv.saturation*f),
+            t=hsv.value*(<span class="hljs-number">1</span>-hsv.saturation*(<span class="hljs-number">1</span>-f));
+
+        <span class="hljs-keyword">switch</span>(i) {
+        <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>: rgb.r=hsv.value; rgb.g=t; rgb.b=p; <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>: rgb.r=q; rgb.g=hsv.value; rgb.b=p; <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>: rgb.r=p; rgb.g=hsv.value; rgb.b=t; <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>: rgb.r=p; rgb.g=q; rgb.b=hsv.value; <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>: rgb.r=t; rgb.g=p; rgb.b=hsv.value; <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>: rgb.r=hsv.value; rgb.g=p; rgb.b=q;
+        }
+        rgb.r=<span class="hljs-built_in">Math</span>.round(rgb.r*<span class="hljs-number">255</span>);
+        rgb.g=<span class="hljs-built_in">Math</span>.round(rgb.g*<span class="hljs-number">255</span>);
+        rgb.b=<span class="hljs-built_in">Math</span>.round(rgb.b*<span class="hljs-number">255</span>);
+      }
+      <span class="hljs-keyword">return</span> rgb;
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Adding hueShift via Jacob (see comments)</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> hueShift = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(h,s)</span> {</span>
+      h+=s; <span class="hljs-keyword">while</span> (h&gt;=<span class="hljs-number">360.0</span>) h-=<span class="hljs-number">360.0</span>; <span class="hljs-keyword">while</span> (h&lt;<span class="hljs-number">0.0</span>) h+=<span class="hljs-number">360.0</span>; <span class="hljs-keyword">return</span> h;
+    };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>min max via Hairgami_Master (see comments)</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> min3 = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(a,b,c)</span> {</span>
+      <span class="hljs-keyword">return</span> (a&lt;b)?((a&lt;c)?a:c):((b&lt;c)?b:c);
+    };
+    <span class="hljs-keyword">var</span> max3 = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(a,b,c)</span> {</span>
+      <span class="hljs-keyword">return</span> (a&gt;b)?((a&gt;c)?a:c):((b&gt;c)?b:c);
+    };
+
+    <span class="hljs-keyword">var</span> temprgb = hexToRgb(color_in_hex),
+        temphsv = rgb2hsv(temprgb);
+
+    temphsv.hue = hueShift(temphsv.hue,<span class="hljs-number">180.0</span>);
+    temprgb = hsv2rgb(temphsv);
+
+    <span class="hljs-keyword">return</span> rgbToHex(temprgb.r, temprgb.g, temprgb.b);
+  },
+  shortenText: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str, max)</span> {</span>
+    <span class="hljs-keyword">if</span>(!str) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">if</span> (str.length &gt; max) {
+      <span class="hljs-keyword">return</span> str.substr(<span class="hljs-number">0</span>, <span class="hljs-built_in">parseInt</span>(max/<span class="hljs-number">2</span>)-<span class="hljs-number">3</span>) + <span class="hljs-string">'...'</span> + str.substr(str.length-<span class="hljs-built_in">parseInt</span>(max/<span class="hljs-number">2</span>), str.length);
+    }
+    <span class="hljs-keyword">return</span> str;
+  }
+};</div></div></div></div></body></html>
