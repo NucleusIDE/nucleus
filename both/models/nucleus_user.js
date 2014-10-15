@@ -1,13 +1,19 @@
 /**
- * _id                          MONGO ID
- * nick                         STRING (Nickname)
- * cwd                          MONGO ID (Current Working Document)
- * current_filepath                     String
- * color                        STRING
- * cursor_pos                   ARRAY [row, col]
- * syncing_nucleus_events       BOOLEAN
- * syncing_app_events       BOOLEAN
+ # NucleusUser
+ ## Attributes
+ * * _id :                          MONGO ID
+ * * nick :                        STRING (Nickname)
+ * * cwd :                         MONGO ID (Current Working Document)
+ * * current_filepath :                     STRING
+ * * color :                        STRING
+ * * cursor_pos :                  ARRAY [row, col]
+ * * syncing_nucleus_events :       BOOLEAN
+ * * syncing_app_events :       BOOLEAN
+
+ * ## Why?
+ * We are not using meteor's password based auth, or any kind of auth for nucleus. We have our own user system. Users log in by providing a nick. That nick sets a session variable and a cookie which are removed `onbeforeunload` of `window`.
  */
+
 
 NucleusUsers = new Meteor.Collection('nucleus_users');
 NucleusUser = Model(NucleusUsers);
@@ -43,6 +49,14 @@ NucleusUser.extend({
   },
 
   toggleEventSync: function(app, shouldRecieve) {
+    /**
+     * Toggle events for the `app`, or sets it to `shouldRecieve` if given.
+     *
+     * Arguments:
+     * * `app` *{String}*: App for which to toggle events. Could be `app` (the app window) or `nucleus` (the nucleus editor window)
+     * * `shouldRecieve` *{Boolean}*: If provided, sets the event sync status to this instead of toggling it
+     */
+
     app = app || "app";
 
     var is_syncing_events = shouldRecieve || app === "app" ? !this.syncing_app_events : !this.syncing_nucleus_events;
@@ -67,12 +81,23 @@ NucleusUser.extend({
   },
 
   delete: function() {
+    /**
+     * Deletes the user. It would work and should be used only on client since Session or cookie won't be available on server.
+     */
+
     NucleusUsers.remove({_id: this._id});
+    if (Meteor.isServer) {
+      return;
+    }
     $.cookie("nucleus_user", null);
     Session.set("nucleus_user", null);
   },
 
   sendChat: function(message) {
+    /**
+     * Broadcast chat message from this user. Group chat is the only kind of chat supported in Nucleus.
+     */
+
     var nick = this.nick;
     var chat = new ChatMessage();
     chat.broadcast(nick, message);
@@ -80,6 +105,10 @@ NucleusUser.extend({
 });
 
 NucleusUser.me = function() {
+  /**
+   * Get currently logged in user.
+   */
+
   if(Meteor.isServer) throw new Error("Client only method");
   var nucUserId = Session.get('nucleus_user') || $.cookie("nucleus_user");
 
@@ -87,6 +116,12 @@ NucleusUser.me = function() {
 };
 
 NucleusUser.new = function(nick) {
+  /**
+   * Create new user. Creating new nucleus user involve setting session var and a cookie. Either one of these would work, access to current user is always through `Nucleususer.me()` so it shouldn't be a problem when we change the user creation to a proper auth system.
+   *
+   * This should always be the method used for creating new `NucleusUser`s
+   */
+
   var existingUser = NucleusUsers.findOne({nick: nick});
   if (existingUser) return false;
 
