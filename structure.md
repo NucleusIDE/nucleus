@@ -61,7 +61,7 @@ Note that we use similar app structure as regular meteor apps in nucleus package
       This models/collection is for storing/broadcasting events to all the connected clients. 
     * nucleus_user.js  
       We don't user meteor's users for identifying people on nucleus. We have our own simplistic version of users which don't need signup etc. Users are identified with their nicks and are destroyed as soon as they close the window.
-  * nucleus.js  
+  * collections.js  
     This file creates collections for the mongo collections which are not created within the Nucleus. These are mainly sharejs `docs` and `ops` collections, and a `nucleus_documents` collection we create for keeping track of docs in `docs`.
   * utilities.js  
     Utilities which can be used on both client and server.
