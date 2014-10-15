@@ -50,8 +50,6 @@ EventUtils = function($window) {
   };
 
   /**
-   * @param tagName
-   * @param elem
    * @returns {*|number}
    */
   this.getElementIndex = function (tagName, elem) {
@@ -69,7 +67,6 @@ EventUtils = function($window) {
   };
 
   /**
-   * @param elem
    * @returns {{tagName: (elem.tagName|*), index: *}}
    */
   this.getElementData = function (elem) {
@@ -82,8 +79,6 @@ EventUtils = function($window) {
   };
 
   /**
-   * @param {string} tagName
-   * @param {number} index
    */
   this.getSingleElement = function (tagName, index) {
     var $document = this.getDocument();

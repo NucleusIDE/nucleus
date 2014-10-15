@@ -4,8 +4,8 @@ This is very initial version of nucleus and code structure might need refactorin
 
 Note that we use similar app structure as regular meteor apps in nucleus package, but meteor doesn't interact with packages the same way it does with the apps. The directory structure by itself has no meaning to the app, and which files are loaded where and in which order is marked in `package.js` file.  Code is broadly divided into three directories:
 
-* **nucleus.js**  
-  This code must be executed prior to any other on both client and server. It contains (as of yet) the overrides for meteor's core methods (`Collection.insert`)  
+* **global_overrides.js**  
+  This code must be executed prior to any other on client. It contains (as of yet) the overrides for meteor's core methods (`Collection.insert`)  
 
 * **client**  
   This directory contains code that should be used on client side.

@@ -197,8 +197,7 @@ var _ElementCache = function () {
 
 /**
  * Fix an event
- * @param event
- * @param appName
+
  * @returns {*}
  */
 var _fixEvent = function (event, elem) {

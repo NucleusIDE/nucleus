@@ -1,0 +1,8 @@
+{
+  "glob": ["./**/!(lib)/*.js", "./*.js", "README.md", "structure.md"],
+  "out": "./docs",
+  "index-page-title": "Read Me",
+  "whitespace-after-token": false,
+  "style": "default",
+  "github": false
+}

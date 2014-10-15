@@ -19,7 +19,7 @@ Package.on_use(function (api, where) {
            'mrt:flash-messages@0.2.4']);
 
   api.add_files([
-    'nucleus.js'
+    'global_overrides.js'
   ], 'client');
 
   api.add_files([

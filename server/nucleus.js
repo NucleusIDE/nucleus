@@ -4,7 +4,9 @@ child = Npm.require('child_process'),
 Future = Npm.require('fibers/future');
 
 
-//It defines `Nucleus` on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file contents for editing etc. Most of the methods here are synchronous. I don't exactly remember what the issue was for which I chose synchronous over async. My initial approach was to use async flow in here, but I opted for sync shortly after starting.
+/**
+ It defines `Nucleus` on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file  contents for editing etc. Most of the methods here are synchronous. I don't exactly remember what the issue was for which I chose synchronous over async. My initial approach was to use async flow in here, but I opted for sync shortly after starting.
+ */
 NucleusFactory = function() {
   var homeDir = process.env.HOME,
       nucleusDir = path.join(homeDir, ".nucleus");
@@ -18,11 +20,12 @@ NucleusFactory = function() {
     return path.extname(filepath).replace(".", "");
   };
 
-//Configure Nucleus on server. Following options are accepted for configurations:
-//  * git :     Remote git url
-//  * project:  Name of the project. A folder with this name is created in `Nucleus.config.projectDir` ('~/.nucleus') and `Nucleus.config.git` url is cloned in it.
-//
-//It also sets the `Nucleus.config.projectDir` which is not configurable by user.
+
+  // Configure Nucleus on server. Following options are accepted for configuration:
+  // * git :     Remote git url
+  // * project:  Name of the project. A folder with this name is created in `Nucleus.config.projectDir` ('~/.nucleus') and `Nucleus.config.git` url is cloned in it.
+  // It also sets the `Nucleus.config.projectDir` which is not configurable by user.
+
   this.configure = function(config) {
     _.extend(Nucleus.config, config);
     Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
@@ -33,12 +36,12 @@ NucleusFactory = function() {
     this.nucleusCloneRepo();
   };
 
-//This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
-//Accepts an object `options` as argument. `options` can have following properties:
-// * rootDir - directory which should be converted to JSON
-// * parent - parent node for the first node in JSON produced. In jstree, `#` represents root node
-// * traverseSymlinks - shall we traverse symlinks?
-// * includeHidden - shall we include hidden files in the produced tree? (hidden files/directories are those whose name start with `.`)
+  //This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
+  //Accepts an object `options` as argument. `options` can have following properties:
+  // * rootDir - directory which should be converted to JSON
+  // * parent - parent node for the first node in JSON produced. In jstree, `#` represents root node
+  // * traverseSymlinks - shall we traverse symlinks?
+  // * includeHidden - shall we include hidden files in the produced tree? (hidden files/directories are those whose name start with `.`)
   this.getDirTree = function(options) {
     options = options || {};
     var  dirTree= function (options) {
