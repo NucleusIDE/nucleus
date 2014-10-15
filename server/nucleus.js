@@ -1,10 +1,10 @@
 fs = Npm.require('fs'),
 path = Npm.require('path'),
 child = Npm.require('child_process'),
-// ShareJs = Npm.require('share').server,
 Future = Npm.require('fibers/future');
 
 
+//It defines `Nucleus` on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file contents for editing etc. Most of the methods here are synchronous. I don't exactly remember what the issue was for which I chose synchronous over async. My initial approach was to use async flow in here, but I opted for sync shortly after starting.
 NucleusFactory = function() {
   var homeDir = process.env.HOME,
       nucleusDir = path.join(homeDir, ".nucleus");
@@ -18,15 +18,27 @@ NucleusFactory = function() {
     return path.extname(filepath).replace(".", "");
   };
 
+//Configure Nucleus on server. Following options are accepted for configurations:
+//  * git :     Remote git url
+//  * project:  Name of the project. A folder with this name is created in `Nucleus.config.projectDir` ('~/.nucleus') and `Nucleus.config.git` url is cloned in it.
+//
+//It also sets the `Nucleus.config.projectDir` which is not configurable by user.
   this.configure = function(config) {
     _.extend(Nucleus.config, config);
     Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
   };
 
+  //This method is called on nucleus initialization on the server (in the app).
   this.initialize = function() {
     this.nucleusCloneRepo();
   };
 
+//This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
+//Accepts an object `options` as argument. `options` can have following properties:
+// * rootDir - directory which should be converted to JSON
+// * parent - parent node for the first node in JSON produced. In jstree, `#` represents root node
+// * traverseSymlinks - shall we traverse symlinks?
+// * includeHidden - shall we include hidden files in the produced tree? (hidden files/directories are those whose name start with `.`)
   this.getDirTree = function(options) {
     options = options || {};
     var  dirTree= function (options) {
@@ -69,6 +81,7 @@ NucleusFactory = function() {
       }
       return info;
     };
+
     var removeEmptyChildren = function(tree) {
       tree.children = _.compact(tree.children);
       _.each(tree.children, removeEmptyChildren);
@@ -77,11 +90,16 @@ NucleusFactory = function() {
 
     var tree = dirTree(options);
     if (! options.includeHidden) {
+      //Double check for hidden files.
       removeEmptyChildren(tree);
     }
     return tree;
   };
 
+  //Get the contents of a single file.
+  // * **filepath** - absolute path of the file whose contents are required
+  //
+  //*filepath* can be `*scratch*`. `*scratch*` in nucleus represents the limbo in the ace editor when user has just logged in and have no file opened. Emacs has a `*scratch*` buffer, so you know.
   this.getFileContents = function(filepath) {
     if (filepath === '*scratch*') return false;
 
@@ -95,6 +113,15 @@ NucleusFactory = function() {
   };
 
 
+  //`git pull` changes from the remote git. These git methods are used behind the git UI in nucleus. I am in favor of using a terminal based UI instead of buttons.
+  // Button based git flow is holy-grail of unknown errors that might occur in the app
+  //
+  //All the git methods assume `master` to be the branch and `origin` to be the remote. These need to be made configurable configurable in future when we'll aim for anonymous users of the app to make changes. My idea is that anonymous users could change the app and when they push the changes, those changes will be saved in a new git repo in user's github, or in a different branch in app owner's github.
+  //
+  //Returns
+  // * `0` - No new changes created by function
+  // * `1` - Pulled new changes
+  // * `-1` - Error occured
   this.pullChanges = function(projectDir) {
     projectDir = projectDir || this.config.projectDir;
     var fut = new Future();
@@ -113,6 +140,11 @@ NucleusFactory = function() {
     return fut.wait();
   };
 
+  // Push new  changes to `master` branch of `origin` remote in `Nucleus.config.projectDir`.
+  //Returns
+  // * `0` - No new commits to push.
+  // * `1` - Pushed new changes
+  // * `-1` - Error occured
   this.pushChanges = function(projectDir) {
     projectDir = projectDir || this.config.projectDir;
     var fut = new Future();
@@ -131,6 +163,15 @@ NucleusFactory = function() {
     return fut.wait();
   };
 
+  //Commit new  changes in `master` branch in `Nucleus.config.projectDir`.
+  //
+  //Accepts:
+  // * **message** - commit message
+  //
+  //Returns
+  // * `0` - No new changes to commit.
+  // * `1` - Committed new changes with message `message`
+  // * `-1` - Error occurred
   this.commitChanges = function(message) {
     var projectDir = this.config.projectDir;
     message = message || "Changes from nucleus.";
@@ -138,7 +179,6 @@ NucleusFactory = function() {
     child.exec('cd ' + projectDir + ' && git add . --all && git commit -m "' + message +'"', function(err, stdout, stderr) {
       if (err) {
         if (err.killed === false && err.code === 1 && err.signal === null) {
-          //no changes to commit
           fut.return(0);
 
         } else {
@@ -153,6 +193,7 @@ NucleusFactory = function() {
     return fut.wait();
   };
 
+  //Clone the `git` remote repo in `Nucleus.config.projectDir`. It won't attempt to clone the repo if `Nucleus.config.projectDir` already exists. If the `Nucleus.config.projectDir` already exists, it attempts to pull new changes instead.
   this.nucleusCloneRepo = function(git, project) {
     git = git || Nucleus.config.git;
     project = project || Nucleus.config.project;
@@ -177,6 +218,7 @@ NucleusFactory = function() {
       this.pullChanges(projectDir);
   };
 
+  //This method is obsolete. We use this method to get the latest CSS from the filesystem, and manually push it into the app. But since we have started running meteor in dev mode on the nucleus server, it is no longer needed as meteor itself live-push all the CSS. Note that this method is faster than meteor's, but it won't load packages'
   this.getAllCSS = function(options) {
     var tree = this.getDirTree(),
         packagesToInclude = options && options.packagesToInclude,
@@ -216,7 +258,7 @@ NucleusFactory = function() {
     return collectedCss;
   };
 
-  //let's keep mup deploy here until we have a clear/bigger deployment strategy
+  //Let's keep mup deploy here until we have a clear/bigger deployment strategy
   this.mupDeploy = function(mup_setup) {
     var projectDir = this.config.projectDir;
     var fut = new Future();
@@ -235,10 +277,17 @@ NucleusFactory = function() {
     return fut.wait();
   };
 
+  //Create a new file on the server
+  //
+  //Arguments:
+  //* `filepath` {*string*} : Absolute or relative path of the file to be created. Relative to `Nucleus.config.projectDir`
+  //* `directory` {*boolean*}: Is the file to be created a directory?
   this.createNewFile = function(filepath, directory) {
+    //check whether the `filepath` is absolute or relative
     filepath = filepath.indexOf("/") === 0 ? filepath : this.config.projectDir + "/" + filepath;
     var fileName = path.basename(filepath);
 
+    //If a file with `filename` is already present, rename it to a unique name.
     var renameUnique = function(filepath) {
       var count = 1;
       var newPath = filepath + "_" + count;
@@ -262,6 +311,12 @@ NucleusFactory = function() {
     return filepath;
   };
 
+  //Delete the file at `filepath`
+  //
+  //Arguments:
+  //`filepath` *{string}*
+  //
+  //If the file represented by `filepath` is a directory, it deletes the directory recursively.
   this.deleteFile = function(filepath) {
     if (!fs.existsSync(filepath)) {
       return true;
@@ -280,6 +335,7 @@ NucleusFactory = function() {
     return fut.wait();
   };
 
+  //Rename `oldpath` to `newpath`
   this.renameFile = function(oldpath, newpath) {
     if (!fs.existsSync(oldpath)) {
       return;
@@ -290,6 +346,7 @@ NucleusFactory = function() {
 
 };
 
+//Publishes all the collections required by nucleus with no limits or checks
 Meteor.publish("nucleusPublisher",function() {
   return [
     NucleusDocuments.find({}),
@@ -299,5 +356,5 @@ Meteor.publish("nucleusPublisher",function() {
   ];
 });
 
-
+//Creat server side global `Nucleus` using the above constructor
 Nucleus = new NucleusFactory();
