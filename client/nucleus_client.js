@@ -1,4 +1,14 @@
+/**
+ * # NucleusClient
+ *
+ */
+
+
 var NucleusClientFactory = function() {
+  /**
+   * It should be the centralized access point for most of the operations on Nucleus on the client side.
+   */
+
   var fileTree,
       currentFile,
       currentFileContents,
@@ -19,12 +29,16 @@ var NucleusClientFactory = function() {
   this.initialize = function(config) {
     this.configure(config);
 
+    //url where nucleus template is expected
     var url = this.config.nucleusUrl,
+        //name of Nucleus window. Not significant
         windowName = this.config.windowName,
+        //nucleus window which has nucleus editor.
         nucleusWindow = window.open(url, windowName, 'height=550,width=900');
 
     if (window.focus) { nucleusWindow.focus(); }
 
+    //Configure flash messages. We are using `mrt:flash-messages` package for flash messages
     FlashMessages.configure({
       autoHide: false,
       hideDelay: 3000,
@@ -36,10 +50,20 @@ var NucleusClientFactory = function() {
     return false;
   };
 
+
+  /**
+   * Get name of the the *scratch* doc. This is the document which is opened in ace when user has just logged in and haven't yet opened any document.
+   */
   this.getScratchDoc = function() {
     return 'scratch';
   };
 
+  /**
+   * Get the window for `app_name`. If `app_name` is not given, it returns window for `nucleus`
+   *
+   * *Attributes*:
+   * * `app_name` *{String}* : Can be **app** or **nucleus**
+   */
   this.getWindow = function(app_name) {
     var nucleus_window = this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : window;
 
@@ -48,23 +72,41 @@ var NucleusClientFactory = function() {
     return nucleus_window;
   };
 
+  /**
+   * Get `app` window
+   */
   this.getAppWindow = function() {
     return window.name === "Nucleus" ? window.opener : window;
   };
 
+  /**
+   * Check if `filepath` is a client file. Client files are supposed to be evaled live on client side. Although this functionality has not been implemented yet.
+   */
   this.isClientFile = function(filepath) {
     var clientRegex = new RegExp("\/"+this.config.clientDir+"\/");
     return clientRegex.test(filepath);
   };
+  /**
+   * Check if `filepath` is a server file.
+   */
   this.isServerFile = function(filepath) {
     var serverRegex = new RegExp("\/"+this.config.clientDir+"\/");
     return serverRegex.test(filepath);
   };
+  /**
+   * Check if `filepath` is a CSS file.
+   */
   this.isCSSFile = function(filepath) {
     var splitArr = filepath.split(".");
     return splitArr[splitArr.length-1] === 'css';
   };
 
+  /**
+   * Mark `nucDoc` for eval on client side.
+   *
+   * *Arguments:*
+   * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property. This document will be attempted to be evaled on client side.
+   */
   this.markDocForEval = function(nucDoc) {
     var filepath = nucDoc.filepath,
         isClientFile = this.isClientFile(filepath);
@@ -75,10 +117,23 @@ var NucleusClientFactory = function() {
     }
   };
 
+  /**
+   * Unmark `nucDoc` from eval on client side. See `NucleusClient.markDocForEval` above
+   *
+   * *Arguments:*
+   * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
+   */
   this.unmarkDocForEval = function(nucDoc) {
     NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false}});
   };
 
+  /**
+   * Eval the `nucDoc` on client side. As of now, this function can only act on `CSS` files. Js/HTML files are not supported for now.
+   * We will use `channikhabra:live-update` package for evaling js/html on client, when it's implemented.
+   *
+   * *Arguments:*
+   * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
+   */
   this.evalNucleusDoc = function(nucDoc) {
     var filepath = nucDoc.filepath,
         doc = ShareJsDocs.findOne(nucDoc.doc_id),
@@ -89,11 +144,17 @@ var NucleusClientFactory = function() {
       console.log("EVALING", filepath);
   };
 
+  /**
+   * Reactively get the `filetree`. It'd first attempt to refresh/set `filetree` and reactively return it.
+   */
   this.getFileTree = function() {
     this.setFileTree();
     nucleusClientDep.depend();
     return fileTree;
   };
+  /**
+   * Reactively set `filetree`
+   */
   this.setFileTree = function() {
     var makeYou = this;
     Meteor.call("nucleusGetFileList", function(err, res) {
@@ -105,9 +166,11 @@ var NucleusClientFactory = function() {
     });
   }.bind(this);
 
+  /**
+   * jstree isn't working when used with JSON from within a meteor package. So, let's create HTML (ul>li) instead.
+   * I tried creating my own simple tree, but it's turning out to be more work
+   */
   this.getJstreeHTML = function() {
-    //jstree isn't working when used with JSON from within a meteor package. So, let's create HTML (ul>li) instead.
-    // I tried creating my own simple tree, but it's turning out to be more work
 
     var tree = this.getFileTree();
     nucleusClientDep.depend();
@@ -127,6 +190,9 @@ var NucleusClientFactory = function() {
     return html;
   };
 
+  /**
+   * This function is obsolete. We use `NucleusClient.getJstreeHTML()` for setting filetree in Nucleus sidebar.
+   */
   this.getJstreeJSON = function() {
     //jstree uses a different JSON formatting then produced by Nucleus.getFileList. Here we do the conversion
     var rawtree = this.getFileTree();
@@ -145,6 +211,13 @@ var NucleusClientFactory = function() {
     return jstree;
   };
 
+  /**
+   * Edit `filepath` in ace editor.
+   *
+   * *Arguments:*
+   * * `filepath` *{string}*: Path of file to be edited. Can be obtained from the filetree nodes in Nucleus sidebar.
+   * * `forceRefresh` *{boolean}*: Discard the changes which are not yet saved to the filesystem and force load `filepath` from filesystem
+   */
   this.editFile = function(filepath, forceRefresh) {
     Meteor.call('nucleusSetupFileForEditting', filepath, forceRefresh, function(err, res) {
       if (err) { console.log(err); return; }
@@ -157,6 +230,11 @@ var NucleusClientFactory = function() {
     });
   };
 
+  /**
+   * Save the selected file to Filesystem. This method is called when user press `Cmd-S` or click `Save` button in Nucleus editor.
+   *
+   * Selected file is `NucleusUser.cwd`.
+   */
   this.saveSelectedFileToDisk = function() {
     var selectedDocId = Session.get("nucleus_selected_doc_id"),
         nucDoc = NucleusDocuments.findOne({doc_id:selectedDocId}),
@@ -169,6 +247,9 @@ var NucleusClientFactory = function() {
     });
   };
 
+  /**
+   * Live Update the CSS of app. This method removes the old css *link* from the app, and will fetch concatenated CSS from server, which is updated CSS from all CSS files. Then it creates a new *style* element and appends new fetched CSS to the document.
+   */
   this.updateCSS = function() {
     var nucleusStyle = document.createElement("style"),
         window = this.getAppWindow();
@@ -189,10 +270,16 @@ var NucleusClientFactory = function() {
     });
   };
 
+  /**
+   * Get all online users. All users in `NucleusUsers` collection are online users since we remove any user who leaves the nucleus as soon as they leave it.
+   */
   this.getOnlineUsers = function() {
     return NucleusUsers.find();
   };
 
+  /**
+   * Clears the user status boxes in sidebar and multiple user cursors in ace editor for those users who have gone offline. We do some un-reactive DOM manipulation for adding user status boxes and cursors in ace which we need to handle ourselves.
+   */
   this.clearDeadUsers = function(users) {
     users = users || NucleusClient.getOnlineUsers().fetch(); //try to decrease db queries
     var nicks = _.map(users, function(user) {
@@ -202,7 +289,7 @@ var NucleusClientFactory = function() {
       return user._id;
     });
 
-    //clear sidebar
+    //Clear sidebar
     var nicksNodes = _.map($(".user-status-box"), function(n) {
       return n.getAttribute('data-user-nick');
     });
@@ -211,7 +298,7 @@ var NucleusClientFactory = function() {
       $("[data-user-nick="+deadNick+"]").remove();
     });
 
-    //clear extra cursors
+    //Clear extra cursors
     var deadUserCursors = _.difference(Object.keys(NucleusEditor.extraCursors), userIds);
     _.each(deadUserCursors, function(deadCursor) {
       NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
@@ -219,6 +306,13 @@ var NucleusClientFactory = function() {
 
   };
 
+  /**
+   * Creates new `filepath` and execute `cb` callback after completion.
+   *
+   * *Arguments:*
+   * * `filepath`: Path of the file to be created
+   * * `cb`: Callback function to be executed after completion.
+   */
   this.createNewFile = function(filepath, cb) {
     Meteor.call("nucleusCreateNewFile", filepath, function(err, res) {
       if(err) {cb(err); return;}
@@ -226,12 +320,27 @@ var NucleusClientFactory = function() {
     });
   };
 
+  /**
+   * Creates new `filepath` and execute `cb` callback after completion.
+   *
+   * *Arguments:*
+   * * `filepath`: Path of the file to be created
+   * * `cb`: Callback function to be executed after completion.
+   */
   this.createNewFolder = function(filepath, cb) {
     Meteor.call("nucleusCreateNewFolder", filepath, function(err, res) {
       if(err) {cb(err); return;}
       cb(null, res);
     });
   };
+
+  /**
+   * Delete `filepath` (file or directory) and execute `cb` callback after completion.
+   *
+   * *Arguments:*
+   * * `filepath`: Path of the file to be created
+   * * `cb`: Callback function to be executed after completion.
+   */
   this.deleteFile = function(filepath, cb) {
     Meteor.call("nucleusDeleteFile", filepath, function(err, res) {
       if(err) {cb(err); return;}
@@ -239,6 +348,14 @@ var NucleusClientFactory = function() {
     });
   };
 
+  /**
+   * Rename `oldpath` to `newpath` and execute `cb` callback after completion.
+   *
+   * *Arguments:*
+   * * `oldpath`: Old path of the file/directory to be renamed
+   * * `newpath`: New path of the file/directory to be renamed
+   * * `cb`: Callback function to be executed after completion.
+   */
   this.renameFile = function(oldpath, newpath, cb) {
     Meteor.call("nucleusRenameFile", oldpath, newpath, function(err, res) {
       if(err) {cb(err); return;}
@@ -249,9 +366,10 @@ var NucleusClientFactory = function() {
   return this;
 };
 
+/**
+ * EVAL AUTORUN
+ */
 Deps.autorun(function() {
-  //EVAL LOOP
-
   Meteor.subscribe('nucleusPublisher');
   NucleusDocuments.find({shouldEval: true}).forEach(function(doc) {
     NucleusClient.evalNucleusDoc(doc);
@@ -260,10 +378,10 @@ Deps.autorun(function() {
 });
 
 
+//Create NucleusClient Global
 NucleusClient = new NucleusClientFactory();
 
-
-//this deletes the current user
+//This deletes the current user when they quit nucleus window
 NucleusClient.getWindow().onbeforeunload = function() {
   console.log("UNLOADING NUCLEUS WINDOW");
   NucleusUser.me().delete();

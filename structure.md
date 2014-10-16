@@ -33,7 +33,7 @@ Note that we use similar app structure as regular meteor apps in nucleus package
         Sync route change.      
   * **lib**  
     External libraries
-  * nucleus.js  
+  * nucleus_client.js  
     Here we define `NucleusClient` which has all the methods required for interaction with `Nuclues` on the client.
   * nucleus_editor.js  
     It is an abstraction over the sharejs-ace editor for centralizing interaction with the editor. 
