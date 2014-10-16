@@ -1,5 +1,6 @@
 {
   "glob": ["./**/!(lib)/*.js", "./*.js", "README.md", "structure.md"],
+  "exclude": ["*docs*"],
   "out": "./docs",
   "index-page-title": "Read Me",
   "whitespace-after-token": false,
