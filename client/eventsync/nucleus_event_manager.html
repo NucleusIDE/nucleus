@@ -1,22 +1,17 @@
-<!DOCTYPE html><html lang="en"><head><title>client/eventsync/nucleus_event_manager</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/nucleus_event_manager"><meta name="groc-project-path" content="client/eventsync/nucleus_event_manager.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/nucleus_event_manager.js">client/eventsync/nucleus_event_manager.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> EventManager = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">this</span>.canEmitEvents = <span class="hljs-literal">true</span>; <span class="hljs-comment">//this flag is used to prevent event ping-pong and re-inserts</span>
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/nucleus_event_manager</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/nucleus_event_manager"><meta name="groc-project-path" content="client/eventsync/nucleus_event_manager.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/nucleus_event_manager.js">client/eventsync/nucleus_event_manager.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleuseventmanager">NucleusEventManager</h1>
+<p>Single point of interaction for event sync.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> EventManager = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This flag is used to prevent event ping-pong and re-inserts. When we recieve an event, we mark <code>NucleusEventManager.canEmitEvents</code> to false so that the client won&#39;t re-send received event.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.canEmitEvents = <span class="hljs-literal">true</span>;
 
   <span class="hljs-keyword">this</span>.isProcessingEvent= <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">return</span> ! <span class="hljs-keyword">this</span>.canEmitEvents;
-  };
-
-  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
-    <span class="hljs-keyword">if</span> (event.type === <span class="hljs-string">"forms"</span>) {
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Simple proxy for handling all kind of events with same interface.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Form events are of many types (check forms). So we take special care of them</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (event.type === <span class="hljs-string">"forms"</span>) {
       <span class="hljs-keyword">this</span>.forms(event.getAppName())[event.getName()].handleEvent(event);
-    } <span class="hljs-keyword">else</span>
-      <span class="hljs-keyword">this</span>[event.getName()](event.getAppName()).handleEvent(event);
+    } <span class="hljs-keyword">else</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this should produce something like <code>this.click(&quot;app&quot;).handleEvent(event)</code></p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">this</span>[event.getName()](event.getAppName()).handleEvent(event);
   };
 
   <span class="hljs-keyword">this</span>.getUtils = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
     <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? <span class="hljs-keyword">this</span>.appUtils : <span class="hljs-keyword">this</span>.nucleusUtils;
-  };
-
-  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This is a pretty fat initializing function. It does a lot of work since we have to sync events for both app and Nucleus windows.</p>
+<p>NucleusEventManager is initialized in <code>NucleusUser</code> model when user toggles the event sync</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">var</span> user = NucleusUser.me(),
         syncing_app_events = user.syncing_app_events,
         syncing_nucleus_events = user.syncing_nucleus_events,
@@ -24,28 +19,29 @@
         $nucleusWindow = NucleusClient.getWindow(<span class="hljs-string">"nucleus"</span>);
 
     <span class="hljs-keyword">this</span>.app_initalized = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">this</span>.appUtils = <span class="hljs-keyword">new</span> EventUtils($appWindow);
-    <span class="hljs-keyword">var</span> appClick = <span class="hljs-keyword">new</span> Click(<span class="hljs-string">"app"</span>),
+    <span class="hljs-keyword">this</span>.appUtils = <span class="hljs-keyword">new</span> EventUtils($appWindow);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>All these events <code>Click</code>, <code>Scroll</code> etc are defined in their respective files in eventSync directory</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> appClick = <span class="hljs-keyword">new</span> Click(<span class="hljs-string">"app"</span>),
         appScroll = <span class="hljs-keyword">new</span> Scroll(<span class="hljs-string">"app"</span>),
         appLocation = <span class="hljs-keyword">new</span> LocationEvent(<span class="hljs-string">"app"</span>),
         appLogin = <span class="hljs-keyword">new</span> LoginEvent(<span class="hljs-string">"app"</span>),
         appForms = <span class="hljs-keyword">new</span> FormsEvent(<span class="hljs-string">"app"</span>);
 
     <span class="hljs-keyword">this</span>.nucleus_initalized = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">this</span>.nucleusUtils = <span class="hljs-keyword">new</span> EventUtils($nucleusWindow);
-    <span class="hljs-keyword">var</span> nucleusClick = <span class="hljs-keyword">new</span> Click(<span class="hljs-string">"nucleus"</span>),
+    <span class="hljs-keyword">this</span>.nucleusUtils = <span class="hljs-keyword">new</span> EventUtils($nucleusWindow);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We don&#39;t sync all events for Nucleus. Only following events are synced:</p>
+<ul>
+<li>click : so a users could follow each other about which files they open in sidebar</li>
+<li>scroll : scrolling in the nucleus editor</li>
+<li>forms : commit message form</li>
+</ul></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> nucleusClick = <span class="hljs-keyword">new</span> Click(<span class="hljs-string">"nucleus"</span>),
         nucleusScroll = <span class="hljs-keyword">new</span> Scroll(<span class="hljs-string">"nucleus"</span>),
-        nucleusForms = <span class="hljs-keyword">new</span> FormsEvent(<span class="hljs-string">"nucleus"</span>);
-
-    <span class="hljs-keyword">this</span>.click = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+        nucleusForms = <span class="hljs-keyword">new</span> FormsEvent(<span class="hljs-string">"nucleus"</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We create proxies for all events since there are two type of apps emitting same events. I thought it&#39;s a nice way of doing this. I still think so.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.click = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
       <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appClick : nucleusClick;
     };
     <span class="hljs-keyword">this</span>.scroll = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
       <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appScroll : nucleusScroll;
     };
-    <span class="hljs-keyword">this</span>.location = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we don&#39;t need location event in nucleus window for now. Making this function just to stay consistent.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appLocation : <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.location = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We don&#39;t need location event in nucleus window for now. Making this function just to stay consistent.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appLocation : <span class="hljs-literal">false</span>;
     };
-    <span class="hljs-keyword">this</span>.login = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this of course must not be synced in nucleus. But let&#39;s stay consistent</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appLogin : <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.login = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This of course must not be synced in nucleus. But let&#39;s stay consistent</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appLogin : <span class="hljs-literal">false</span>;
     };
     <span class="hljs-keyword">this</span>.forms = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
       <span class="hljs-keyword">return</span> appName === <span class="hljs-string">"app"</span> ? appForms : nucleusForms;
@@ -55,14 +51,16 @@ Let&#39;s run an interval to initialize the events properly when event manager i
       <span class="hljs-keyword">if</span> (user.syncing_nucleus_events || user.syncing_app_events) {
         Meteor.clearInterval(initInterval);
 
-        <span class="hljs-keyword">if</span>(user.syncing_app_events &amp;&amp; !<span class="hljs-keyword">this</span>.app_initialized) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>if someone is already logged in before joining sync, let&#39;s log them out so their login state won&#39;t interfere with others
-this is to bring everyone on same page.</p></div></div><div class="code"><div class="wrapper">          <span class="hljs-keyword">if</span>($appWindow.Meteor.logout) $appWindow.Meteor.logout();
+        <span class="hljs-keyword">if</span>(user.syncing_app_events &amp;&amp; !<span class="hljs-keyword">this</span>.app_initialized) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If someone is already logged in before joining sync, let&#39;s log them out so their login state won&#39;t interfere with others.
+This is to bring everyone on same page.</p></div></div><div class="code"><div class="wrapper">          <span class="hljs-keyword">if</span>($appWindow.Meteor.logout) $appWindow.Meteor.logout();
 
           <span class="hljs-keyword">this</span>.click(<span class="hljs-string">"app"</span>).initialize();
           <span class="hljs-keyword">this</span>.scroll(<span class="hljs-string">"app"</span>).initialize();
           <span class="hljs-keyword">this</span>.location(<span class="hljs-string">"app"</span>).initialize();
           <span class="hljs-keyword">this</span>.login(<span class="hljs-string">"app"</span>).initialize();
-          <span class="hljs-keyword">this</span>.forms(<span class="hljs-string">"app"</span>).initialize();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this.forms.initialize();</p></div></div><div class="code"><div class="wrapper">          <span class="hljs-keyword">this</span>.app_initialized = <span class="hljs-literal">true</span>;
+          <span class="hljs-keyword">this</span>.forms(<span class="hljs-string">"app"</span>).initialize();
+
+          <span class="hljs-keyword">this</span>.app_initialized = <span class="hljs-literal">true</span>;
 
           <span class="hljs-keyword">this</span>.startRecievingEvents();
         }
@@ -81,28 +79,21 @@ this is to bring everyone on same page.</p></div></div><div class="code"><div cl
 
   };
 
-  <span class="hljs-keyword">this</span>.tearDown = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>NucleusEventManager.click.tearDown();
-NucleusEventManager.scroll.tearDown();
-this.forms.tearDown();
-this.location.tearDown();
-this.login.tearDown();</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.stopRecievingEvents = <span class="hljs-literal">true</span>;
-  };
+  <span class="hljs-keyword">this</span>.tearDown = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    NucleusEventManager.click.tearDown();
+    NucleusEventManager.scroll.tearDown();
+    <span class="hljs-keyword">this</span>.forms.tearDown();
+    <span class="hljs-keyword">this</span>.location.tearDown();
+    <span class="hljs-keyword">this</span>.login.tearDown();
 
-  <span class="hljs-keyword">this</span>.getRecievers = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">this</span>.stopRecievingEvents = <span class="hljs-literal">true</span>;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get all users which are syncing events i.e which are ready to receive events.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getRecievers = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">return</span> NucleusUsers.find({recieve_events: <span class="hljs-literal">true</span>});
-  };
-
-  <span class="hljs-keyword">this</span>.startRecievingEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-    <span class="hljs-keyword">this</span>.replayEventsSinceLastRouteChange();
-
-    Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(c)</span> {</span>
-      <span class="hljs-keyword">var</span> events = NucleusEvent.getNewEvents();
-      <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.stopRecievingEvents) c.stop();
-      NucleusEventManager.playEvents(events);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sets up an autorun to start receiving events. It also keeps an eye if user want to stop receiving events and stop this autorun if so.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.startRecievingEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Replay all events since latest route change.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.replayEventsSinceLastRouteChange();
+    Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(c)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get new events to be played.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> events = NucleusEvent.getNewEvents();
+      <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.stopRecievingEvents) c.stop();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Play all new events.</p></div></div><div class="code"><div class="wrapper">      NucleusEventManager.playEvents(events);
     });
-  };
-
-  <span class="hljs-keyword">this</span>.playEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(events)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Play an array of <code>events</code>. Because of the heavy-lifting done in <code>NucleusEventManager.initialize()</code>, all these methods are pretty thin and easy to read.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.playEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(events)</span> {</span>
     _.each(events, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
       <span class="hljs-keyword">if</span>(!event) <span class="hljs-keyword">return</span>;
       <span class="hljs-keyword">if</span>(_.contains(event.getDoneUsers(), NucleusUser.me()._id)) <span class="hljs-keyword">return</span>;
@@ -110,35 +101,29 @@ this.login.tearDown();</p></div></div><div class="code"><div class="wrapper">   
       event.markDoneForMe();
       NucleusEventManager.handleEvent(event);
     });
-  };
-
-  <span class="hljs-keyword">this</span>.replayEventsSinceLastRouteChange = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Replay all events that happened after latest route change.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.replayEventsSinceLastRouteChange = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">var</span> onlineUsers = NucleusEventManager.getRecievers().map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
       <span class="hljs-keyword">return</span> user._id;
     });
     onlineUsers = _.difference(onlineUsers, NucleusUser.me()._id);
 
-    <span class="hljs-keyword">if</span>(onlineUsers.length === <span class="hljs-number">0</span>) {<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>last go event created by any logged in nucleus user</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> lastGoEvent = NucleusEvents.find({name: <span class="hljs-string">"location"</span>, originator: {$<span class="hljs-keyword">in</span>: onlineUsers}}, {sort: {triggered_at: -<span class="hljs-number">1</span>}, limit: <span class="hljs-number">1</span>}).fetch()[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">if</span>(onlineUsers.length === <span class="hljs-number">0</span>) {<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the last go event created by any logged in nucleus user.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> lastGoEvent = NucleusEvents.find({name: <span class="hljs-string">"location"</span>, originator: {$<span class="hljs-keyword">in</span>: onlineUsers}}, {sort: {triggered_at: -<span class="hljs-number">1</span>}, limit: <span class="hljs-number">1</span>}).fetch()[<span class="hljs-number">0</span>];
 
-    <span class="hljs-keyword">if</span>(lastGoEvent) {
-      <span class="hljs-keyword">var</span> followingEvents = NucleusEvents.find({triggered_at: {$gt: lastGoEvent.triggered_at}}).fetch();
-    }
+    <span class="hljs-keyword">if</span>(lastGoEvent) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get all the events that happened after <code>go</code> event</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> followingEvents = NucleusEvents.find({triggered_at: {$gt: lastGoEvent.triggered_at}}).fetch();
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the last login event that happened.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> lastLoginEvent = NucleusEvents.find({name: <span class="hljs-string">"login"</span>, type: <span class="hljs-string">"login"</span>, originator: {$<span class="hljs-keyword">in</span>: onlineUsers}}, {sort: {triggered_at: -<span class="hljs-number">1</span>}, limit: <span class="hljs-number">1</span>}).fetch()[<span class="hljs-number">0</span>];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Log in every user who want to sync events. This is so that we won&#39;t attempt to route a user to a page which is not accessible because they&#39;re not logged in or are logged in as some other user type.</p></div></div><div class="code"><div class="wrapper">    NucleusEventManager.playEvents([lastLoginEvent]);
 
-    <span class="hljs-keyword">var</span> lastLoginEvent = NucleusEvents.find({name: <span class="hljs-string">"login"</span>, type: <span class="hljs-string">"login"</span>, originator: {$<span class="hljs-keyword">in</span>: onlineUsers}}, {sort: {triggered_at: -<span class="hljs-number">1</span>}, limit: <span class="hljs-number">1</span>}).fetch()[<span class="hljs-number">0</span>];
-
-
-    NucleusEventManager.playEvents([lastLoginEvent]);
-
-    <span class="hljs-keyword">if</span>(! lastGoEvent) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>FIXME: Find a reliable way to make sure last login event is played and user is logged in successfully before playing last route event</p></div></div><div class="code"><div class="wrapper">    Meteor.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>the template to which the go event goes need rendered before we can trigger events that follow.
-otherwise it interfere and some of the following events get triggered on the page before go event
-FIXME: Find a reliable way to call following events after the template to which go event takes is rendered</p></div></div><div class="code"><div class="wrapper">      NucleusEventManager.playEvents([lastGoEvent]);
+    <span class="hljs-keyword">if</span>(! lastGoEvent) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>FIXME: Find a reliable way to make sure last login event is played and user is logged in successfully before playing last route event</p></div></div><div class="code"><div class="wrapper">    Meteor.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>The template to which the go event goes must be rendered before we can trigger events that follow.
+Otherwise it interfere and some of the following events get triggered on the page before go event.</p>
+<p>FIXME: Find a reliable way to call following events after the template to which go event takes is rendered</p></div></div><div class="code"><div class="wrapper">      NucleusEventManager.playEvents([lastGoEvent]);
 
       Meteor.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         NucleusEventManager.playEvents(followingEvents);
       }, <span class="hljs-number">300</span>);
     }, <span class="hljs-number">300</span>);
   };
-};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>copied from browser-event-sync. But, why chaching?</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> _ElementCache = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/////////////////////
+START COPIED CODE //
+/////////////////////</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Copied from browser-event-sync.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> _ElementCache = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
   <span class="hljs-keyword">var</span> cache = {},
       guidCounter = <span class="hljs-number">1</span>,
       expando = <span class="hljs-string">"data"</span> + (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>).getTime();
@@ -165,8 +150,7 @@ FIXME: Find a reliable way to call following events after the template to which 
       }
     }
   };
-};</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Fix an event</p>
-<p><strong>Returns a *</strong></p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> _fixEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, elem)</span> {</span>
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fix an event</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> _fixEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, elem)</span> {</span>
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">returnTrue</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
   }
@@ -334,8 +318,10 @@ FIXME: Find a reliable way to call following events after the template to which 
     };
     ret.guid = fn.guid;
     <span class="hljs-keyword">return</span> ret;
-  };
-};
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>///////////////////
+END COPIED CODE //
+///////////////////</p></div></div><div class="code"><div class="wrapper">};
+
 
 NucleusEventManager = <span class="hljs-keyword">new</span> EventManager();
 NucleusEventManager.cache = <span class="hljs-keyword">new</span> _ElementCache();

@@ -459,10 +459,41 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "chat/both/chat_model.js",
                 "targetPath": "chat/both/chat_model",
                 "pageTitle": "chat/both/chat_model",
-                "title": "chat_model"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "ChatMessage",
+                    "slug": "chatmessage",
+                    "isFileHeader": true
+                  },
+                  "depth": 1,
+                  "children": [
+                    {
+                      "type": "heading",
+                      "data": {
+                        "level": 2,
+                        "title": "Attributes",
+                        "slug": "attributes"
+                      },
+                      "depth": 2
+                    }
+                  ]
+                },
+                "title": "ChatMessage"
               },
               "depth": 3,
-              "outline": []
+              "outline": [
+                {
+                  "type": "heading",
+                  "data": {
+                    "level": 2,
+                    "title": "Attributes",
+                    "slug": "attributes"
+                  },
+                  "depth": 2
+                }
+              ]
             }
           ]
         }, {
@@ -485,11 +516,21 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                   "foldPrefix": "^",
                   "name": "JavaScript"
                 },
-                "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/chat/client/chat.js",
-                "projectPath": "chat/client/chat.js",
-                "targetPath": "chat/client/chat",
-                "pageTitle": "chat/client/chat",
-                "title": "chat"
+                "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/chat/client/subscriptions.js",
+                "projectPath": "chat/client/subscriptions.js",
+                "targetPath": "chat/client/subscriptions",
+                "pageTitle": "chat/client/subscriptions",
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "Subscriptions",
+                    "slug": "subscriptions",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "Subscriptions"
               },
               "depth": 3,
               "outline": []
@@ -515,11 +556,21 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                   "foldPrefix": "^",
                   "name": "JavaScript"
                 },
-                "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/chat/server/chat.js",
-                "projectPath": "chat/server/chat.js",
-                "targetPath": "chat/server/chat",
-                "pageTitle": "chat/server/chat",
-                "title": "chat"
+                "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/chat/server/publishers.js",
+                "projectPath": "chat/server/publishers.js",
+                "targetPath": "chat/server/publishers",
+                "pageTitle": "chat/server/publishers",
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "Publishers",
+                    "slug": "publishers",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "Publishers"
               },
               "depth": 3,
               "outline": []
@@ -559,7 +610,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/clicks.js",
                 "targetPath": "client/eventsync/clicks",
                 "pageTitle": "client/eventsync/clicks",
-                "title": "clicks"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "ClickEvent",
+                    "slug": "clickevent",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "ClickEvent"
               },
               "depth": 3,
               "outline": []
@@ -579,7 +640,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/form_inputs.js",
                 "targetPath": "client/eventsync/form_inputs",
                 "pageTitle": "client/eventsync/form_inputs",
-                "title": "form_inputs"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "input:text",
+                    "slug": "inputtext",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "input:text"
               },
               "depth": 3,
               "outline": []
@@ -599,7 +670,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/form_submit.js",
                 "targetPath": "client/eventsync/form_submit",
                 "pageTitle": "client/eventsync/form_submit",
-                "title": "form_submit"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "input:submit",
+                    "slug": "inputsubmit",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "input:submit"
               },
               "depth": 3,
               "outline": []
@@ -619,7 +700,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/form_toggles.js",
                 "targetPath": "client/eventsync/form_toggles",
                 "pageTitle": "client/eventsync/form_toggles",
-                "title": "form_toggles"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "input:toggles",
+                    "slug": "inputtoggles",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "input:toggles"
               },
               "depth": 3,
               "outline": []
@@ -639,7 +730,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/forms.js",
                 "targetPath": "client/eventsync/forms",
                 "pageTitle": "client/eventsync/forms",
-                "title": "forms"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "FormEvent",
+                    "slug": "formevent",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "FormEvent"
               },
               "depth": 3,
               "outline": []
@@ -659,7 +760,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/location.js",
                 "targetPath": "client/eventsync/location",
                 "pageTitle": "client/eventsync/location",
-                "title": "location"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "LocationEvent",
+                    "slug": "locationevent",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "LocationEvent"
               },
               "depth": 3,
               "outline": []
@@ -679,7 +790,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/login.js",
                 "targetPath": "client/eventsync/login",
                 "pageTitle": "client/eventsync/login",
-                "title": "login"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "LoginEvent",
+                    "slug": "loginevent",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "LoginEvent"
               },
               "depth": 3,
               "outline": []
@@ -699,7 +820,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/nucleus_event_manager.js",
                 "targetPath": "client/eventsync/nucleus_event_manager",
                 "pageTitle": "client/eventsync/nucleus_event_manager",
-                "title": "nucleus_event_manager"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "NucleusEventManager",
+                    "slug": "nucleuseventmanager",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "NucleusEventManager"
               },
               "depth": 3,
               "outline": []
@@ -719,7 +850,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/scroll.js",
                 "targetPath": "client/eventsync/scroll",
                 "pageTitle": "client/eventsync/scroll",
-                "title": "scroll"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "ScrollEvent",
+                    "slug": "scrollevent",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "ScrollEvent"
               },
               "depth": 3,
               "outline": []
@@ -739,7 +880,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
                 "projectPath": "client/eventsync/utils.js",
                 "targetPath": "client/eventsync/utils",
                 "pageTitle": "client/eventsync/utils",
-                "title": "utils"
+                "firstHeader": {
+                  "type": "heading",
+                  "data": {
+                    "level": 1,
+                    "title": "EventUtils",
+                    "slug": "eventutils",
+                    "isFileHeader": true
+                  },
+                  "depth": 1
+                },
+                "title": "EventUtils"
               },
               "depth": 3,
               "outline": []
@@ -879,11 +1030,21 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
               "foldPrefix": "^",
               "name": "JavaScript"
             },
-            "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/client/nucleus.js",
-            "projectPath": "client/nucleus.js",
-            "targetPath": "client/nucleus",
-            "pageTitle": "client/nucleus",
-            "title": "nucleus"
+            "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/client/nucleus_client.js",
+            "projectPath": "client/nucleus_client.js",
+            "targetPath": "client/nucleus_client",
+            "pageTitle": "client/nucleus_client",
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "NucleusClient",
+                "slug": "nucleusclient",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "NucleusClient"
           },
           "depth": 2,
           "outline": []
@@ -903,7 +1064,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "client/nucleus_editor.js",
             "targetPath": "client/nucleus_editor",
             "pageTitle": "client/nucleus_editor",
-            "title": "nucleus_editor"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "NucleusEditor",
+                "slug": "nucleuseditor",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "NucleusEditor"
           },
           "depth": 2,
           "outline": []
@@ -923,7 +1094,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "client/nucleus_sidebar.js",
             "targetPath": "client/nucleus_sidebar",
             "pageTitle": "client/nucleus_sidebar",
-            "title": "nucleus_sidebar"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "NucleusSidebar",
+                "slug": "nucleussidebar",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "NucleusSidebar"
           },
           "depth": 2,
           "outline": []
@@ -943,10 +1124,60 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
             "projectPath": "client/template.js",
             "targetPath": "client/template",
             "pageTitle": "client/template",
-            "title": "template"
+            "firstHeader": {
+              "type": "heading",
+              "data": {
+                "level": 1,
+                "title": "Templates",
+                "slug": "templates",
+                "isFileHeader": true
+              },
+              "depth": 1
+            },
+            "title": "Templates"
           },
           "depth": 2,
           "outline": []
+        }
+      ]
+    }, {
+      "type": "folder",
+      "data": {
+        "path": "docs",
+        "title": "docs"
+      },
+      "depth": 1,
+      "children": [
+        {
+          "type": "folder",
+          "data": {
+            "path": "docs/assets",
+            "title": "assets"
+          },
+          "depth": 2,
+          "children": [
+            {
+              "type": "file",
+              "data": {
+                "language": {
+                  "nameMatchers": [".js"],
+                  "pygmentsLexer": "javascript",
+                  "multiLineComment": ["/*", "*", "*/"],
+                  "singleLineComment": ["//"],
+                  "ignorePrefix": "}",
+                  "foldPrefix": "^",
+                  "name": "JavaScript"
+                },
+                "sourcePath": "/Users/channi/Documents/Work/channikhabra:nucleus/docs/assets/behavior.js",
+                "projectPath": "docs/assets/behavior.js",
+                "targetPath": "docs/assets/behavior",
+                "pageTitle": "docs/assets/behavior",
+                "title": "behavior"
+              },
+              "depth": 3,
+              "outline": []
+            }
+          ]
         }
       ]
     }, {

@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head><title>client/nucleus_client</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/nucleus_client"><meta name="groc-project-path" content="client/nucleus_client.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/nucleus_client.js">client/nucleus_client.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleusclient">NucleusClient</h1></div></div></div><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> NucleusClientFactory = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>It should be the centralized access point for most of the operations on Nucleus on the client side.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> fileTree,
+      currentFile,
+      currentFileContents,
+      nucleusClientDep = <span class="hljs-keyword">new</span> Deps.Dependency;
+
+  <span class="hljs-keyword">this</span>.config = {
+    nucleusUrl: window.location.origin + <span class="hljs-string">'/nucleus'</span>,
+    windowName: <span class="hljs-string">'Nucleus'</span>,
+    clientDir: <span class="hljs-string">'client'</span>,
+    serverDir: <span class="hljs-string">'server'</span>,
+    suckCSSFromPackages: []
+  };
+
+  <span class="hljs-keyword">this</span>.configure = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(config)</span> {</span>
+    _.extend(<span class="hljs-keyword">this</span>.config, config);
+  };
+
+  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(config)</span> {</span>
+    <span class="hljs-keyword">this</span>.configure(config);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>url where nucleus template is expected</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> url = <span class="hljs-keyword">this</span>.config.nucleusUrl,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>name of Nucleus window. Not significant</p></div></div><div class="code"><div class="wrapper">        windowName = <span class="hljs-keyword">this</span>.config.windowName,</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>nucleus window which has nucleus editor.</p></div></div><div class="code"><div class="wrapper">        nucleusWindow = window.open(url, windowName, <span class="hljs-string">'height=550,width=900'</span>);
+
+    <span class="hljs-keyword">if</span> (window.focus) { nucleusWindow.focus(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Configure flash messages. We are using <code>mrt:flash-messages</code> package for flash messages</p></div></div><div class="code"><div class="wrapper">    FlashMessages.configure({
+      autoHide: <span class="hljs-literal">false</span>,
+      hideDelay: <span class="hljs-number">3000</span>,
+      autoScroll: <span class="hljs-literal">true</span>
+    });
+
+    <span class="hljs-keyword">this</span>.nucleusWindow = nucleusWindow;
+    <span class="hljs-keyword">this</span>.updateCSS();
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get name of the the <em>scratch</em> doc. This is the document which is opened in ace when user has just logged in and haven&#39;t yet opened any document.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getScratchDoc = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'scratch'</span>;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the window for <code>app_name</code>. If <code>app_name</code> is not given, it returns window for <code>nucleus</code></p>
+<p><em>Attributes</em>:</p>
+<ul>
+<li><code>app_name</code> <em>{String}</em> : Can be <strong>app</strong> or <strong>nucleus</strong></li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getWindow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app_name)</span> {</span>
+    <span class="hljs-keyword">var</span> nucleus_window = <span class="hljs-keyword">this</span>.nucleusWindow ? <span class="hljs-keyword">this</span>.nucleusWindow : window.name === <span class="hljs-string">"Nucleus"</span> ? window : window;
+
+    <span class="hljs-keyword">if</span>(app_name === <span class="hljs-string">"app"</span>) <span class="hljs-keyword">return</span> nucleus_window.opener ? nucleus_window.opener : nucleus_window;
+
+    <span class="hljs-keyword">return</span> nucleus_window;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get <code>app</code> window</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getAppWindow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> window.name === <span class="hljs-string">"Nucleus"</span> ? window.opener : window;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if <code>filepath</code> is a client file. Client files are supposed to be evaled live on client side. Although this functionality has not been implemented yet.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.isClientFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">var</span> clientRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"\/"</span>+<span class="hljs-keyword">this</span>.config.clientDir+<span class="hljs-string">"\/"</span>);
+    <span class="hljs-keyword">return</span> clientRegex.test(filepath);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if <code>filepath</code> is a server file.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.isServerFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">var</span> serverRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">"\/"</span>+<span class="hljs-keyword">this</span>.config.clientDir+<span class="hljs-string">"\/"</span>);
+    <span class="hljs-keyword">return</span> serverRegex.test(filepath);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if <code>filepath</code> is a CSS file.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.isCSSFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath)</span> {</span>
+    <span class="hljs-keyword">var</span> splitArr = filepath.split(<span class="hljs-string">"."</span>);
+    <span class="hljs-keyword">return</span> splitArr[splitArr.length-<span class="hljs-number">1</span>] === <span class="hljs-string">'css'</span>;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Mark <code>nucDoc</code> for eval on client side.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>nucDoc</code> <em>{Mongo Document}</em> : Document from <code>NucleusDocuments</code> which would have <code>filepath</code> property. This document will be attempted to be evaled on client side.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.markDocForEval = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nucDoc)</span> {</span>
+    <span class="hljs-keyword">var</span> filepath = nucDoc.filepath,
+        isClientFile = <span class="hljs-keyword">this</span>.isClientFile(filepath);
+    <span class="hljs-keyword">if</span> (isClientFile || !<span class="hljs-keyword">this</span>.isServerFile(filepath) &amp;&amp; <span class="hljs-keyword">this</span>.isCSSFile(filepath)) {
+      NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: <span class="hljs-literal">true</span>}});
+    } <span class="hljs-keyword">else</span> {
+      FlashMessages.sendWarning(<span class="hljs-string">"This file can't be evaled in realtime. Changes will be visible on next deploy."</span>);
+    }
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Unmark <code>nucDoc</code> from eval on client side. See <code>NucleusClient.markDocForEval</code> above</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>nucDoc</code> <em>{Mongo Document}</em> : Document from <code>NucleusDocuments</code> which would have <code>filepath</code> property.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.unmarkDocForEval = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nucDoc)</span> {</span>
+    NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: <span class="hljs-literal">false</span>}});
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Eval the <code>nucDoc</code> on client side. As of now, this function can only act on <code>CSS</code> files. Js/HTML files are not supported for now.
+We will use <code>channikhabra:live-update</code> package for evaling js/html on client, when it&#39;s implemented.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>nucDoc</code> <em>{Mongo Document}</em> : Document from <code>NucleusDocuments</code> which would have <code>filepath</code> property.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.evalNucleusDoc = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nucDoc)</span> {</span>
+    <span class="hljs-keyword">var</span> filepath = nucDoc.filepath,
+        doc = ShareJsDocs.findOne(nucDoc.doc_id),
+        newJs = doc.data.snapshot;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isCSSFile(filepath))
+      <span class="hljs-keyword">this</span>.updateCSS();
+    <span class="hljs-keyword">else</span>
+      console.log(<span class="hljs-string">"EVALING"</span>, filepath);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reactively get the <code>filetree</code>. It&#39;d first attempt to refresh/set <code>filetree</code> and reactively return it.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getFileTree = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">this</span>.setFileTree();
+    nucleusClientDep.depend();
+    <span class="hljs-keyword">return</span> fileTree;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reactively set <code>filetree</code></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.setFileTree = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> makeYou = <span class="hljs-keyword">this</span>;
+    Meteor.call(<span class="hljs-string">"nucleusGetFileList"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>so that this.getFileTree() won&#39;t run infinitely for reactive computations</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (!_.isEqual(res, fileTree)) {
+        nucleusClientDep.changed();
+        fileTree = res;
+      }
+    });
+  }.bind(<span class="hljs-keyword">this</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>jstree isn&#39;t working when used with JSON from within a meteor package. So, let&#39;s create HTML (ul&gt;li) instead.
+I tried creating my own simple tree, but it&#39;s turning out to be more work</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getJstreeHTML = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+
+    <span class="hljs-keyword">var</span> tree = <span class="hljs-keyword">this</span>.getFileTree();
+    nucleusClientDep.depend();
+
+    <span class="hljs-keyword">if</span> (! tree) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> template = <span class="hljs-string">"\
+      &lt;ul&gt; \
+      &lt;% _.each(tree.children, function(child) { %&gt;  \
+      &lt;li class='nucleus_tree_node' id='&lt;%= child.path %&gt;' data-type='&lt;%= child.type %&gt;'&gt;&lt;%= child.name %&gt; \
+      &lt;%= childFn({tree: child, childFn: childFn}) %&gt; \
+    &lt;/li&gt; \
+      &lt;% }) %&gt; \
+    &lt;/ul&gt;"</span>;
+    <span class="hljs-keyword">var</span> templateFn = _.template(template);
+
+    <span class="hljs-keyword">var</span> html = templateFn({tree: tree, childFn: templateFn});
+    <span class="hljs-keyword">return</span> html;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This function is obsolete. We use <code>NucleusClient.getJstreeHTML()</code> for setting filetree in Nucleus sidebar.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getJstreeJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>jstree uses a different JSON formatting then produced by Nucleus.getFileList. Here we do the conversion</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> rawtree = <span class="hljs-keyword">this</span>.getFileTree();
+    <span class="hljs-keyword">if</span>(! rawtree) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">var</span> setJstreeJSON = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
+      _.each(obj.children, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> {</span>
+        <span class="hljs-keyword">if</span> (child.name.indexOf(<span class="hljs-string">"."</span>) === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>; <span class="hljs-comment">//ignore hidden files/folders</span>
+        jstree.push({<span class="hljs-string">"id"</span>: child.path, <span class="hljs-string">"parent"</span>: child.parent, <span class="hljs-string">"text"</span>: child.name});
+        <span class="hljs-keyword">if</span> (obj.type === <span class="hljs-string">'folder'</span>) setJstreeJSON(child);
+      });
+    };
+    <span class="hljs-keyword">var</span> jstree = [
+      {<span class="hljs-string">"id"</span>: rawtree.path, <span class="hljs-string">"parent"</span>: <span class="hljs-string">"#"</span>, <span class="hljs-string">"text"</span>: rawtree.name}
+    ];
+    setJstreeJSON(rawtree);
+    <span class="hljs-keyword">return</span> jstree;
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Edit <code>filepath</code> in ace editor.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>filepath</code> <em>{string}</em>: Path of file to be edited. Can be obtained from the filetree nodes in Nucleus sidebar.</li>
+<li><code>forceRefresh</code> <em>{boolean}</em>: Discard the changes which are not yet saved to the filesystem and force load <code>filepath</code> from filesystem</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.editFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath, forceRefresh)</span> {</span>
+    Meteor.call(<span class="hljs-string">'nucleusSetupFileForEditting'</span>, filepath, forceRefresh, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) { console.log(err); <span class="hljs-keyword">return</span>; }
+      Session.set(<span class="hljs-string">"nucleus_selected_doc_id"</span>, res);
+
+      <span class="hljs-keyword">var</span> user = NucleusUser.me();
+      <span class="hljs-keyword">if</span>(!user) <span class="hljs-keyword">return</span>; <span class="hljs-comment">// this is to avoid a message in console which shows up when user is not yet logged in</span>
+      user.setCwd(res);
+      user.setCurrentFilepath(filepath);
+    });
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Save the selected file to Filesystem. This method is called when user press <code>Cmd-S</code> or click <code>Save</code> button in Nucleus editor.</p>
+<p>Selected file is <code>NucleusUser.cwd</code>.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.saveSelectedFileToDisk = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> selectedDocId = Session.get(<span class="hljs-string">"nucleus_selected_doc_id"</span>),
+        nucDoc = NucleusDocuments.findOne({doc_id:selectedDocId}),
+        client = <span class="hljs-keyword">this</span>;
+    Meteor.call(<span class="hljs-string">"nucleusSaveDocToDisk"</span>, selectedDocId, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span> (err) { console.log(err); <span class="hljs-keyword">return</span>;}
+      <span class="hljs-keyword">if</span>(res === <span class="hljs-number">0</span>) FlashMessages.sendWarning(<span class="hljs-string">"No Changes to Save"</span>);
+      <span class="hljs-keyword">if</span>(res === <span class="hljs-number">1</span>) {client.markDocForEval(nucDoc); FlashMessages.sendSuccess(<span class="hljs-string">"File Saved Successfully"</span>);}
+      <span class="hljs-keyword">if</span>(res === <span class="hljs-number">2</span>) FlashMessages.sendError(<span class="hljs-string">"Something went Wrong when Saving File"</span>);
+    });
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Live Update the CSS of app. This method removes the old css <em>link</em> from the app, and will fetch concatenated CSS from server, which is updated CSS from all CSS files. Then it creates a new <em>style</em> element and appends new fetched CSS to the document.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.updateCSS = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">var</span> nucleusStyle = document.createElement(<span class="hljs-string">"style"</span>),
+        window = <span class="hljs-keyword">this</span>.getAppWindow();
+    <span class="hljs-keyword">if</span>(window.document.getElementById(<span class="hljs-string">"nucleus-style"</span>)) window.document.getElementById(<span class="hljs-string">"nucleus-style"</span>).remove();
+    nucleusStyle.id = <span class="hljs-string">"nucleus-style"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>clear old CSS
+This works because Meteor injects only one stylesheet <link></p></div></div><div class="code"><div class="wrapper">    _.each(window.document.querySelectorAll(<span class="hljs-string">"link"</span>), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(link)</span> {</span>
+      <span class="hljs-keyword">if</span> (link.rel === <span class="hljs-string">'stylesheet'</span>) link.href = <span class="hljs-string">''</span>;
+    });
+
+    Meteor.call(<span class="hljs-string">"nucleusGetAllCSS"</span>, {packagesToInclude: <span class="hljs-keyword">this</span>.config.suckCSSFromPackages}, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      nucleusStyle.innerHTML = res;
+      window.document.head.appendChild(nucleusStyle);
+    });
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get all online users. All users in <code>NucleusUsers</code> collection are online users since we remove any user who leaves the nucleus as soon as they leave it.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.getOnlineUsers = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">return</span> NucleusUsers.find();
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clears the user status boxes in sidebar and multiple user cursors in ace editor for those users who have gone offline. We do some un-reactive DOM manipulation for adding user status boxes and cursors in ace which we need to handle ourselves.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.clearDeadUsers = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(users)</span> {</span>
+    users = users || NucleusClient.getOnlineUsers().fetch(); <span class="hljs-comment">//try to decrease db queries</span>
+    <span class="hljs-keyword">var</span> nicks = _.map(users, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+      <span class="hljs-keyword">return</span> user.getNick();
+    });
+    <span class="hljs-keyword">var</span> userIds = _.map(users, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+      <span class="hljs-keyword">return</span> user._id;
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clear sidebar</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> nicksNodes = _.map($(<span class="hljs-string">".user-status-box"</span>), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(n)</span> {</span>
+      <span class="hljs-keyword">return</span> n.getAttribute(<span class="hljs-string">'data-user-nick'</span>);
+    });
+    <span class="hljs-keyword">var</span> deadNicks = _.difference(nicksNodes, nicks);
+    _.each(deadNicks, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(deadNick)</span> {</span>
+      $(<span class="hljs-string">"[data-user-nick="</span>+deadNick+<span class="hljs-string">"]"</span>).remove();
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clear extra cursors</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> deadUserCursors = _.difference(<span class="hljs-built_in">Object</span>.keys(NucleusEditor.extraCursors), userIds);
+    _.each(deadUserCursors, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(deadCursor)</span> {</span>
+      NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
+    });
+
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Creates new <code>filepath</code> and execute <code>cb</code> callback after completion.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>filepath</code>: Path of the file to be created</li>
+<li><code>cb</code>: Callback function to be executed after completion.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.createNewFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath, cb)</span> {</span>
+    Meteor.call(<span class="hljs-string">"nucleusCreateNewFile"</span>, filepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span>(err) {cb(err); <span class="hljs-keyword">return</span>;}
+      cb(<span class="hljs-literal">null</span>, res);
+    });
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Creates new <code>filepath</code> and execute <code>cb</code> callback after completion.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>filepath</code>: Path of the file to be created</li>
+<li><code>cb</code>: Callback function to be executed after completion.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.createNewFolder = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath, cb)</span> {</span>
+    Meteor.call(<span class="hljs-string">"nucleusCreateNewFolder"</span>, filepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span>(err) {cb(err); <span class="hljs-keyword">return</span>;}
+      cb(<span class="hljs-literal">null</span>, res);
+    });
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Delete <code>filepath</code> (file or directory) and execute <code>cb</code> callback after completion.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>filepath</code>: Path of the file to be created</li>
+<li><code>cb</code>: Callback function to be executed after completion.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.deleteFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(filepath, cb)</span> {</span>
+    Meteor.call(<span class="hljs-string">"nucleusDeleteFile"</span>, filepath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span>(err) {cb(err); <span class="hljs-keyword">return</span>;}
+      cb(<span class="hljs-literal">null</span>, res);
+    });
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Rename <code>oldpath</code> to <code>newpath</code> and execute <code>cb</code> callback after completion.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>oldpath</code>: Old path of the file/directory to be renamed</li>
+<li><code>newpath</code>: New path of the file/directory to be renamed</li>
+<li><code>cb</code>: Callback function to be executed after completion.</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.renameFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(oldpath, newpath, cb)</span> {</span>
+    Meteor.call(<span class="hljs-string">"nucleusRenameFile"</span>, oldpath, newpath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, res)</span> {</span>
+      <span class="hljs-keyword">if</span>(err) {cb(err); <span class="hljs-keyword">return</span>;}
+      cb(<span class="hljs-literal">null</span>, res);
+    });
+  };
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>EVAL AUTORUN</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  Meteor.subscribe(<span class="hljs-string">'nucleusPublisher'</span>);
+  NucleusDocuments.find({shouldEval: <span class="hljs-literal">true</span>}).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(doc)</span> {</span>
+    NucleusClient.evalNucleusDoc(doc);
+    NucleusClient.unmarkDocForEval(doc);
+  });
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create NucleusClient Global</p></div></div><div class="code"><div class="wrapper">NucleusClient = <span class="hljs-keyword">new</span> NucleusClientFactory();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This deletes the current user when they quit nucleus window</p></div></div><div class="code"><div class="wrapper">NucleusClient.getWindow().onbeforeunload = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  console.log(<span class="hljs-string">"UNLOADING NUCLEUS WINDOW"</span>);
+  NucleusUser.me().delete();
+};</div></div></div></div></body></html>

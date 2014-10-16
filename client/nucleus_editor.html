@@ -1,16 +1,13 @@
-<!DOCTYPE html><html lang="en"><head><title>client/nucleus_editor</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/nucleus_editor"><meta name="groc-project-path" content="client/nucleus_editor.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/nucleus_editor.js">client/nucleus_editor.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> showLabelOnMouseMove = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
-  <span class="hljs-keyword">var</span> mousePos = [e.clientX,e.clientY];
-
-  <span class="hljs-keyword">var</span> getRectangleForElem = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span> {</span>
-    <span class="hljs-keyword">if</span>(!elem) <span class="hljs-keyword">return</span>;
+<!DOCTYPE html><html lang="en"><head><title>client/nucleus_editor</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/nucleus_editor"><meta name="groc-project-path" content="client/nucleus_editor.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/nucleus_editor.js">client/nucleus_editor.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="nucleuseditor">NucleusEditor</h1></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show user&#39;s nick in label when mouse is moved to her cursor in ace editor.</p>
+<p>We get rectangles around the cursors, and check if the mouse is in any of those rectangles.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> showLabelOnMouseMove = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+  <span class="hljs-keyword">var</span> mousePos = [e.clientX,e.clientY];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the rectangle around the cursor element in ace</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> getRectangleForElem = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(elem)</span> {</span>
+    <span class="hljs-keyword">if</span>(!elem) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;;
     <span class="hljs-keyword">var</span> boundingRect = elem.getBoundingClientRect(),
         topLeft = [boundingRect.left, boundingRect.top],
         bottomRight = [boundingRect.right, boundingRect.bottom];
 
     <span class="hljs-keyword">return</span> [topLeft, bottomRight];
-  };
-
-  <span class="hljs-keyword">var</span> pointIsInRect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point, rect)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if given <code>point</code> is in <code>rect</code> rectangle</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> pointIsInRect = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(point, rect)</span> {</span>
     <span class="hljs-keyword">var</span> x = point[<span class="hljs-number">0</span>],
         y = point[<span class="hljs-number">1</span>];
 
@@ -25,53 +22,37 @@
         y2 = <span class="hljs-built_in">Math</span>.max(z2, z4);
 
     <span class="hljs-keyword">return</span> (x1 &lt;= x &amp;&amp; x &lt;= x2) &amp;&amp; (y1 &lt;= y &amp;&amp; y &lt;= y2);
-  };
-
-  <span class="hljs-keyword">var</span> cursorRects = _.map(<span class="hljs-built_in">Object</span>.keys(NucleusEditor.extraCursors), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>get rectangles for all extra cursors present in the ace editor. Every online user has a cursor.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> cursorRects = _.map(<span class="hljs-built_in">Object</span>.keys(NucleusEditor.extraCursors), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span> {</span>
     <span class="hljs-keyword">var</span> elem = document.getElementsByClassName(NucleusEditor.extraCursors[userId].class)[<span class="hljs-number">0</span>];
     <span class="hljs-keyword">return</span> {userId: userId, rect: getRectangleForElem(elem)};
-  });
-
-  _.each(cursorRects, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> {</span>
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if the mouse position is in any of the <code>cursorRects</code>. If it&#39;s in some cursorRect, show the label, otherwise clear the cursor label</p></div></div><div class="code"><div class="wrapper">  _.each(cursorRects, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> {</span>
     <span class="hljs-keyword">if</span>(pointIsInRect(mousePos, item.rect))
       NucleusEditor.showLabelForUser(item.userId);
     <span class="hljs-keyword">else</span>
       NucleusEditor.clearCursorLabel();
   });
-};
-
-
-<span class="hljs-keyword">var</span> NucleusEditorFactory = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">this</span>.editor = <span class="hljs-literal">null</span>;
-  <span class="hljs-keyword">this</span>.extraCursors = {};
-  <span class="hljs-keyword">this</span>.addedStyleRules = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>when refactoring this code, if possible use Object.keys instead of this.allEvents</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.allEvents = [];
-  <span class="hljs-keyword">this</span>.aceModesForExts = {
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Constructor for <code>NucleusEditor</code></p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> NucleusEditorFactory = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Ace editor instance. This is populated in templates.js when sharejs initializes the ace editor</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.editor = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Array of all extra cursors present</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.extraCursors = {};
+  <span class="hljs-keyword">this</span>.addedStyleRules = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>when refactoring this code, if possible use Object.keys instead of this.allEvents</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.allEvents = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>simple key-value pair for assigning ace-modes for documents depending on the extension of the file being edited</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.aceModesForExts = {
     <span class="hljs-string">'html'</span>: <span class="hljs-string">"handlebars"</span>,
     <span class="hljs-string">'css'</span>: <span class="hljs-string">'css'</span>,
     <span class="hljs-string">'json'</span>: <span class="hljs-string">'json'</span>,
     <span class="hljs-string">'js'</span>: <span class="hljs-string">'javascript'</span>,
     <span class="hljs-string">'lock'</span>: <span class="hljs-string">'json'</span>
-  };
-  <span class="hljs-keyword">this</span>.events = {
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This part might be over-engineered, or might not be. Objective was to have a singular point for all the events that we have on the ace-editor</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.events = {
     cursorMovement: [],
     mouseMove: [
       showLabelOnMouseMove
     ],
     scroll: []
   };
-  <span class="hljs-keyword">this</span>.Range = ace.require(<span class="hljs-string">'ace/range'</span>).Range;
-
-  <span class="hljs-keyword">this</span>.initilize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(aceInstance)</span> {</span>
+  <span class="hljs-keyword">this</span>.Range = ace.require(<span class="hljs-string">'ace/range'</span>).Range;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We initialize the <code>NucleusEditor</code> in template.js when we get ace-editor instance from shareJs</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.initilize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(aceInstance)</span> {</span>
     <span class="hljs-keyword">this</span>.setEditor(aceInstance);
     <span class="hljs-keyword">this</span>.setTheme(<span class="hljs-string">'monokai'</span>);
-    <span class="hljs-keyword">this</span>.setMode(<span class="hljs-string">'javascript'</span>);
-    <span class="hljs-keyword">this</span>.editor.setHighlightActiveLine(<span class="hljs-literal">false</span>);
-    <span class="hljs-keyword">this</span>.addCommands([
+    <span class="hljs-keyword">this</span>.setMode(<span class="hljs-string">'javascript'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Highlighting active line would make the extra cursors disappear from that line.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.editor.setHighlightActiveLine(<span class="hljs-literal">false</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Some basic commands</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.addCommands([
       {
         name: <span class="hljs-string">'saveFile'</span>,
         bindKey: {win: <span class="hljs-string">'Ctrl-s'</span>,  mac: <span class="hljs-string">'Command-s'</span>},
-        exec: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span>
-          NucleusClient.saveSelectedFileToDisk();
+        exec: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Save the file currently being edited in user&#39;s ace editor</p></div></div><div class="code"><div class="wrapper">          NucleusClient.saveSelectedFileToDisk();
         },
         readOnly: <span class="hljs-literal">true</span> <span class="hljs-comment">// false if this command should not apply in readOnly mode</span>
       }
@@ -98,16 +79,14 @@
   };
   <span class="hljs-keyword">this</span>.setTheme = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(theme)</span> {</span>
     <span class="hljs-keyword">this</span>.getEditor().setTheme(<span class="hljs-string">"ace/theme/"</span> + theme);
-  };
-
-  <span class="hljs-keyword">this</span>.addCursorMovementAction = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(action)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>I don&#39;t even know why I am overdoing this shit. Just based on a hunch</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.events.cursorMovement.push(action);
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>I don&#39;t even know why I am over-engineering this shit. Just based on a hunch</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.addCursorMovementAction = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(action)</span> {</span>
+    <span class="hljs-keyword">this</span>.events.cursorMovement.push(action);
     <span class="hljs-keyword">this</span>.registerAllEvents();
   };
 
   <span class="hljs-keyword">this</span>.addModeForExt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
     _.extend(<span class="hljs-keyword">this</span>.aceModesForExts, obj);
-  };
-  <span class="hljs-keyword">this</span>.setModeForExt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ext)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method is used for setting the mode of document on every doc change</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.setModeForExt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ext)</span> {</span>
     ext = ext || <span class="hljs-string">"js"</span>;
     <span class="hljs-keyword">var</span> mode = <span class="hljs-keyword">this</span>.aceModesForExts[ext] || ext;
     <span class="hljs-keyword">this</span>.setMode(mode);
@@ -130,15 +109,16 @@
 
   <span class="hljs-keyword">this</span>.removeEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(eventName, fn)</span> {</span>
     <span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.events[eventName]) <span class="hljs-keyword">return</span>;
-
     <span class="hljs-keyword">var</span> index = <span class="hljs-keyword">this</span>.events.indexOf(fn);
-
     <span class="hljs-keyword">if</span> (index &gt; -<span class="hljs-number">1</span>) {
       <span class="hljs-keyword">this</span>.events.splice(index, <span class="hljs-number">1</span>);
     }
-  };
-
-  <span class="hljs-keyword">this</span>.registerAllEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(invert)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This is why I have the events over-engineered. A more elegent solution might be possible though.</p>
+<p>This method registers all the events in <code>NucleusEditor.events</code>. Thing is that when the document in ace editor changes, it would drop all the events registered on the editor. We need to register them all again every time document being edited changes.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>invert</code> <em>{boolean}</em>: Shall I perform the inverted operation? i.e unregister events instead of registering them</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.registerAllEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(invert)</span> {</span>
     <span class="hljs-keyword">var</span> ed = <span class="hljs-keyword">this</span>;
 
     <span class="hljs-keyword">if</span>(! <span class="hljs-keyword">this</span>.getEditor()) {
@@ -149,11 +129,10 @@
         }
       }.bind(<span class="hljs-keyword">this</span>), <span class="hljs-number">100</span>);
       <span class="hljs-keyword">return</span>;
-    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>let&#39;s unbind all events before adding new ones to avoid double events.
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let&#39;s unbind all events before adding new ones to avoid double events.
 May be this is why I am overdoing it. I have a deja-vu feeling I&#39;ve been here struggling with ace double events
-although I don&#39;t remember working with this part of ace</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> binder = invert ? <span class="hljs-string">"off"</span> : <span class="hljs-string">"on"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>well, ace don&#39;t really double call events when we call registerAllEvents multiple times, but let&#39;s keep it
-TODO: remove it if double events are not a problem TODAY: Tue Aug 19 14:42:19 2014
-if(binder === &#39;on&#39;) this.registerAllEvents(true);</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> cursorEvents = <span class="hljs-keyword">this</span>.events.cursorMovement;
+although I don&#39;t remember working with this part of ace</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> binder = invert ? <span class="hljs-string">"off"</span> : <span class="hljs-string">"on"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>well, ace don&#39;t really double call events when we call registerAllEvents multiple times, but let&#39;s keep it</p>
+<p>TODO: remove it if double events are not a problem</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> cursorEvents = <span class="hljs-keyword">this</span>.events.cursorMovement;
     _.each(cursorEvents, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(action)</span> {</span>
       <span class="hljs-keyword">this</span>.getSelection()[binder](<span class="hljs-string">"changeCursor"</span>, action);
     }.bind(<span class="hljs-keyword">this</span>));
@@ -161,9 +140,9 @@ if(binder === &#39;on&#39;) this.registerAllEvents(true);</p></div></div><div cl
     <span class="hljs-keyword">var</span> mouseMoveEvents = <span class="hljs-keyword">this</span>.events.mouseMove;
     _.each(mouseMoveEvents, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(action)</span> {</span>
       <span class="hljs-keyword">this</span>.editor[binder](<span class="hljs-string">"mousemove"</span>, action);
-    }.bind(<span class="hljs-keyword">this</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>for all other events. cursorEvents and mouseMoveEvents should be turned to use this on refactor</p></div></div><div class="code"><div class="wrapper">    _.each(ed.allEvents, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
-      _.each(ed.events[event], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(action)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>some events need to be set on session, editor or some other property of ace editor
-FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wrapper">        ed.editor.session[binder](event, action);
+    }.bind(<span class="hljs-keyword">this</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>For all other events. cursorEvents and mouseMoveEvents should be turned to use this on refactor</p></div></div><div class="code"><div class="wrapper">    _.each(ed.allEvents, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
+      _.each(ed.events[event], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(action)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>some events need to be set on session, editor or some other property of ace editor</p>
+<p>FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wrapper">        ed.editor.session[binder](event, action);
       });
     });
 
@@ -171,15 +150,14 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
 
   <span class="hljs-keyword">this</span>.unregisterAllEvents = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">this</span>.registerAllEvents(<span class="hljs-literal">true</span>);
-  };
-
-
-  <span class="hljs-keyword">this</span>.clearCursorLabel = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove the cursor label from ace editor</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.clearCursorLabel = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">var</span> $label = $(<span class="hljs-string">".user_nick_cursor_label"</span>);
     $label.css({display: <span class="hljs-string">"none"</span>});
-  };
-
-  <span class="hljs-keyword">this</span>.showLabelForUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the label for <code>user</code>.</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>user</code> <em>{string}</em> or <em>{NucleusUser}</em></li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.showLabelForUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
     user = <span class="hljs-keyword">typeof</span> user === <span class="hljs-string">'string'</span> ? NucleusUsers.findOne(user) : user;
 
     <span class="hljs-keyword">var</span> userCursorRange = <span class="hljs-keyword">this</span>.extraCursors[user._id].range,
@@ -192,9 +170,13 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
     <span class="hljs-keyword">var</span> $label = $(<span class="hljs-string">".user_nick_cursor_label"</span>);
     $label.text(nick);
     $label.css({display: <span class="hljs-string">'inline'</span>, top: userCursorPos.pageY+lineHeight, left: userCursorPos.pageX, background: color, padding: <span class="hljs-string">"2px"</span>, color: Utils.getComplementoryColor(color), lineHeight: lineHeight+<span class="hljs-string">'px'</span>});
-  };
-
-  <span class="hljs-keyword">this</span>.insertExtraCursor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Insert the extra cursor for <code>user</code>. It&#39;s called extra cursor because these cursors are inserted for all users except the currently logged in users.
+We create an element and assign it color which is same as the color assigned to a user to be displayed in sidebar status box.</p>
+<p>Return value from this method is kept in <code>NucleusEditor.extraCursors</code> for interacting with these cursors</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>user</code>: <em>{string}</em> or <em>{NucleusUser}</em></li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.insertExtraCursor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
     <span class="hljs-keyword">var</span> cursor = user.getCursor(),
         row =  cursor[<span class="hljs-number">0</span>],
         column = cursor[<span class="hljs-number">1</span>],
@@ -205,15 +187,11 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
         user = <span class="hljs-keyword">typeof</span> user === <span class="hljs-string">'string'</span> ? NucleusUsers.findOne(user) : user,
         color = user.getColor(),
         nick = user.getNick(),
-        curClass = <span class="hljs-string">"extra-ace-cursor-"</span>+color.replace(<span class="hljs-string">"#"</span>, <span class="hljs-string">''</span>);
-
-
-    <span class="hljs-keyword">var</span> cursorCss = <span class="hljs-string">"."</span>+ curClass +<span class="hljs-string">" {\
+        curClass = <span class="hljs-string">"extra-ace-cursor-"</span>+color.replace(<span class="hljs-string">"#"</span>, <span class="hljs-string">''</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>CSS for new cursor to be inserted</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> cursorCss = <span class="hljs-string">"."</span>+ curClass +<span class="hljs-string">" {\
     position: absolute;\
     background-color: "</span> + color + <span class="hljs-string">";\
     border-left: 2px solid "</span>+ color + <span class="hljs-string">";\
-  }"</span>;
-    <span class="hljs-keyword">this</span>.addStyleRule(cursorCss);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>I don&#39;t really know why this is needed. I copied this from firepad code</p></div></div><div class="code"><div class="wrapper">    cursorRange.clipRows = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  }"</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check documentation for <code>NucleusEditor.addStyleRule()</code></p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">this</span>.addStyleRule(cursorCss);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>I don&#39;t really know why this is needed. I copied this from firepad code</p></div></div><div class="code"><div class="wrapper">    cursorRange.clipRows = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
       <span class="hljs-keyword">var</span> localRange = <span class="hljs-keyword">new</span> self.Range().clipRows.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
       localRange.isEmpty = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
@@ -225,9 +203,7 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
     cursorRange.end = doc.createAnchor(cursorRange.end);
     cursorRange.id = session.addMarker(cursorRange, curClass + <span class="hljs-string">" blink"</span> + <span class="hljs-string">" cursor-"</span>+nick, <span class="hljs-string">"text"</span>);
     <span class="hljs-keyword">return</span> {range: cursorRange, <span class="hljs-keyword">class</span>: curClass};
-  };
-
-  <span class="hljs-keyword">this</span>.addStyleRule= <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(css)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This is a helper function which we use for inserting style rules in head. We can&#39;t insert style directly into inserted extra cursors in ace, we can insert classes though. So we insert classes in the cursors, and add style rules for those classes using this function.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.addStyleRule= <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(css)</span> {</span>
     <span class="hljs-keyword">var</span> document = NucleusClient.getWindow().document;
     <span class="hljs-keyword">if</span>(!document) <span class="hljs-keyword">return</span>;
 
@@ -239,15 +215,19 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
 
     <span class="hljs-keyword">this</span>.addedStyleRules[css] = <span class="hljs-literal">true</span>;
     <span class="hljs-keyword">this</span>.addedStyleSheet.insertRule(css, <span class="hljs-number">0</span>);
-  };
-
-  <span class="hljs-keyword">this</span>.removeCursor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cursorRange)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove the cursor corresponding to <code>cursorRange</code></p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>cursorRange</code> <em>{Ace Range}</em> : This is retrieved from <code>NucleusEditor.extraCursors</code></li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.removeCursor = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(cursorRange)</span> {</span>
     cursorRange.start.detach();
     cursorRange.end.detach();
     <span class="hljs-keyword">this</span>.getSession().removeMarker(cursorRange.id);
-  };
-
-  <span class="hljs-keyword">this</span>.updateCursorForUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the cursor for <code>user</code>. It simply remove the cursor and create it in user&#39;s changed cursor position</p>
+<p><em>Arguments:</em></p>
+<ul>
+<li><code>user</code> <em>{NucleusUser}</em></li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.updateCursorForUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
     <span class="hljs-keyword">if</span> (! NucleusUser.me() || user._id === NucleusUser.me()._id) <span class="hljs-keyword">return</span>;
 
     <span class="hljs-keyword">var</span> userId = user._id;
@@ -255,9 +235,7 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
     <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.extraCursors[userId])
       <span class="hljs-keyword">this</span>.removeCursor(<span class="hljs-keyword">this</span>.extraCursors[userId].range);
     <span class="hljs-keyword">this</span>.extraCursors[userId] = <span class="hljs-keyword">this</span>.insertExtraCursor(user);
-  };
-
-  <span class="hljs-keyword">this</span>.userAreOnSameFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user1, user2)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if <code>user1</code> and <code>user2</code> are on same file</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.userAreOnSameFile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user1, user2)</span> {</span>
     <span class="hljs-keyword">if</span> (!(user1 &amp;&amp; user2)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">return</span> user1.getCwd() === user2.getCwd();
   };
@@ -265,9 +243,7 @@ FIXME: make this choice dynamic</p></div></div><div class="code"><div class="wra
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 };
 
-NucleusEditor = <span class="hljs-keyword">new</span> NucleusEditorFactory();
-
-NucleusEditor.addCursorMovementAction(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+NucleusEditor = <span class="hljs-keyword">new</span> NucleusEditorFactory();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update user&#39;s cursor position in mongo db when he changes his cursor. This will automatically update user&#39;s cursor on all other users&#39; editors</p></div></div><div class="code"><div class="wrapper">NucleusEditor.addCursorMovementAction(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
   <span class="hljs-keyword">var</span> cursor = NucleusEditor.getSelection().getCursor();
   NucleusUser.me() &amp;&amp; NucleusUser.me().setCursor(cursor.row, cursor.column);
 });</div></div></div></div></body></html>

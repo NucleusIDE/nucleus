@@ -1,10 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><title>client/template</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/template"><meta name="groc-project-path" content="client/template.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/template.js">client/template.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">Template.sidebar.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+<!DOCTYPE html><html lang="en"><head><title>client/template</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="client/template"><meta name="groc-project-path" content="client/template.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/template.js">client/template.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="templates">Templates</h1></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the height of sidebar to be the height of window. I couldn&#39;t get it working in CSS</p></div></div><div class="code"><div class="wrapper">Template.sidebar.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
   $(<span class="hljs-string">"#sidebar"</span>).height($(window).height());
-};
-Template.nucleus_tree_widget.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the maxHeight of jstree so it won&#39;t take all the space when expanded. It make a cool effect</p></div></div><div class="code"><div class="wrapper">Template.nucleus_tree_widget.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
   $(<span class="hljs-string">"#nucleus_file_tree"</span>).css({maxHeight: ($(window).height()*<span class="hljs-number">50</span>)/<span class="hljs-number">100</span>});
 };
-Template.nucleus_nick_prompt.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success</p></div></div><div class="code"><div class="wrapper">  $(<span class="hljs-string">"#nick"</span>).css({
+Template.nucleus_nick_prompt.rendered = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success</p></div></div><div class="code"><div class="wrapper">  $(<span class="hljs-string">"#nick"</span>).css({
     boxShadow: <span class="hljs-string">"0 0 29px 0px rgba(17,153,230, 0.9)"</span>,
     border: <span class="hljs-string">"1px solid rgba(17,153,230,0.5)"</span>
   });
@@ -55,8 +54,7 @@ Template.nucleus_nick_prompt.events({
 });
 
 Template.nucleus_tree_widget.helpers({
-  tree: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-    <span class="hljs-keyword">var</span> treeId = <span class="hljs-string">"nucleus_file_tree"</span>;
+  tree: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Couldn&#39;t do it in <code>Template.nucleus_tree_widget.rendered</code> block. This need to be reactive since <code>NucleusClient.getJstreeHTML()</code> is reactive</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> treeId = <span class="hljs-string">"nucleus_file_tree"</span>;
 
     <span class="hljs-keyword">var</span> treeInterval = Meteor.setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
       <span class="hljs-keyword">if</span>(document.getElementById(treeId).childElementCount &gt;= <span class="hljs-number">1</span>) {
@@ -75,18 +73,16 @@ Template.editor.rendered = <span class="hljs-function"><span class="hljs-keyword
 };
 
 Template.editor.config = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span>
-    NucleusEditor.initilize(editor);
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This method gets called when sharejs has initialized the ace-editor. <code>editor</code> argument here is the ace-instance provided by sharejs. We use it to initialize <code>NucleusEditor</code></p></div></div><div class="code"><div class="wrapper">    NucleusEditor.initilize(editor);
   };
 };
 
 Template.editor.setMode = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span>
-    <span class="hljs-keyword">var</span> selectedFile = Session.get(<span class="hljs-string">"nucleus_selected_file"</span>),
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(editor)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This function is called by sharejs whenever the document being edited in ace changes.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> selectedFile = Session.get(<span class="hljs-string">"nucleus_selected_file"</span>),
         extRe = <span class="hljs-regexp">/(?:\.([^.]+))?$/</span>,
         ext = extRe.exec(selectedFile)[<span class="hljs-number">1</span>];
-    NucleusEditor.setModeForExt(ext);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>events get unregistered on filechange</p></div></div><div class="code"><div class="wrapper">    NucleusEditor.registerAllEvents();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we need to re-assign the window height on document change otherwise editor falls back to height given in css.
-sharejs does dom overwrite may be</p></div></div><div class="code"><div class="wrapper">    Meteor.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    NucleusEditor.setModeForExt(ext);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Events get unregistered on document change</p></div></div><div class="code"><div class="wrapper">    NucleusEditor.registerAllEvents();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We need to re-assign the window height on document change otherwise editor falls back to height given in css.
+Sharejs does dom overwrite may be</p></div></div><div class="code"><div class="wrapper">    Meteor.setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
       $(<span class="hljs-string">"#nucleus_editor"</span>).height($(window).height());
     }, <span class="hljs-number">200</span>);
   };
@@ -152,17 +148,17 @@ Template.nucleus_toolbar.events({
     e.preventDefault();
     NucleusUser.me().toggleEventSync(<span class="hljs-string">"nucleus"</span>);
   }
-});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>autorun to set file for editing when user clicks on a file in sidebar</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Autorun to set file for editing when user clicks on a file in sidebar</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
   <span class="hljs-keyword">var</span> selectedFile = Session.get(<span class="hljs-string">"nucleus_selected_file"</span>);
   <span class="hljs-keyword">if</span> (!selectedFile) <span class="hljs-keyword">return</span>;
 
   NucleusClient.editFile(selectedFile);
-});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>autorun to update sidebar user state boxes and cursor position for different users</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Autorun to update sidebar user state boxes and cursor position for different users</p></div></div><div class="code"><div class="wrapper">Deps.autorun(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
   <span class="hljs-keyword">var</span> users = NucleusClient.getOnlineUsers().fetch();
   NucleusClient.clearDeadUsers(users);
 
   _.each(users, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(user)</span> {</span>
-    NucleusSidebar.updateUserStatusBox(user);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>below function should execute only When NucleusEditor is initialized with ace instance</p></div></div><div class="code"><div class="wrapper">    NucleusEditor.getEditor() &amp;&amp; NucleusEditor.userAreOnSameFile(NucleusUser.me(), user) &amp;&amp; NucleusEditor.updateCursorForUser(user);
+    NucleusSidebar.updateUserStatusBox(user);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Below function should execute only When NucleusEditor is initialized with ace instance</p></div></div><div class="code"><div class="wrapper">    NucleusEditor.getEditor() &amp;&amp; NucleusEditor.userAreOnSameFile(NucleusUser.me(), user) &amp;&amp; NucleusEditor.updateCursorForUser(user);
   });
 });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>////////
 Chat //

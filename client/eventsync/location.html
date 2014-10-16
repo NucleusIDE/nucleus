@@ -1,10 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><title>client/eventsync/location</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/location"><meta name="groc-project-path" content="client/eventsync/location.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/location.js">client/eventsync/location.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">LocationEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/location</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/location"><meta name="groc-project-path" content="client/eventsync/location.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/location.js">client/eventsync/location.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="locationevent">LocationEvent</h1>
+<p>Handle capturing, syncing and receiving route change events.</p></div></div><div class="code"><div class="wrapper">LocationEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
   <span class="hljs-keyword">var</span> EVENT_NAME = <span class="hljs-string">'location'</span>,
       APP_NAME = appName,
       $window = NucleusClient.getWindow(APP_NAME),
-      utils = NucleusEventManager.getUtils(APP_NAME);
-
-  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      utils = NucleusEventManager.getUtils(APP_NAME);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Override router go calls, and add <code>popstate</code> event for handling back/forward events in browser</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">this</span>.overRideGoCalls();
     NucleusEventManager.addEvent($window, <span class="hljs-string">'popstate'</span>, <span class="hljs-keyword">this</span>.syncGoPushstate());
   };
@@ -30,12 +29,9 @@
       $window.Router.go = $window.Router.originalGo;
     <span class="hljs-keyword">if</span>($window.MobiRouter)
       $window.MobiRouter.go = $window.MobiRouter.originalGo;
-  };
-
-  <span class="hljs-keyword">this</span>.syncGoCall = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(router)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send route change events over the wire i.e save them in mongo db.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.syncGoCall = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(router)</span> {</span>
     <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-      <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">0</span>);
-      <span class="hljs-keyword">var</span> ret = $window[router].originalGo.apply($window[router], args);
+      <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">0</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Play the original go call as it should for the client originating the event</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> ret = $window[router].originalGo.apply($window[router], args);
       <span class="hljs-keyword">this</span>.pushHistory();
 
       <span class="hljs-keyword">if</span> (NucleusEventManager.canEmitEvents) {
@@ -52,11 +48,8 @@
 
       <span class="hljs-keyword">return</span> ret;
     }.bind(<span class="hljs-keyword">this</span>);
-  };
-
-  <span class="hljs-keyword">this</span>.history = [<span class="hljs-string">'/'</span>];
-  <span class="hljs-keyword">this</span>.curIndex = <span class="hljs-number">0</span>;
-  <span class="hljs-keyword">this</span>.syncGoPushstate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Here starts the touchy part for handling back/forward events. Iron-router don&#39;t put any stat in pushstate, so we have to do some sorcery ourself</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.history = [<span class="hljs-string">'/'</span>];
+  <span class="hljs-keyword">this</span>.curIndex = <span class="hljs-number">0</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Broadcast popstate events</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.syncGoPushstate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">var</span> loc = <span class="hljs-keyword">this</span>;
 
     <span class="hljs-keyword">var</span> movedDirection = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(list, url, cursor)</span> {</span>
@@ -95,9 +88,7 @@
         NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
       }
     };
-  };
-
-  <span class="hljs-keyword">this</span>.pushHistory = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item, cursor)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>we maintain our version of browser history to play back/forward events</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.pushHistory = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item, cursor)</span> {</span>
     item = item || $window.location.pathname;
     cursor = cursor || <span class="hljs-keyword">this</span>.curIndex;
 
@@ -124,13 +115,11 @@
     <span class="hljs-keyword">this</span>.history = history;
     cursor += <span class="hljs-number">1</span>;
     <span class="hljs-keyword">this</span>.curIndex = cursor;
-  };
-
-  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle received events</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> {</span>
     NucleusEventManager.canEmitEvents = <span class="hljs-literal">false</span>;
 
     <span class="hljs-keyword">if</span>(event.type === <span class="hljs-string">'popstate'</span>) {
-      <span class="hljs-keyword">var</span> action = event.value;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>let&#39;s not go back if user is on first page</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (action === <span class="hljs-string">'back'</span> &amp;&amp; $window.history.state.initial) {
+      <span class="hljs-keyword">var</span> action = event.value;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let&#39;s not go back if user is on first page</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (action === <span class="hljs-string">'back'</span> &amp;&amp; $window.history.state.initial) {
         <span class="hljs-keyword">return</span>;
       }
       $window.history[action]();

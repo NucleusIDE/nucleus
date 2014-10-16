@@ -1,10 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><title>client/eventsync/clicks</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/clicks"><meta name="groc-project-path" content="client/eventsync/clicks.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/clicks.js">client/eventsync/clicks.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">Click = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
+<!DOCTYPE html><html lang="en"><head><title>client/eventsync/clicks</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../../"><meta name="groc-document-path" content="client/eventsync/clicks"><meta name="groc-project-path" content="client/eventsync/clicks.js"><meta name="groc-github-url" content="https://github.com/channikhabra/meteor-nucleus"><link rel="stylesheet" type="text/css" media="all" href="../../assets/style.css"><script type="text/javascript" src="../../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/channikhabra/meteor-nucleus/blob/master/client/eventsync/clicks.js">client/eventsync/clicks.js</a></div></div><div id="document"><div class="segment"><div class="comments "><div class="wrapper"><h1 id="clickevent">ClickEvent</h1>
+<p>Handle capturing, syncing and receiving click events.</p></div></div><div class="code"><div class="wrapper">Click = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(appName)</span> {</span>
   <span class="hljs-keyword">var</span> EVENT_NAME  = <span class="hljs-string">"click"</span>,
       APP_NAME = appName,
       $document = NucleusClient.getWindow(APP_NAME).document,
-      utils = NucleusEventManager.getUtils(APP_NAME);
-
-  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+      utils = NucleusEventManager.getUtils(APP_NAME);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add the click event listener to body of the window of given app</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.initialize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
     NucleusEventManager.addEvent($document.body, EVENT_NAME, <span class="hljs-keyword">this</span>.syncBrowserEvent());
   };
 
@@ -12,20 +11,22 @@
     NucleusEventManager.removeEvent($document.body, EVENT_NAME, <span class="hljs-keyword">this</span>.syncBrowserEvent());
   };
 
-  <span class="hljs-keyword">this</span>.triggerClick = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(elem)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>let&#39;s use jquery to trigger the click instead of doing it ourselves. Jquery&#39;s click work well with Router.go()/MobiRouter.go()
-calls. Other way of triggering click event cause a window reload which is certainly not what we want</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span>(elem.id !== <span class="hljs-string">"sync_nucleus_events"</span> &amp;&amp; elem.id !== <span class="hljs-string">"sync_app_events"</span>)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this check is so one user won&#39;t change other user&#39;s sync status
-FIXME: In future, we might need to replace this check with something like &quot;check if this click happened in Toolbox&quot; or something</p></div></div><div class="code"><div class="wrapper">      $(elem).click();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>var evObj;
-if ($document.createEvent) {
-    evObj = $document.createEvent(&quot;MouseEvents&quot;);
-    evObj.initEvent(&quot;click&quot;, true, true);
-    elem.dispatchEvent(evObj);</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-comment">//  else {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><pre><code>if ($document.createEventObject) {
-    evObj = $document.createEventObject();
-    evObj.cancelBubble = true;
-    elem.fireEvent(&quot;on&quot; + &quot;click&quot;, evObj);
-}</code></pre></div></div><div class="code"><div class="wrapper">    <span class="hljs-comment">// </span>
-  };
-
-  <span class="hljs-keyword">this</span>.syncBrowserEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+  <span class="hljs-keyword">this</span>.triggerClick = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(elem)</span> {</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let&#39;s use jquery to trigger the click instead of doing it ourselves. Jquery&#39;s click work well with Router.go()/MobiRouter.go()
+calls. Other way of triggering click event cause a window reload which is certainly not what we want</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span>(elem.id !== <span class="hljs-string">"sync_nucleus_events"</span> &amp;&amp; elem.id !== <span class="hljs-string">"sync_app_events"</span>)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This check is so one user won&#39;t change other user&#39;s sync status.</p>
+<p>FIXME: In future, we might need to replace this check with something like &quot;check if this click happened in Toolbox&quot; or something</p></div></div><div class="code"><div class="wrapper">      $(elem).click();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><!--
+ var evObj;
+ if ($document.createEvent) {
+ evObj = $document.createEvent("MouseEvents");
+ evObj.initEvent("click", true, true);
+ elem.dispatchEvent(evObj);
+ } else {
+ if ($document.createEventObject) {
+ evObj = $document.createEventObject();
+ evObj.cancelBubble = true;
+ elem.fireEvent("on" + "click", evObj);
+ }
+ }
+ --> </div></div><div class="code"><div class="wrapper">  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send event over the wire i.e save event in mango db</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.syncBrowserEvent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
     <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
       <span class="hljs-keyword">var</span> canEmit = NucleusEventManager.canEmitEvents;
 
@@ -44,9 +45,7 @@ if ($document.createEvent) {
       }
       <span class="hljs-keyword">else</span> NucleusEventManager.canEmitEvents = <span class="hljs-literal">true</span>;
     };
-  };
-
-  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Handle the event that has been received over the wire.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">this</span>.handleEvent = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> {</span>
     NucleusEventManager.canEmitEvents = <span class="hljs-literal">false</span>;
 
     <span class="hljs-keyword">var</span> target = event.getTarget();

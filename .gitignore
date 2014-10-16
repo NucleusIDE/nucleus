@@ -2,3 +2,4 @@
 .npm/package
 .build.channikhabra:nucleus/*
 .build*
+docs/*
