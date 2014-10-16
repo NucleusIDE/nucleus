@@ -1,0 +1,6 @@
+/**
+ * # Subscriptions
+ */
+
+
+Meteor.subscribe('chats');
