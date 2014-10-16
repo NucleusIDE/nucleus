@@ -1,9 +1,17 @@
+/**
+ * # LocationEvent
+ * Handle capturing, syncing and receiving route change events.
+ */
+
 LocationEvent = function(appName) {
   var EVENT_NAME = 'location',
       APP_NAME = appName,
       $window = NucleusClient.getWindow(APP_NAME),
       utils = NucleusEventManager.getUtils(APP_NAME);
 
+  /**
+   * Override router go calls, and add `popstate` event for handling back/forward events in browser
+   */
   this.initialize = function() {
     this.overRideGoCalls();
     NucleusEventManager.addEvent($window, 'popstate', this.syncGoPushstate());
@@ -32,9 +40,13 @@ LocationEvent = function(appName) {
       $window.MobiRouter.go = $window.MobiRouter.originalGo;
   };
 
+  /**
+   * Send route change events over the wire i.e save them in mongo db.
+   */
   this.syncGoCall = function(router) {
     return function() {
       var args = Array.prototype.slice.call(arguments, 0);
+      //Play the original go call as it should for the client originating the event
       var ret = $window[router].originalGo.apply($window[router], args);
       this.pushHistory();
 
@@ -54,8 +66,12 @@ LocationEvent = function(appName) {
     }.bind(this);
   };
 
+  //Here starts the touchy part for handling back/forward events. Iron-router don't put any stat in pushstate, so we have to do some sorcery ourself
   this.history = ['/'];
   this.curIndex = 0;
+  /**
+   * Broadcast popstate events
+   */
   this.syncGoPushstate = function() {
     var loc = this;
 
@@ -97,6 +113,7 @@ LocationEvent = function(appName) {
     };
   };
 
+  //we maintain our version of browser history to play back/forward events
   this.pushHistory = function(item, cursor) {
     item = item || $window.location.pathname;
     cursor = cursor || this.curIndex;
@@ -126,13 +143,14 @@ LocationEvent = function(appName) {
     this.curIndex = cursor;
   };
 
+  //Handle received events
   this.handleEvent = function(event) {
     NucleusEventManager.canEmitEvents = false;
 
     if(event.type === 'popstate') {
       var action = event.value;
 
-      //let's not go back if user is on first page
+      //Let's not go back if user is on first page
       if (action === 'back' && $window.history.state.initial) {
         return;
       }

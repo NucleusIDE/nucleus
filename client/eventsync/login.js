@@ -1,3 +1,7 @@
+/**
+ * # LoginEvent
+ */
+
 LoginEvent = function(appName) {
   var EVENT_NAME = 'login',
       APP_NAME = appName,
@@ -47,6 +51,7 @@ LoginEvent = function(appName) {
 
       ev.setName(EVENT_NAME);
       ev.setAppName(APP_NAME);
+      // We simply store all the arguments used to call the `loginWithPassword` and replay the event over the wire.
       ev.args = args;
       ev.type = 'login';
       ev.broadcast();

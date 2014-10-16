@@ -1,3 +1,8 @@
+/**
+ * # input:text
+ *
+ * Handle capturing, syncing and receiving form text input events.
+ */
 InputTextEvent = function(appName) {
   var EVENT_NAME  = "input:text",
       APP_NAME = appName,

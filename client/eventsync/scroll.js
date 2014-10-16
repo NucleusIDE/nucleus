@@ -1,3 +1,7 @@
+/**
+ * #ScrollEvent
+ */
+
 Scroll = function(appName) {
   var EVENT_NAME = "scroll",
       APP_NAME = appName,
@@ -9,10 +13,9 @@ Scroll = function(appName) {
   this.initialize = function () {
     NucleusEventManager.addEvent($window, EVENT_NAME, this.syncEvent());
 
-    console.log("INITIALIZING SCROLL FOR", APP_NAME);
     if (APP_NAME === 'nucleus') {
-      //in case of nuclues, we set ace events instead of window events
-      //we need to use below api because events on ace are undone when document changes. NucleusEditor handles that
+      //In case of nuclues, we set ace events instead of window events.
+      //We need to use below api because events on ace are undone when document changes. NucleusEditor handles that
       NucleusEditor.addEvent("changeScrollTop", this.syncNucleusScroll);
       NucleusEditor.addEvent("changeScrollLeft", this.syncNucleusScroll);
     }
@@ -20,9 +23,8 @@ Scroll = function(appName) {
 
   this.tearDown = function () {
     NucleusEventManager.removeEvent($window, EVENT_NAME, this.syncEvent());
-    // bs.socket.on(EVENT_NAME, exports.socketEvent());
     if (APP_NAME === 'nucleus') {
-      //in case of nuclues, we set ace events instead of window events
+      //In case of nuclues, we set ace events instead of window events
       NucleusEditor.editor.session.off("changeScrollLeft", this.syncNucleusScroll);
       NucleusEditor.editor.session.off("changeScrollTop", this.syncNucleusScroll);
 
@@ -31,6 +33,9 @@ Scroll = function(appName) {
     }
   };
 
+  /**
+   * Send events over the wire.
+   */
   this.syncEvent = function () {
     return function () {
       var canEmit = NucleusEventManager.canEmitEvents;
@@ -46,8 +51,10 @@ Scroll = function(appName) {
     }.bind(this);
   };
 
+  /**
+   * We have different scroll sync for nucleus than for the app. For nucleus, we scroll the nucleus editor, not the whole window because scrolling whole window won't scroll the nucleus editor. Scroll in nucleus editor is what we want in Nucleus
+   */
   this.syncNucleusScroll =  function () {
-    console.log("NUCLEUS SCROLL CHANGED");
     var canEmit = NucleusEventManager.canEmitEvents;
 
     if(canEmit) {
@@ -55,7 +62,7 @@ Scroll = function(appName) {
       ev.setName(EVENT_NAME);
       ev.setAppName(APP_NAME);
       ev.type = "editorScroll";
-      //in case of nucleus, we just sync scroll in the editor window with API provided by ace
+      //In case of nucleus, we just sync scroll in the editor window with API provided by ace
       ev.position = {
         x: NucleusEditor.editor.session.getScrollLeft(),
         y: NucleusEditor.editor.session.getScrollTop()
@@ -70,7 +77,7 @@ Scroll = function(appName) {
     NucleusEventManager.canEmitEvents = false;
 
     if(data.getAppName() === "nucleus" && data.type === "editorScroll") {
-      //in case of nucleus, we just sync scroll in the editor window with API provided by ace
+      //In case of nucleus, we just sync scroll in the editor window with API provided by ace
       NucleusEditor.editor.session.setScrollLeft(data.position.x);
       NucleusEditor.editor.session.setScrollTop(data.position.y);
       return;

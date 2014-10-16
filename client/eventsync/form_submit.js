@@ -1,5 +1,11 @@
+/**
+ * # input:submit
+ *
+ * Handle capturing, syncing and receiving form submit events.
+ */
+
 FormSubmitEvent = function(appName) {
-  var EVENT_NAME  = "input:text",
+  var EVENT_NAME  = "input:submit",
       APP_NAME = appName,
       $document = NucleusClient.getWindow(APP_NAME).document,
       utils = NucleusEventManager.getUtils(APP_NAME);
@@ -41,7 +47,7 @@ FormSubmitEvent = function(appName) {
     NucleusEventManager.canEmitEvents = false;
 
     if (elem && data.type === "submit") {
-      //we wrap elem as a jquery object becuase elem.submit() don't trigger any event handlers on submit added in meteor app and cause reload
+      //We wrap elem as a jquery object becuase elem.submit() don't trigger any event handlers on submit added in meteor app and cause reload
       // but $(elem).submit() triggers event handlers correctly
       $(elem).submit();
     }

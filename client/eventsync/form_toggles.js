@@ -1,3 +1,12 @@
+/**
+ * # input:toggles
+ *
+ * Handle capturing, syncing and receiving form toggle-able input events. These include:
+ * * checkboxes
+ * * radio buttons
+ * * select input
+ */
+
 InputToggleEvent = function(appName) {
   var EVENT_NAME  = "input:toggles",
       APP_NAME = appName,

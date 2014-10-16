@@ -1,3 +1,12 @@
+/**
+ * # FormEvent
+ *
+ * Singular point of interaction for form events:
+ * * input:text
+ * * input:toggles
+ * * form:submit
+ */
+
 FormsEvent = function(appName) {
   var APP_NAME = appName;
   this.initialize = function () {

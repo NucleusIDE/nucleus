@@ -1,9 +1,16 @@
+/**
+ * # ClickEvent
+ * Handle capturing, syncing and receiving click events.
+ */
 Click = function(appName) {
   var EVENT_NAME  = "click",
       APP_NAME = appName,
       $document = NucleusClient.getWindow(APP_NAME).document,
       utils = NucleusEventManager.getUtils(APP_NAME);
 
+  /**
+   * Add the click event listener to body of the window of given app
+   */
   this.initialize = function () {
     NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
   };
@@ -13,27 +20,35 @@ Click = function(appName) {
   };
 
   this.triggerClick = function (elem) {
-    //let's use jquery to trigger the click instead of doing it ourselves. Jquery's click work well with Router.go()/MobiRouter.go()
+    //Let's use jquery to trigger the click instead of doing it ourselves. Jquery's click work well with Router.go()/MobiRouter.go()
     //calls. Other way of triggering click event cause a window reload which is certainly not what we want
     if(elem.id !== "sync_nucleus_events" && elem.id !== "sync_app_events")
-      //this check is so one user won't change other user's sync status
-      //FIXME: In future, we might need to replace this check with something like "check if this click happened in Toolbox" or something
+      /*
+       * This check is so one user won't change other user's sync status.
+       *
+       * FIXME: In future, we might need to replace this check with something like "check if this click happened in Toolbox" or something
+       */
       $(elem).click();
 
-    // var evObj;
-    // if ($document.createEvent) {
-    //     evObj = $document.createEvent("MouseEvents");
-    //     evObj.initEvent("click", true, true);
-    //     elem.dispatchEvent(evObj);
-    // } else {
-    //     if ($document.createEventObject) {
-    //         evObj = $document.createEventObject();
-    //         evObj.cancelBubble = true;
-    //         elem.fireEvent("on" + "click", evObj);
-    //     }
-    // }
+    /* <!--
+     var evObj;
+     if ($document.createEvent) {
+     evObj = $document.createEvent("MouseEvents");
+     evObj.initEvent("click", true, true);
+     elem.dispatchEvent(evObj);
+     } else {
+     if ($document.createEventObject) {
+     evObj = $document.createEventObject();
+     evObj.cancelBubble = true;
+     elem.fireEvent("on" + "click", evObj);
+     }
+     }
+     --> */
   };
 
+  /**
+   * Send event over the wire i.e save event in mango db
+   */
   this.syncBrowserEvent = function() {
     return function (event) {
       var canEmit = NucleusEventManager.canEmitEvents;
@@ -55,6 +70,9 @@ Click = function(appName) {
     };
   };
 
+  /**
+   * Handle the event that has been received over the wire.
+   */
   this.handleEvent = function (event) {
     NucleusEventManager.canEmitEvents = false;
 

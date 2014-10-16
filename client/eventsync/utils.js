@@ -1,3 +1,9 @@
+/**
+ * # EventUtils
+ *
+ * Almost all this code is copied from browser-sync-client. Although it is modified to handle dual-windows for `app` and `nucleus`, meaning of the code stays the same.
+ */
+
 EventUtils = function($window) {
   this.$window = $window;
 
@@ -12,7 +18,7 @@ EventUtils = function($window) {
 
   /**
    * Cross-browser scroll position
-   * @returns {{x: number, y: number}}
+   * returns {{x: number, y: number}}
    */
   this.getBrowserScrollPosition = function () {
 
@@ -37,7 +43,7 @@ EventUtils = function($window) {
     };
   },
   /**
-   * @returns {{x: number, y: number}}
+   * returns {{x: number, y: number}}
    */
   this.getScrollSpace = function () {
     var $document = this.getDocument();
@@ -50,7 +56,7 @@ EventUtils = function($window) {
   };
 
   /**
-   * @returns {*|number}
+   * returns {*|number}
    */
   this.getElementIndex = function (tagName, elem) {
     var $document = this.getDocument();
@@ -67,7 +73,7 @@ EventUtils = function($window) {
   };
 
   /**
-   * @returns {{tagName: (elem.tagName|*), index: *}}
+   * returns {{tagName: (elem.tagName|*), index: *}}
    */
   this.getElementData = function (elem) {
     var tagName = elem.tagName;
