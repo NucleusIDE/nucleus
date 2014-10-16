@@ -1,11 +1,18 @@
+/**
+ * # Templates
+ */
+
+
+//Set the height of sidebar to be the height of window. I couldn't get it working in CSS
 Template.sidebar.rendered = function() {
   $("#sidebar").height($(window).height());
 };
+//Set the maxHeight of jstree so it won't take all the space when expanded. It make a cool effect
 Template.nucleus_tree_widget.rendered = function() {
   $("#nucleus_file_tree").css({maxHeight: ($(window).height()*50)/100});
 };
 Template.nucleus_nick_prompt.rendered = function() {
-  //this is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success
+  //This is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success
   $("#nick").css({
     boxShadow: "0 0 29px 0px rgba(17,153,230, 0.9)",
     border: "1px solid rgba(17,153,230,0.5)"
@@ -58,6 +65,9 @@ Template.nucleus_nick_prompt.events({
 
 Template.nucleus_tree_widget.helpers({
   tree: function() {
+    /**
+     * Couldn't do it in `Template.nucleus_tree_widget.rendered` block. This need to be reactive since `NucleusClient.getJstreeHTML()` is reactive
+     */
     var treeId = "nucleus_file_tree";
 
     var treeInterval = Meteor.setInterval(function() {
@@ -78,21 +88,25 @@ Template.editor.rendered = function() {
 
 Template.editor.config = function () {
   return function(editor) {
+    // This method gets called when sharejs has initialized the ace-editor. `editor` argument here is the ace-instance provided by sharejs. We use it to initialize `NucleusEditor`
     NucleusEditor.initilize(editor);
   };
 };
 
 Template.editor.setMode = function() {
   return function(editor) {
+    /**
+     * This function is called by sharejs whenever the document being edited in ace changes.
+     */
     var selectedFile = Session.get("nucleus_selected_file"),
         extRe = /(?:\.([^.]+))?$/,
         ext = extRe.exec(selectedFile)[1];
     NucleusEditor.setModeForExt(ext);
-    //events get unregistered on filechange
+    //Events get unregistered on document change
     NucleusEditor.registerAllEvents();
 
-    //we need to re-assign the window height on document change otherwise editor falls back to height given in css.
-    //sharejs does dom overwrite may be
+    //We need to re-assign the window height on document change otherwise editor falls back to height given in css.
+    //Sharejs does dom overwrite may be
     Meteor.setTimeout(function() {
       $("#nucleus_editor").height($(window).height());
     }, 200);
@@ -162,7 +176,7 @@ Template.nucleus_toolbar.events({
 });
 
 
-//autorun to set file for editing when user clicks on a file in sidebar
+//Autorun to set file for editing when user clicks on a file in sidebar
 Deps.autorun(function() {
   var selectedFile = Session.get("nucleus_selected_file");
   if (!selectedFile) return;
@@ -171,14 +185,14 @@ Deps.autorun(function() {
 });
 
 
-//autorun to update sidebar user state boxes and cursor position for different users
+//Autorun to update sidebar user state boxes and cursor position for different users
 Deps.autorun(function() {
   var users = NucleusClient.getOnlineUsers().fetch();
   NucleusClient.clearDeadUsers(users);
 
   _.each(users, function(user) {
     NucleusSidebar.updateUserStatusBox(user);
-    // below function should execute only When NucleusEditor is initialized with ace instance
+    // Below function should execute only When NucleusEditor is initialized with ace instance
     NucleusEditor.getEditor() && NucleusEditor.userAreOnSameFile(NucleusUser.me(), user) && NucleusEditor.updateCursorForUser(user);
   });
 });
