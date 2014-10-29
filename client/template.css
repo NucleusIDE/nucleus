@@ -229,6 +229,7 @@ html, body {
 }
 
 .nuc-btn-custom {
+  font-family: sans-serif;
   display: inline-block;
   padding: 6px 12px;
   margin-bottom: 0px;
@@ -292,6 +293,7 @@ html, body {
   float: left;
   display: inline-block;
   padding-left: 5px;
+  margin-left: 3%;
 }
 
 .sidebar-commit-row {
@@ -299,14 +301,17 @@ html, body {
   overflow: hidden; /* clear fix */
 }
 
-.sidebar-commit-message input[type="text"] {
+#sidebar-commit-message {
   border: 1px solid #63655F;
-  padding: 6px 2px 6px 10px;
+  padding: 7px;
   background: #A9AAA5;;
   width: 57%;
   float: right;
   display: inline-block;
   color: #1D1E16;
+  line-height: 1 !important;
+  font-family: sans-serif;
+  margin-right: 3%;
 }
 /* end sidebar commit */
 

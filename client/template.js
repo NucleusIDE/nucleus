@@ -348,8 +348,8 @@ Template.buddy_list.events({
 //////////////////
 Template.nucleus_topbar.helpers({
   file_dirty: function(btnType) {
-    if(btnType === 'save') return "btn-save";
-    else return "btn-discard";
+    if(btnType === 'save') return "nuc-btn-save";
+    else return "nuc-btn-discard";
   }
 });
 
