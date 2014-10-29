@@ -37,7 +37,8 @@ NucleusFactory = function() {
   };
 
   //This method is called on nucleus initialization on the server (in the app).
-  this.initialize = function() {
+  this.initialize = function(config) {
+    config && this.configure(config);
     this.nucleusCloneRepo();
   };
 
@@ -211,7 +212,7 @@ NucleusFactory = function() {
 
     var nucleusDirExists = fs.existsSync(nucleusDir);
     var repoAlreadyCloned = fs.existsSync(projectDir);
-    var command = "cd " + nucleusDir + " && git clone " + git + " " + project + " && cd " + project +" && git checkout -b nucleus  && git remote add nucleus " + git;
+    var command = "cd " + nucleusDir + " && git clone " + git + " " + project + " && cd " + project +" && git remote add nucleus " + git;
 
     if (!nucleusDirExists) fs.mkdirSync(path.join(homeDir, ".nucleus"));
 
