@@ -48,7 +48,7 @@ html, body {
 #nucleus_editor {
   width: 80%;
   float: right;
-  height: 900px;
+  height: 95vh; /* we need to set the height of editor upto which we want it to be scrollable (and visible). */
 }
 
 .alert {

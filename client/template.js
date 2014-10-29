@@ -83,7 +83,6 @@ Template.nucleus_tree_widget.helpers({
 
 Template.editor.rendered = function() {
   $("#nucleus_editor").height($(window).height() - 35);
-  $("#nucleus_editor").css({maxHeight: $(window).height() - 35});
 };
 
 Template.editor.config = function () {
