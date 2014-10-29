@@ -82,8 +82,8 @@ Template.nucleus_tree_widget.helpers({
 });
 
 Template.editor.rendered = function() {
-  $("#nucleus_editor").height($(window).height());
-  $("#nucleus_editor").css({maxHeight: $(window).height()});
+  $("#nucleus_editor").height($(window).height() - 35);
+  $("#nucleus_editor").css({maxHeight: $(window).height() - 35});
 };
 
 Template.editor.config = function () {
@@ -108,7 +108,7 @@ Template.editor.setMode = function() {
     //We need to re-assign the window height on document change otherwise editor falls back to height given in css.
     //Sharejs does dom overwrite may be
     Meteor.setTimeout(function() {
-      $("#nucleus_editor").height($(window).height());
+      $("#nucleus_editor").height($(window).height() - 35);
     }, 200);
   };
 };
