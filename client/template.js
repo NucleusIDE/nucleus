@@ -385,3 +385,16 @@ Template.nucleus_terminal.helpers({
 //////////////////
 // END TERMINAL //
 //////////////////
+
+//////////////////////////
+// START NUCLEUS RIBBON //
+//////////////////////////
+Template.nucleus_ribbon.events({
+  "click #nucleus_client_init": function(e) {
+    e.preventDefault();
+    NucleusClient.initialize();
+  }
+});
+/////////////////////////
+// end nucleus ribbon  //
+/////////////////////////

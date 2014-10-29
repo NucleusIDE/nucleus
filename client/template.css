@@ -35,7 +35,7 @@ html, body {
   overflow: scroll;
 }
 
-.btn-sidebar {
+.nuc-btn-sidebar {
   /* margin: 10px auto; */
   width: 100%;
   border-radius: 0 !important;
@@ -228,7 +228,7 @@ html, body {
   position: relative;
 }
 
-.btn-custom {
+.nuc-btn-custom {
   display: inline-block;
   padding: 6px 12px;
   margin-bottom: 0px;
@@ -244,35 +244,35 @@ html, body {
   background-image: none;
 }
 
-.btn-dark {
+.nuc-btn-dark {
   border: 1px solid #63655F;
   border-radius: 0px;
   background: #51534C;
   color: #D2D2D2;
 }
 
-.btn-dark:active {
+.nuc-btn-dark:active {
   background: none repeat scroll 0% 0% rgba(158, 161, 149, 1); /* i think light color is better for active buttons */
   color: #fff;  
 }
-.btn-dark:hover {
+.nuc-btn-dark:hover {
   color: #fff;
   text-decoration: none;
 }
 
-.btn-dark-active {
+.nuc-btn-dark-active {
   /* background: #2F3129; */
   background: none repeat scroll 0% 0% rgba(158, 161, 149, 1); /* i think light color is better for active buttons */
   color: #fff;
 }
 
-.btn-30 {
+.nuc-btn-30 {
   width: 30%;
   max-width: 30%;
   margin: 10px 5px;
 }
 
-.btn-80 {
+.nuc-btn-80 {
   width: 80%;
   margin: 10px 5%;
 }
@@ -299,7 +299,7 @@ html, body {
   overflow: hidden; /* clear fix */
 }
 
-.sidebar-commit-message {
+.sidebar-commit-message input[type="text"] {
   border: 1px solid #63655F;
   padding: 6px 2px 6px 10px;
   background: #A9AAA5;;
@@ -480,25 +480,25 @@ html, body {
   margin-left: 10px;
   float: left;
 }
-.btn-topbar {
+.nuc-btn-topbar {
   border: 1px solid #63655F;
   border-radius: 0px;
   background: transparent;
   color: #D2D2D2;
   padding: 3px 15px;
 }
-.btn-topbar:hover {
+.nuc-btn-topbar:hover {
   color: #fff;
   text-decoration: none;
 }
-.btn-topbar:active {
+.nuc-btn-topbar:active {
   background: none repeat scroll 0% 0% rgba(158, 161, 149, 1);
   color: #fff;
 }
-.btn-save {
+.nuc-btn-save {
   border: 1px solid #37AA73;
 }
-.btn-discard {
+.nuc-btn-discard {
   border: 1px solid #AA3737;
 }
 /* end topbar */
@@ -519,3 +519,144 @@ html, body {
   background: rgba(30, 33, 44, 0.92);
 }
 /* end nucleus terminal */
+
+/*!
+ * Nucleus make me ribbon. Copied from github-fork-ribbon-css
+ * https://github.com/simonwhitaker/github-fork-ribbon-css
+ */
+
+/* Left will inherit from right (so we don't need to duplicate code) */
+.nucleus-make-me-ribbon {
+  /* The right and left classes determine the side we attach our banner to */
+  position: absolute;
+
+  /* Add a bit of padding to give some substance outside the "stitching" */
+  padding: 2px 0;
+
+  /* Set the base colour */
+  background-color: #a00;
+
+  /* Set a gradient: transparent black at the top to almost-transparent black at the bottom */
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.15)));
+  background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+
+  /* Add a drop shadow */
+  -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+
+  /* Set the font */
+  font: 700 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.nucleus-make-me-ribbon a,
+.nucleus-make-me-ribbon a:hover {
+  /* Set the text properties */
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
+  text-align: center;
+
+  /* Set the geometry. If you fiddle with these you'll also need
+     to tweak the top and right values in .nucleus-make-me-ribbon. */
+  width: 200px;
+  line-height: 20px;
+
+  /* Set the layout properties */
+  display: inline-block;
+  padding: 2px 0;
+
+  /* Add "stitching" effect */
+  border-width: 1px 0;
+  border-style: dotted;
+  border-color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.nucleus-make-me-ribbon-wrapper {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.nucleus-make-me-ribbon-wrapper.fixed {
+  position: fixed;
+}
+
+.nucleus-make-me-ribbon-wrapper.left {
+  left: 0;
+}
+
+.nucleus-make-me-ribbon-wrapper.right {
+  right: 0;
+}
+
+.nucleus-make-me-ribbon-wrapper.left-bottom {
+  position: fixed;
+  top: inherit;
+  bottom: 0;
+  left: 0;
+}
+
+.nucleus-make-me-ribbon-wrapper.right-bottom {
+  position: fixed;
+  top: inherit;
+  bottom: 0;
+  right: 0;
+}
+
+.nucleus-make-me-ribbon-wrapper.right .nucleus-make-me-ribbon {
+  top: 42px;
+  right: -43px;
+
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.nucleus-make-me-ribbon-wrapper.left .nucleus-make-me-ribbon {
+  top: 42px;
+  left: -43px;
+
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+
+.nucleus-make-me-ribbon-wrapper.left-bottom .nucleus-make-me-ribbon {
+  top: 80px;
+  left: -43px;
+
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.nucleus-make-me-ribbon-wrapper.right-bottom .nucleus-make-me-ribbon {
+  top: 80px;
+  right: -43px;
+
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}

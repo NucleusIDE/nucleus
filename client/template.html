@@ -20,13 +20,13 @@
 <template name="nucleus_topbar">
   <div id="nucleus_topbar">
     <div class="button-group button-group-left">
-      <a id="nucleus_show_terminal" class="btn-custom btn-topbar " href="#">
+      <a id="nucleus_show_terminal" class="nuc-btn-custom nuc-btn-topbar " href="#">
         <i class="fa fa-terminal"></i>
       </a>
     </div>
     <div class="button-group button-group-right">
-      <a id="nucleus_save_file" class="btn-custom btn-topbar {{file_dirty 'save'}}" href="">Save</a>
-      <a id="nucleus_discard_file" class="btn-custom btn-topbar {{file_dirty 'discard'}}" href="">Discard</a>
+      <a id="nucleus_save_file" class="nuc-btn-custom nuc-btn-topbar {{file_dirty 'save'}}" href="">Save</a>
+      <a id="nucleus_discard_file" class="nuc-btn-custom nuc-btn-topbar {{file_dirty 'discard'}}" href="">Discard</a>
     </div>
   </div>
 </template>
@@ -65,16 +65,16 @@
     </div>
     
     <div class="sidebar-row" style="text-align: center;">
-      <a id="pull_changes" class="btn-custom btn-dark btn-30">
+      <a id="pull_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-level-down"></i>
         Pull</a>    
-      <a id="push_changes" class="btn-custom btn-dark btn-30">
+      <a id="push_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-level-up"></i>
         Push</a>    
     </div>
 
     <div class="sidebar-row sidebar-commit-row">
-      <a id="commit_changes" class="btn-custom btn-dark commit-btn">
+      <a id="commit_changes" class="nuc-btn-custom nuc-btn-dark commit-nuc-btn">
         <i class="fa fa-circle-o-notch"></i>
         Commit</a>
       <input class="sidebar-commit-message" placeholder="Enter Commit Message" type="text" />
@@ -86,11 +86,11 @@
     </div>
     
     <div class="sidebar-row" style="text-align: center;">
-      <a id="sync_app_events" class="{{recievingEvents 'app'}} btn-custom btn-dark btn-30">
+      <a id="sync_app_events" class="{{recievingEvents 'app'}} nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa {{fa_recievingEvents 'app'}}"></i>
         App 
       </a>    
-      <a id="sync_nucleus_events" class="{{recievingEvents 'nucleus'}} btn-custom btn-dark  btn-30">
+      <a id="sync_nucleus_events" class="{{recievingEvents 'nucleus'}} nuc-btn-custom nuc-btn-dark  nuc-btn-30">
         <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa {{fa_recievingEvents 'nucleus'}}"></i>
         Nucleus
       </a>
@@ -101,7 +101,7 @@
     </div>
     
     <div class="sidebar-row" style="text-align: center;">
-      <a id="mup_deploy" class="btn-custom btn-dark  btn-80">
+      <a id="mup_deploy" class="nuc-btn-custom nuc-btn-dark  nuc-btn-80">
         <i style="font-size: 16px;padding: 0 10px;margin-left: -10px;" class="fa fa-bolt"></i>
         mup Deploy
       </a>    
@@ -163,4 +163,12 @@
   {{/if}}
 </template>
 
+
+<template name="nucleus_ribbon">
+  <div id="nucleus_client_init" class="github-fork-ribbon-wrapper {{this.location}}">
+    <div class="github-fork-ribbon">
+      <a href="/nucleus">Make me with Nucleus</a>
+    </div>
+  </div>
+</template>
 

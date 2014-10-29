@@ -24,7 +24,7 @@ Package.on_use(function (api, where) {
 
   api.add_files([
     'both/utilities.js',
-    'both/nucleus.js',
+    'both/collections.js',
     'chat/both/chat_model.js',
     'both/models/nucleus_user.js',
     'both/models/nucleus_event_model.js',
@@ -38,7 +38,7 @@ Package.on_use(function (api, where) {
     'client/lib/font-awesome/css/font-awesome.css',
     'client/lib/hint.css',
 
-    'client/nucleus.js',
+    'client/nucleus_client.js',
     'client/nucleus_editor.js',
     'client/nucleus_sidebar.js',
 
@@ -59,7 +59,7 @@ Package.on_use(function (api, where) {
     'client/eventsync/location.js',
     'client/eventsync/login.js',
 
-    'chat/client/chat.js'
+    'chat/client/subscriptions.js'
   ], ['client']);
 
   api.add_files([
@@ -77,7 +77,7 @@ Package.on_use(function (api, where) {
   api.add_files([
     'server/nucleus.js',
     'server/methods.js',
-    'chat/server/chat.js',
+    'chat/server/publishers.js',
   ], ['server']);
 
   api.export && api.export(['NucleusUser'], ['server', 'client']);

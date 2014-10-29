@@ -135,6 +135,7 @@ var NucleusClientFactory = function() {
    * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
    */
   this.evalNucleusDoc = function(nucDoc) {
+    return; //since we are using meteor development version on server, we don't need to live update CSS either, since meteor itself does it now
     var filepath = nucDoc.filepath,
         doc = ShareJsDocs.findOne(nucDoc.doc_id),
         newJs = doc.data.snapshot;
