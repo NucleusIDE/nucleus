@@ -46,7 +46,7 @@ var NucleusClientFactory = function() {
     });
 
     this.nucleusWindow = nucleusWindow;
-    this.updateCSS();
+    // this.updateCSS();
     return false;
   };
 
