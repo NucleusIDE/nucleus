@@ -23,6 +23,11 @@ InputTextEvent = function(appName) {
 
       if (NucleusEventManager.canEmitEvents) {
         if (elem.tagName === "INPUT" || elem.tagName === "TEXTAREA") {
+          //we don't want to sync keyboard events in chat box etc.
+          //FIXME: Need more robust solution here than hard-coded id
+          if(APP_NAME==='nucleus' && elem.id !== 'sidebar-commit-message')
+            return;
+
           var value = elem.value;
 
           var ev = new NucleusEvent();
