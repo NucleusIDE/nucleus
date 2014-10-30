@@ -22,13 +22,7 @@ Click = function(appName) {
   this.triggerClick = function (elem) {
     //Let's use jquery to trigger the click instead of doing it ourselves. Jquery's click work well with Router.go()/MobiRouter.go()
     //calls. Other way of triggering click event cause a window reload which is certainly not what we want
-    if(elem.id !== "sync_nucleus_events" && elem.id !== "sync_app_events")
-      /*
-       * This check is so one user won't change other user's sync status.
-       *
-       * FIXME: In future, we might need to replace this check with something like "check if this click happened in Toolbox" or something
-       */
-      $(elem).click();
+    $(elem).click();
 
     /* <!--
      var evObj;
@@ -59,6 +53,10 @@ Click = function(appName) {
           utils.forceChange(elem);
           return;
         }
+        //for nucleus app, we want to sync click events only if they are made in the jstree sidebar. So.
+        if(APP_NAME==='nucleus' && ! /jstree/.test(elem.parentElement.classList.toString()))
+            return;
+
 
         var ev = new NucleusEvent();
         ev.setName(EVENT_NAME);
