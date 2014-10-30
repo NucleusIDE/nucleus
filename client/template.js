@@ -121,7 +121,7 @@ Template.editor.helpers({
 Template.nucleus_toolbar.helpers({
   recievingEvents: function(app) {
     if (NucleusUser.me())
-      return  NucleusUser.me().isSyncingEvents(app) ? 'btn-dark-active': '';
+      return  NucleusUser.me().isSyncingEvents(app) ? 'nuc-btn-dark-active': '';
   },
   fa_recievingEvents: function(app) {
     if (NucleusUser.me())
