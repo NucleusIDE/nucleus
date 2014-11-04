@@ -40,6 +40,7 @@ NucleusFactory = function() {
   this.initialize = function(config) {
     config && this.configure(config);
     this.nucleusCloneRepo();
+    CrashWatcher.initialize();
   };
 
   //This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`

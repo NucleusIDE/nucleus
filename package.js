@@ -6,7 +6,8 @@ Package.describe({
 });
 
 Npm.depends({
-  'fibers': '1.0.2'
+  'fibers': '1.0.2',
+//  'watch': '0.13.0'
 });
 
 Package.on_use(function (api, where) {
@@ -75,6 +76,7 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
+    'server/crash_watcher.js',
     'server/nucleus.js',
     'server/methods.js',
     'chat/server/publishers.js',
