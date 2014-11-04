@@ -459,12 +459,30 @@ html, body {
   position: fixed;
   bottom: 10px;
   left: 25%;
-  z-index: 99999999;
+  z-index: 999;
+  min-width: 20%;
 }
 
 .alert {
   margin-top: 10px;
+  background: rgba(121,121,121,0.5);
+  font-size: 12px;
+  line-height: 2;
 }
+
+.alert.alert-success.alert-dismissable {
+background: rgba(70,121,70,0.5);
+}
+.alert.alert-error.alert-dismissable {
+background: rgba(218, 67, 67, 0.4);
+}
+.alert.alert-info.alert-dismissable {
+background: rgba(35, 206, 218, 0.5);
+}
+.alert.alert-warning.alert-dismissable {
+background: rgba(218, 206, 65, 0.4);
+}
+
 /* end flash messages */
 
 /* topbar */
