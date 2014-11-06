@@ -348,11 +348,11 @@ NucleusFactory = function() {
   //Rename `oldpath` to `newpath`
   this.renameFile = function(oldpath, newpath) {
     if (!fs.existsSync(oldpath)) {
-      return;
+      return false;;
     }
 
     return fs.renameSync(oldpath, newpath);
-  }
+  };
 
 };
 
