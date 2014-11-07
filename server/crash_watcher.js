@@ -31,7 +31,7 @@ CrashWatcher = {
         app_url = 'localhost:3000';
 
     //let's launch nuc-watch-meteor from inside the nucleus instead of explicitly calling it
-    var watcher = spawn("nuc-watch-meteor", ["", "-d ",app_dir, "-u ",app_url], {detatched: true});
+    var watcher = spawn("nuc-watch-meteor", ["", "-d", app_dir, "-u", app_url], {detatched: true});
 
     watcher.stdout.setEncoding("utf-8");
     watcher.stderr.setEncoding("utf-8");
