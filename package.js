@@ -7,7 +7,7 @@ Package.describe({
 
 Npm.depends({
   'fibers': '1.0.2',
-//  'watch': '0.13.0'
+  'nuc-watch-meteor': 'https://github.com/channikhabra/nuc-watch-meteor/archive/0f3f2d5ebd1231582f5c7bc966fabb3bf30c27c0.tar.gz'
 });
 
 Package.on_use(function (api, where) {
