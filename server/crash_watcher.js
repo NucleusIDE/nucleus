@@ -27,7 +27,7 @@ CrashWatcher = {
     }));
   },
   spawn_app_crash_watcher: function() {
-    var app_dir = Nucleus.console.projectDir,
+    var app_dir = Nucleus.config.projectDir,
         app_url = 'localhost:3000';
 
     //let's launch nuc-watch-meteor from inside the nucleus instead of explicitly calling it
