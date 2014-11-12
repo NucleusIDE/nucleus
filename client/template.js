@@ -2,6 +2,13 @@
  * # Templates
  */
 
+Template.nucleus.helpers({
+  showNucleus: function() {
+    console.log("NUCLEUS URL IS", NucleusClient.config.nucleusUrl);
+    return true;
+  }
+});
+
 
 //Set the height of sidebar to be the height of window. I couldn't get it working in CSS
 Template.sidebar.rendered = function() {

@@ -1,9 +1,11 @@
 <template name="nucleus">
-  {{> nucleus_nick_prompt}}
-  {{> nucleus_terminal}}
-  {{> sidebar}}
-  {{> nucleus_topbar}}
-  {{> editor}}
+  {{#if showNucleus}}
+    {{> nucleus_nick_prompt}}
+    {{> nucleus_terminal}}
+    {{> sidebar}}
+    {{> nucleus_topbar}}
+    {{> editor}}
+  {{/if}}
 </template>
 
 <template name="nucleus_nick_prompt">
