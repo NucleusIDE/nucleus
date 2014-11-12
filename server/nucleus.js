@@ -18,7 +18,8 @@ NucleusFactory = function() {
 
   this.config = {
     git: '',
-    project: ''
+    project: '',
+    preventAppCrashes: true
   };
 
   this.getFileExtension = function (filepath) {
@@ -40,7 +41,8 @@ NucleusFactory = function() {
   this.initialize = function(config) {
     config && this.configure(config);
     this.nucleusCloneRepo();
-    CrashWatcher.initialize();
+    if(this.config.preventAppCrashes)
+      CrashWatcher.initialize();
   };
 
   //This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
@@ -225,7 +227,9 @@ NucleusFactory = function() {
     }
 
     if (nucleusDirExists && repoAlreadyCloned)
-      this.pullChanges(projectDir);
+      //pulling new changes lose un-committed changes. So let's not pull changes for now
+      return;
+    //      this.pullChanges(projectDir);
   };
 
   //This method is obsolete. We use this method to get the latest CSS from the filesystem, and manually push it into the app. But since we have started running meteor in dev mode on the nucleus server, it is no longer needed as meteor itself live-push all the CSS. Note that this method is faster than meteor's, but it won't load packages'
