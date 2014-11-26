@@ -74,7 +74,7 @@ NucleusSidebar = {
         'themes': {
           icons: false,
           stripes: false,
-          responsive: true,
+          responsive: false,
           dots: false
         }
       },

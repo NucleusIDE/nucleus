@@ -15,6 +15,7 @@ Package.on_use(function (api, where) {
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session',
            'mrt:moment@2.8.1',
            'channikhabra:stupid-models@0.0.3',
+           'channikhabra:live-update@0.1.0',
            'mizzao:sharejs@0.6.1',
            'channikhabra:terminal@0.1.1',
            'mrt:flash-messages@0.2.4']);

@@ -285,6 +285,29 @@ html, body {
   float: left;
 }
 
+.deploy-btn-icon {
+  font-size: 16px;
+  padding: 0 10px;
+  margin-left: -10px;
+}
+
+@media (max-width: 1220px) {
+  .nuc-btn-30 {
+    max-width: 100%;
+    width: 80%;
+  }
+  .commit-btn {
+    width: 80% !important;
+    margin-left: 10% !important;
+  }
+  #sidebar-commit-message {
+    width: 100% !important;
+  }
+  .deploy-btn-icon {
+    padding: 0 3px;
+  }
+}
+
 /* end buttons */
 
 /* sidebar commit */
@@ -471,16 +494,16 @@ html, body {
 }
 
 .alert.alert-success.alert-dismissable {
-background: rgba(70,121,70,0.5);
+  background: rgba(70,121,70,0.5);
 }
 .alert.alert-error.alert-dismissable {
-background: rgba(218, 67, 67, 0.4);
+  background: rgba(218, 67, 67, 0.4);
 }
 .alert.alert-info.alert-dismissable {
-background: rgba(35, 206, 218, 0.5);
+  background: rgba(35, 206, 218, 0.5);
 }
 .alert.alert-warning.alert-dismissable {
-background: rgba(218, 206, 65, 0.4);
+  background: rgba(218, 206, 65, 0.4);
 }
 
 /* end flash messages */
