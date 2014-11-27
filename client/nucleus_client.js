@@ -339,35 +339,6 @@ var NucleusClientFactory = function() {
   };
 
   /**
-   * Clears the user status boxes in sidebar and multiple user cursors in ace editor for those users who have gone offline. We do some un-reactive DOM manipulation for adding user status boxes and cursors in ace which we need to handle ourselves.
-   */
-  this.clearDeadUsers = function(users) {
-    users = users || NucleusClient.getOnlineUsers().fetch(); //try to decrease db queries
-    var nicks = _.map(users, function(user) {
-      return user.getNick();
-    });
-    var userIds = _.map(users, function(user) {
-      return user._id;
-    });
-
-    //Clear sidebar
-    var nicksNodes = _.map($(".user-status-box"), function(n) {
-      return n.getAttribute('data-user-nick');
-    });
-    var deadNicks = _.difference(nicksNodes, nicks);
-    _.each(deadNicks, function(deadNick) {
-      $("[data-user-nick="+deadNick+"]").remove();
-    });
-
-    //Clear extra cursors
-    var deadUserCursors = _.difference(Object.keys(NucleusEditor.extraCursors), userIds);
-    _.each(deadUserCursors, function(deadCursor) {
-      NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
-    });
-
-  };
-
-  /**
    * Creates new `filepath` and execute `cb` callback after completion.
    *
    * *Arguments:*

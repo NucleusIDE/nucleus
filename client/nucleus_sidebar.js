@@ -231,5 +231,49 @@ NucleusSidebar = {
         i.style.opacity = 1;
       }
     },100);
+  },
+
+  /**
+   * Clears the user status boxes in sidebar and multiple user cursors in ace editor for those users who have gone offline. We do some un-reactive DOM manipulation for adding user status boxes and cursors in ace which we need to handle ourselves.
+   */
+  clearDeadUsers: function(users) {
+    users = users || NucleusClient.getOnlineUsers().fetch(); //try to decrease db queries
+    var nicks = _.map(users, function(user) {
+      return user.getNick();
+    });
+    var userIds = _.map(users, function(user) {
+      return user._id;
+    });
+
+    //Clear sidebar
+    var nicksNodes = _.map($(".user-status-box"), function(n) {
+      return n.getAttribute('data-user-nick');
+    });
+
+    var deadNicks = _.difference(nicksNodes, nicks);
+    _.each(deadNicks, function(deadNick) {
+      $("[data-user-nick="+deadNick+"]").remove();
+    });
+
+    //Clear extra cursors of
+    var deadUserCursors = _.difference(Object.keys(NucleusEditor.extraCursors), userIds);
+    _.each(deadUserCursors, function(deadCursor) {
+      NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
+    });
+
+    Meteor.setTimeout(function() {
+      console.log("CLEARING EXTRA STATUS BOXES");
+      this.clearExtraStatusBoxes(nicks);
+    }.bind(this), 200);
+  },
+  clearExtraStatusBoxes: function(nicks) {
+    //clear extra status boxes for present users
+    _.each(nicks, function(nick) {
+      var nickNodes = $("[data-user-nick="+nick+"]");
+      if(nickNodes.length <= 1) return;
+      for(var i = nickNodes.length-1; i > 0; i--)
+        nickNodes[i].remove();
+    });
   }
+
 };

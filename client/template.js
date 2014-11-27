@@ -194,7 +194,7 @@ Deps.autorun(function() {
 //Autorun to update sidebar user state boxes and cursor position for different users
 Deps.autorun(function() {
   var users = NucleusClient.getOnlineUsers().fetch();
-  NucleusClient.clearDeadUsers(users);
+  NucleusSidebar.clearDeadUsers(users);
 
   _.each(users, function(user) {
     NucleusSidebar.updateUserStatusBox(user);
