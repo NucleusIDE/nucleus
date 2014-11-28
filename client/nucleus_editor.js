@@ -25,6 +25,10 @@ var showLabelOnMouseMove = function(e) {
     var x = point[0],
         y = point[1];
 
+    if (!rect || !rect[0] || !rect[0][0]) {
+      return false;
+    }
+
     var z1 = rect[0][0],
         z2 = rect[0][1],
         z3 = rect[1][0],
