@@ -99,4 +99,29 @@ EventUtils = function($window) {
     var $document = this.getDocument();
     return $document.getElementsByTagName("body")[0];
   };
+
+  /**
+   * Execute the function *func* when value(s) in roll stop changing. Check ofter *check_time*
+   *
+   * Arguments:
+   * * roller           - object   (which carries the roll)
+   * * roll             - string   (property of *roller* which represents the changing value)
+   * * func             - function (to execute when roll stops changing)
+   * * check_time       - time     (in ms to execute the func after)
+   *
+   * We need to give *roller* and *roll* to access the global (changing) roll instead of locally passed roll
+   */
+  this.executeWhenStopRolling = function(roller, roll, func, check_time) {
+    check_time = check_time || 100;
+    var lastRoll = roller[roll];
+    var rollInterval = Meteor.setInterval(function() {
+      var rolling_val = roller[roll];
+      if(lastRoll === rolling_val) {
+        func();
+        Meteor.clearInterval(rollInterval);
+      } else {
+        lastRoll = rolling_val;
+      }
+    }, check_time);
+  };
 };

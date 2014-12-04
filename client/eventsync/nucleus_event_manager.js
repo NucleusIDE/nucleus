@@ -123,9 +123,12 @@ var EventManager = function() {
   };
 
   this.tearDown = function() {
-    NucleusEventManager.click.tearDown();
-    NucleusEventManager.scroll.tearDown();
-    this.forms.tearDown();
+    this.click('app').tearDown();
+    this.click('nucleus').tearDown();
+    this.scroll('app').tearDown();
+    this.scroll('nucleus').tearDown();
+    this.forms('app').tearDown();
+    this.forms('nucleus').tearDown();
     this.location.tearDown();
     this.login.tearDown();
 

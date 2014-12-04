@@ -17,7 +17,7 @@ Scroll = function(appName) {
       //In case of nuclues, we set ace events instead of window events.
       //We need to use below api because events on ace are undone when document changes. NucleusEditor handles that
       NucleusEditor.addEvent("changeScrollTop", this.syncNucleusScroll);
-      NucleusEditor.addEvent("changeScrollLeft", this.syncNucleusScroll);
+      //      NucleusEditor.addEvent("changeScrollLeft", this.syncNucleusScroll);
     }
   };
 
@@ -36,16 +36,30 @@ Scroll = function(appName) {
   /**
    * Send events over the wire.
    */
+  var appScrollSynced = false;
   this.syncEvent = function () {
     return function () {
       var canEmit = NucleusEventManager.canEmitEvents;
-
-      if(canEmit) {
+      var syncScroll = function() {
         var ev = new NucleusEvent();
         ev.setName(EVENT_NAME);
         ev.setAppName(APP_NAME);
         ev.position = this.getScrollPosition();
         ev.broadcast();
+        appScrollSynced = false;
+        console.log("BROADCASTED SCROLL");
+      }.bind(this);
+
+      if(canEmit) {
+        if(! appScrollSynced) {
+          var that = this;
+          var roller = {roll: that.getScrollPosition().raw.y};
+          console.log("ROLLER", roller);
+          NucleusEventManager.appUtils.executeWhenStopRolling(
+            roller, 'roll', syncScroll, 1000
+          );
+          appScrollSynced = true;
+        }
       } else
         NucleusEventManager.canEmitEvents = true;
     }.bind(this);
@@ -54,10 +68,11 @@ Scroll = function(appName) {
   /**
    * We have different scroll sync for nucleus than for the app. For nucleus, we scroll the nucleus editor, not the whole window because scrolling whole window won't scroll the nucleus editor. Scroll in nucleus editor is what we want in Nucleus
    */
+  var nucScrollSynced = false; //we need to use this global to call the scroll change event once only. Without this, syncNucleusScroll gets called about 50 times per cm of scroll changed which spoils the performance
   this.syncNucleusScroll =  function () {
     var canEmit = NucleusEventManager.canEmitEvents;
 
-    if(canEmit) {
+    var syncEvent = function() {
       var ev = new NucleusEvent();
       ev.setName(EVENT_NAME);
       ev.setAppName(APP_NAME);
@@ -69,6 +84,16 @@ Scroll = function(appName) {
       };
 
       ev.broadcast();
+      nucScrollSynced = false;
+    };
+
+    if(canEmit) {
+      if(! nucScrollSynced) {
+        nucScrollSynced = true;
+        NucleusEventManager.nucleusUtils.executeWhenStopRolling(
+          NucleusEditor.editor.session, '$scrollTop', syncEvent, 100
+        );
+      }
     } else
       NucleusEventManager.canEmitEvents = true;
   };
