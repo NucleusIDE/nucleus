@@ -10,38 +10,37 @@ InputTextEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
-    NucleusEventManager.addEvent($document.body, "keyup", this.syncBrowserEvent());
+    NucleusEventManager.addEvent($document.body, "keyup", this.syncBrowserEvent);
   };
 
   this.tearDown = function () {
-    NucleusEventManager.removeEvent($document.body, "keyup", this.syncBrowserEvent());
+    NucleusEventManager.removeEvent($document.body, "keyup", this.syncBrowserEvent);
   };
 
-  this.syncBrowserEvent = function () {
-    return function (event) {
-      var elem = event.target || event.srcElement;
+  this.syncBrowserEvent = function (event) {
+    var elem = event.target || event.srcElement;
 
-      if (NucleusEventManager.canEmitEvents) {
-        if (elem.tagName === "INPUT" || elem.tagName === "TEXTAREA") {
-          //we don't want to sync keyboard events in chat box etc.
-          //FIXME: Need more robust solution here than hard-coded id
-          if(APP_NAME==='nucleus' && elem.id !== 'sidebar-commit-message')
-            return;
+    if (NucleusEventManager.canEmitEvents) {
+      if (elem.tagName === "INPUT" || elem.tagName === "TEXTAREA") {
+        //we don't want to sync keyboard events in chat box etc.
+        //FIXME: Need more robust solution here than hard-coded id
+        if(APP_NAME==='nucleus' && elem.id !== 'sidebar-commit-message')
+          return;
 
-          var value = elem.value;
+        var value = elem.value;
 
-          var ev = new NucleusEvent();
-          ev.setName(EVENT_NAME);
-          ev.setAppName(APP_NAME);
-          ev.type = 'forms';
-          ev.setTarget(utils.getElementData(elem));
-          ev.setValue(value);
-          ev.broadcast();
-        }
-      } else {
-        NucleusEventManager.canEmitEvents = true;
+        var ev = new NucleusEvent();
+        ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
+        ev.type = 'forms';
+        ev.setTarget(utils.getElementData(elem));
+        ev.setValue(value);
+        ev.broadcast();
+        console.log("BROADCAST TEXT INPUT EVENT");
       }
-    };
+    } else {
+      NucleusEventManager.canEmitEvents = true;
+    }
   };
 
   this.handleEvent = function (event) {
