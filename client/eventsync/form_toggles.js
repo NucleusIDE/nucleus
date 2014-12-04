@@ -14,39 +14,36 @@ InputToggleEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
-    var browserEvent = this.syncBrowserEvent();
+    var browserEvent = this.syncBrowserEvent;
     this.addEvents(NucleusEventManager, browserEvent);
   };
 
   this.tearDown = function() {
-    var browserEvent = this.syncBrowserEvent();
+    var browserEvent = this.syncBrowserEvent;
     this.removeEvents(NucleusEventManager, browserEvent);
   };
 
-  this.syncBrowserEvent = function () {
-    return function (event) {
+  this.syncBrowserEvent = function (event) {
 
-      if (NucleusEventManager.canEmitEvents) {
-        var elem = event.target || event.srcElement;
-        var data;
-        if (elem.type === "radio" || elem.type === "checkbox" || elem.tagName === "SELECT") {
-          var ev = new NucleusEvent();
+    if (NucleusEventManager.canEmitEvents) {
+      var elem = event.target || event.srcElement;
+      var data;
+      if (elem.type === "radio" || elem.type === "checkbox" || elem.tagName === "SELECT") {
+        var ev = new NucleusEvent();
 
-          data = utils.getElementData(elem);
-          ev.setName(EVENT_NAME);
-          ev.setAppName(APP_NAME);
-          ev.type = 'forms';
-          data.type = elem.type;
-          data.checked = elem.checked;
-          ev.setTarget(data);
-          ev.setValue(elem.value);
-          ev.broadcast();
-        }
-      } else {
-        NucleusEventManager.canEmitEvents = true;
+        data = utils.getElementData(elem);
+        ev.setName(EVENT_NAME);
+        ev.setAppName(APP_NAME);
+        ev.type = 'forms';
+        data.type = elem.type;
+        data.checked = elem.checked;
+        ev.setTarget(data);
+        ev.setValue(elem.value);
+        ev.broadcast();
       }
-
-    };
+    } else {
+      NucleusEventManager.canEmitEvents = true;
+    }
   };
 
   this.handleEvent = function (event) {

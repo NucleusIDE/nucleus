@@ -36,7 +36,6 @@ InputTextEvent = function(appName) {
         ev.setTarget(utils.getElementData(elem));
         ev.setValue(value);
         ev.broadcast();
-        console.log("BROADCAST TEXT INPUT EVENT");
       }
     } else {
       NucleusEventManager.canEmitEvents = true;
