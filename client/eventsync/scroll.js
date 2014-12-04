@@ -47,16 +47,17 @@ Scroll = function(appName) {
         ev.position = this.getScrollPosition();
         ev.broadcast();
         appScrollSynced = false;
-        console.log("BROADCASTED SCROLL");
       }.bind(this);
 
       if(canEmit) {
         if(! appScrollSynced) {
           var that = this;
-          var roller = {roll: that.getScrollPosition().raw.y};
-          console.log("ROLLER", roller);
+          var roller = {
+            y: that.getScrollPosition().raw.y,
+            x: that.getScrollPosition().raw.x
+          };
           NucleusEventManager.appUtils.executeWhenStopRolling(
-            roller, 'roll', syncScroll, 1000
+            roller, ['x', 'y'], syncScroll, 1000
           );
           appScrollSynced = true;
         }
@@ -91,7 +92,7 @@ Scroll = function(appName) {
       if(! nucScrollSynced) {
         nucScrollSynced = true;
         NucleusEventManager.nucleusUtils.executeWhenStopRolling(
-          NucleusEditor.editor.session, '$scrollTop', syncEvent, 100
+          NucleusEditor.editor.session, ['$scrollTop', '$scrollLeft'], syncEvent, 100
         );
       }
     } else

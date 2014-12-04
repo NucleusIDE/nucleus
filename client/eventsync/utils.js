@@ -113,14 +113,35 @@ EventUtils = function($window) {
    */
   this.executeWhenStopRolling = function(roller, roll, func, check_time) {
     check_time = check_time || 100;
-    var lastRoll = roller[roll];
+    var lastRoll;
+
+    if(_.isArray(roll)) {
+      lastRoll = [];
+      _.each(roll, function(r) {
+        lastRoll.push(roller[r]);
+      });
+    }
+    else
+      lastRoll = roller[roll];
+
+
+
     var rollInterval = Meteor.setInterval(function() {
-      var rolling_val = roller[roll];
-      if(lastRoll === rolling_val) {
+      var rollingVal;
+      if(_.isArray(roll)) {
+        rollingVal = [];
+        _.each(roll, function(r) {
+          rollingVal.push(roller[r]);
+        });
+      }
+      else
+        rollingVal = roller[roll];
+
+      if(_.isEqual(lastRoll, rollingVal)) {
         func();
         Meteor.clearInterval(rollInterval);
       } else {
-        lastRoll = rolling_val;
+        lastRoll = rollingVal;
       }
     }, check_time);
   };
