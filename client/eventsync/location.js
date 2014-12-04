@@ -14,12 +14,12 @@ LocationEvent = function(appName) {
    */
   this.initialize = function() {
     this.overRideGoCalls();
-    NucleusEventManager.addEvent($window, 'popstate', this.syncGoPushstate());
+    NucleusEventManager.addEvent($window, 'popstate', this.syncGoPushstate);
   };
 
   this.tearDown = function() {
     this.undoGoCallOverRide();
-    NucleusEventManager.removeEvent($window, 'popstate', this.syncGoPushstate());
+    NucleusEventManager.removeEvent($window, 'popstate', this.syncGoPushstate);
   };
 
   this.overRideGoCalls = function() {
@@ -80,37 +80,35 @@ LocationEvent = function(appName) {
       else return 'back';
     };
 
-    return function() {
-      if (NucleusEventManager.canEmitEvents) {
-        var hist = loc.history,
-            cursor = loc.curIndex,
-            url = $window.location.pathname;
+    if (NucleusEventManager.canEmitEvents) {
+      var hist = loc.history,
+          cursor = loc.curIndex,
+          url = $window.location.pathname;
 
-        var ev = new NucleusEvent();
-        ev.setName(EVENT_NAME);
-        ev.type = 'popstate';
-        ev.setAppName(APP_NAME);
+      var ev = new NucleusEvent();
+      ev.setName(EVENT_NAME);
+      ev.type = 'popstate';
+      ev.setAppName(APP_NAME);
 
-        if(movedDirection(hist, url, cursor) === 'back') {
-          cursor = cursor - 1;
-          loc.curIndex = cursor;
+      if(movedDirection(hist, url, cursor) === 'back') {
+        cursor = cursor - 1;
+        loc.curIndex = cursor;
 
-          ev.setValue('back');
-          ev.broadcast();
-          return;
-        }
-        else {
-          cursor = cursor + 1;
-          loc.curIndex = cursor;
-
-          ev.setValue('forward');
-          ev.broadcast();
-          return;
-        }
-      } else {
-        NucleusEventManager.canEmitEvents = true;
+        ev.setValue('back');
+        ev.broadcast();
+        return;
       }
-    };
+      else {
+        cursor = cursor + 1;
+        loc.curIndex = cursor;
+
+        ev.setValue('forward');
+        ev.broadcast();
+        return;
+      }
+    } else {
+      NucleusEventManager.canEmitEvents = true;
+    }
   };
 
   //we maintain our version of browser history to play back/forward events

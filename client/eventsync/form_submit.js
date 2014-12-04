@@ -37,7 +37,7 @@ FormSubmitEvent = function(appName) {
     } else {
       NucleusEventManager.canEmitEvents = true;
     }
-  };sync
+  };
 
   this.handleEvent = function (event) {
     var data = JSON.parse(event.target);
