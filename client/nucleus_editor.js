@@ -164,9 +164,10 @@ var NucleusEditorFactory = function() {
 
   this.removeEvent = function(eventName, fn) {
     if(!this.events[eventName]) return;
-    var index = this.events.indexOf(fn);
+
+    var index = this.events[eventName].indexOf(fn);
     if (index > -1) {
-      this.events.splice(index, 1);
+      this.events[eventName].splice(index, 1);
     }
   };
 

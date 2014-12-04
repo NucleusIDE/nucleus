@@ -70,7 +70,7 @@ NucleusUser.extend({
       NucleusClient.getWindow(app).eval("NucleusEventManager.initialize()");
     }
     else {
-      NucleusClient.getAppWindow(app).eval("NucleusEventManager.tearDown()");
+      NucleusClient.getWindow(app).eval("NucleusEventManager.tearDown()");
     }
 
   },

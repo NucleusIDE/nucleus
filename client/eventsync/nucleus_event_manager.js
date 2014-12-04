@@ -124,14 +124,16 @@ var EventManager = function() {
 
   this.tearDown = function() {
     var user = NucleusUser.me();
-    if(user.syncing_app_events) {
+
+    if(window.name !== 'Nucleus') {
       this.click('app').tearDown();
       this.scroll('app').tearDown();
       this.forms('app').tearDown();
       this.location('app').tearDown();
       this.login('app').tearDown();
     }
-    if(user.syncing_nucleus_events) {
+    if(window.name === 'Nucleus') {
+      console.log("TEaring down nucleus");
       this.click('nucleus').tearDown();
       this.scroll('nucleus').tearDown();
       this.forms('nucleus').tearDown();
