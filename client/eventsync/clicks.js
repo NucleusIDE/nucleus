@@ -12,11 +12,11 @@ Click = function(appName) {
    * Add the click event listener to body of the window of given app
    */
   this.initialize = function () {
-    NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
+    NucleusEventManager.addEvent($document.body, EVENT_NAME, this.syncBrowserEvent);
   };
 
   this.tearDown = function() {
-    NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent());
+    NucleusEventManager.removeEvent($document.body, EVENT_NAME, this.syncBrowserEvent);
   };
 
   this.triggerClick = function (elem) {
@@ -43,29 +43,28 @@ Click = function(appName) {
   /**
    * Send event over the wire i.e save event in mango db
    */
-  this.syncBrowserEvent = function() {
-    return function (event) {
-      var canEmit = NucleusEventManager.canEmitEvents;
+  this.syncBrowserEvent = function (event) {
+    var canEmit = NucleusEventManager.canEmitEvents;
 
-      if (canEmit) {
-        var elem = event.target || event.srcElement;
-        if (elem.type === "checkbox" || elem.type === "radio") {
-          utils.forceChange(elem);
-          return;
-        }
-        //for nucleus app, we want to sync click events only if they are made in the jstree sidebar. So.
-        if(APP_NAME==='nucleus' && ! /jstree/.test(elem.parentElement.classList.toString()))
-            return;
-
-
-        var ev = new NucleusEvent();
-        ev.setName(EVENT_NAME);
-        ev.setAppName(APP_NAME);
-        ev.setTarget(utils.getElementData(elem));
-        ev.broadcast();
+    if (canEmit) {
+      var elem = event.target || event.srcElement;
+      if (elem.type === "checkbox" || elem.type === "radio") {
+        utils.forceChange(elem);
+        return;
       }
-      else NucleusEventManager.canEmitEvents = true;
-    };
+      //for nucleus app, we want to sync click events only if they are made in the jstree sidebar. So.
+      if(APP_NAME==='nucleus' && ! /jstree/.test(elem.parentElement.classList.toString()))
+        return;
+
+
+      var ev = new NucleusEvent();
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.setTarget(utils.getElementData(elem));
+      ev.broadcast();
+      console.log("BROADCAST ED CLICK", elem);
+    }
+    else NucleusEventManager.canEmitEvents = true;
   };
 
   /**
