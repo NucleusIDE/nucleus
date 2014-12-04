@@ -11,35 +11,33 @@ FormSubmitEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
-    var browserEvent = this.syncBrowserEvent();
+    var browserEvent = this.syncBrowserEvent;
     NucleusEventManager.addEvent($document.body, "submit", browserEvent);
     NucleusEventManager.addEvent($document.body, "reset", browserEvent);
   };
 
   this.tearDown = function () {
-    var browserEvent = this.syncBrowserEvent();
+    var browserEvent = this.syncBrowserEvent;
     NucleusEventManager.removeEvent($document.body, "submit", browserEvent);
     NucleusEventManager.removeEvent($document.body, "reset", browserEvent);
   };
 
-  this.syncBrowserEvent = function () {
-    return function (event) {
-      if (NucleusEventManager.canEmitEvents) {
-        var elem = event.target || event.srcElement;
-        var data = utils.getElementData(elem);
-        data.type = event.type;
+  this.syncBrowserEvent = function (event) {
+    if (NucleusEventManager.canEmitEvents) {
+      var elem = event.target || event.srcElement;
+      var data = utils.getElementData(elem);
+      data.type = event.type;
 
-        var ev = new NucleusEvent();
-        ev.setName(EVENT_NAME);
-        ev.setAppName(APP_NAME);
-        ev.type = 'forms';
-        ev.setTarget(data);
-        ev.broadcast();
-      } else {
-        NucleusEventManager.canEmitEvents = true;
-      }
-    };
-  };
+      var ev = new NucleusEvent();
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.type = 'forms';
+      ev.setTarget(data);
+      ev.broadcast();
+    } else {
+      NucleusEventManager.canEmitEvents = true;
+    }
+  };sync
 
   this.handleEvent = function (event) {
     var data = JSON.parse(event.target);
