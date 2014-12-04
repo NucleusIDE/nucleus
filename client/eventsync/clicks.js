@@ -62,7 +62,6 @@ Click = function(appName) {
       ev.setAppName(APP_NAME);
       ev.setTarget(utils.getElementData(elem));
       ev.broadcast();
-      console.log("BROADCAST ED CLICK", elem);
     }
     else NucleusEventManager.canEmitEvents = true;
   };

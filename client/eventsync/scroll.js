@@ -11,7 +11,7 @@ Scroll = function(appName) {
   this.$window = $window;
 
   this.initialize = function () {
-    NucleusEventManager.addEvent($window, EVENT_NAME, this.syncEvent());
+    NucleusEventManager.addEvent($window, EVENT_NAME, this.syncEvent);
 
     if (APP_NAME === 'nucleus') {
       //In case of nuclues, we set ace events instead of window events.
@@ -22,7 +22,7 @@ Scroll = function(appName) {
   };
 
   this.tearDown = function () {
-    NucleusEventManager.removeEvent($window, EVENT_NAME, this.syncEvent());
+    NucleusEventManager.removeEvent($window, EVENT_NAME, this.syncEvent);
     if (APP_NAME === 'nucleus') {
       //In case of nuclues, we set ace events instead of window events
       NucleusEditor.editor.session.off("changeScrollLeft", this.syncNucleusScroll);
@@ -38,33 +38,31 @@ Scroll = function(appName) {
    */
   var appScrollSynced = false;
   this.syncEvent = function () {
-    return function () {
-      var canEmit = NucleusEventManager.canEmitEvents;
-      var syncScroll = function() {
-        var ev = new NucleusEvent();
-        ev.setName(EVENT_NAME);
-        ev.setAppName(APP_NAME);
-        ev.position = this.getScrollPosition();
-        ev.broadcast();
-        appScrollSynced = false;
-      }.bind(this);
-
-      if(canEmit) {
-        if(! appScrollSynced) {
-          var that = this;
-          var roller = {
-            y: that.getScrollPosition().raw.y,
-            x: that.getScrollPosition().raw.x
-          };
-          NucleusEventManager.appUtils.executeWhenStopRolling(
-            roller, ['x', 'y'], syncScroll, 1000
-          );
-          appScrollSynced = true;
-        }
-      } else
-        NucleusEventManager.canEmitEvents = true;
+    var canEmit = NucleusEventManager.canEmitEvents;
+    var syncScroll = function() {
+      var ev = new NucleusEvent();
+      ev.setName(EVENT_NAME);
+      ev.setAppName(APP_NAME);
+      ev.position = this.getScrollPosition();
+      ev.broadcast();
+      appScrollSynced = false;
     }.bind(this);
-  };
+
+    if(canEmit) {
+      if(! appScrollSynced) {
+        var that = this;
+        var roller = {
+          y: that.getScrollPosition().raw.y,
+          x: that.getScrollPosition().raw.x
+        };
+        NucleusEventManager.appUtils.executeWhenStopRolling(
+          roller, ['x', 'y'], syncScroll, 1000
+        );
+        appScrollSynced = true;
+      }
+    } else
+      NucleusEventManager.canEmitEvents = true;
+  }.bind(this);
 
   /**
    * We have different scroll sync for nucleus than for the app. For nucleus, we scroll the nucleus editor, not the whole window because scrolling whole window won't scroll the nucleus editor. Scroll in nucleus editor is what we want in Nucleus
