@@ -502,7 +502,7 @@ html, body {
 #flash_messages {
   position: fixed;
   bottom: 10px;
-  left: 25%;
+  right: 3%;
   z-index: 999;
   min-width: 20%;
 }
