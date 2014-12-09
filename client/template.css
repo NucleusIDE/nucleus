@@ -354,7 +354,6 @@ html, body {
   vertical-align: top;
   cursor: default;
   position: relative;
-  z-index: 100;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.06);
   font-size: 11px;
@@ -362,13 +361,7 @@ html, body {
   background-color: #303130;
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, 0.64)), color-stop(1, #2e2e2e));
   background-image: -moz-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, 0.64)), color-stop(1, #2e2e2e));
-
-  /* line-height: 1.5; */
-  /* background: none repeat scroll 0% 0% #51534C; */
-  /* font-size: 10px; */
   text-align: center;
-/* margin: 10px 0px; */
-/* text-transform: uppercase; */
 }
 /* end labels  */
 
