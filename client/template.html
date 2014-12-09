@@ -1,10 +1,10 @@
 <template name="nucleus">
   {{#if showNucleus}}
-    {{> nucleus_nick_prompt}}
-    {{> nucleus_terminal}}
-    {{> sidebar}}
-    {{> nucleus_topbar}}
-    {{> editor}}
+  {{> nucleus_nick_prompt}}
+  {{> nucleus_terminal}}
+  {{> sidebar}}
+  {{> nucleus_topbar}}
+  {{> editor}}
   {{/if}}
 </template>
 
@@ -168,9 +168,7 @@
 
 <template name="nucleus_ribbon">
   <div id="nucleus_client_init" class="nucleus-make-me-ribbon-wrapper {{this.location}}">
-    <div class="nucleus-make-me-ribbon">
-      <a href="/nucleus">Make me with Nucleus</a>
-    </div>
+    <img src="/packages/channikhabra_nucleus/public/logo.png" title="Make me with Nucleus" />
   </div>
 </template>
 

@@ -423,6 +423,17 @@ Template.nucleus_terminal.helpers({
 //////////////////////////
 // START NUCLEUS RIBBON //
 //////////////////////////
+Template.nucleus_ribbon.rendered = function() {
+  var invert = 1;
+  Meteor.setInterval(function() {
+    invert = invert == 1 ? .45 : 1;
+    $(".nucleus-make-me-ribbon-wrapper img").css({
+      "opacity": invert
+    }
+    );
+  }, 1500);
+};
+
 Template.nucleus_ribbon.events({
   "click #nucleus_client_init": function(e) {
     e.preventDefault();
