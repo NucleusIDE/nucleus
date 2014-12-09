@@ -215,6 +215,13 @@ NucleusSidebar = {
     } else {
       $currNickNode.remove();
     }
+    var setStatusBoxMargins = function(li) {
+      var offset = $(li).offset().left + 5,
+          margin = offset === 0 ? false : offset;
+      if(margin) {
+        $($(li).find('.user-status-box')[0]).css({"margin-right": margin});
+      }
+    };
 
     var interval = Meteor.setInterval(function() {
       var li = document.getElementById(user.getCurrentFilepath());
@@ -229,6 +236,7 @@ NucleusSidebar = {
         i.style.opacity = 0;
         window.getComputedStyle(i).opacity; //this is so the transition b/w opacity of i work
         i.style.opacity = 1;
+        setStatusBoxMargins(li); //this is so that when the status box belongs to a nested filetree node, it won't get hidden
       }
     },100);
   },
@@ -262,7 +270,6 @@ NucleusSidebar = {
     });
 
     Meteor.setTimeout(function() {
-      console.log("CLEARING EXTRA STATUS BOXES");
       this.clearExtraStatusBoxes(nicks);
     }.bind(this), 200);
   },
