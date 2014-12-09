@@ -19,7 +19,8 @@ html, body {
   min-height: 100%;
   max-height: 100%;
   color: rgb(211,211,211);
-  background: #272822;
+  /* background: #272822; */
+  background: #252525;
   overflow: scroll;
   top: 0;
   bottom: 0;
@@ -135,7 +136,6 @@ html, body {
 /* CHAT BOX */
 .chat_box {
   font-size: 14px;
-  background: none repeat scroll 0% 0% #2F3129;
 }
 .chat_history {
   width: 100%;
@@ -145,19 +145,19 @@ html, body {
   background: rgba(222,222,222,0.2);
 }
 .chat_input {
-  padding: 8px;
-  background: #2F3129;
+  padding: 8px !important;
+  background: #3A3A3A;
   width: 100%;
   height: 35px;
   border: 0px none;
-  color: rgba(169, 170, 165, 1);
+  color: rgba(169, 170, 165, 1) !important;
   outline: none;
 }
 /* END CHAT BOX */
 
 /* FOOTER CONTROL BOX */
 .active-box {
-  background: #2F3129;
+  background: #3A3A3A;
 }
 
 .footer_controls {
@@ -189,7 +189,7 @@ html, body {
   left: 0;
   right: 0;
   height: 215px;
-  background: #1D1E16;
+  background: #252525;
   padding: 5px;
 }
 /* END FOOTER CONTROL BOX */
@@ -199,7 +199,7 @@ html, body {
   list-style-type: none;
   padding: 2px 0px;
   height: 205px;
-  background: #2F3129;
+  background: rgba(255,255,255,0.1);
 }
 .buddy_list li {
   padding: 10px;
@@ -246,14 +246,14 @@ html, body {
 }
 
 .nuc-btn-dark {
-  border: 1px solid #63655F;
+  border: 1px solid #3B3D3B;
   border-radius: 0px;
-  background: #51534C;
+  background: #303130;
   color: #D2D2D2;
 }
 
 .nuc-btn-dark:active {
-  background: none repeat scroll 0% 0% rgba(158, 161, 149, 1); /* i think light color is better for active buttons */
+  background-color: #494949;
   color: #fff;  
 }
 .nuc-btn-dark:hover {
@@ -262,15 +262,14 @@ html, body {
 }
 
 .nuc-btn-dark-active {
-  /* background: #2F3129; */
-  background: none repeat scroll 0% 0% rgba(158, 161, 149, 1); /* i think light color is better for active buttons */
+  background-color: #494949;
   color: #fff;
 }
 
 .nuc-btn-30 {
   width: 30%;
   max-width: 30%;
-  margin: 10px 5px;
+  margin: 8px 3px;
 }
 
 .nuc-btn-80 {
@@ -295,16 +294,22 @@ html, body {
   .nuc-btn-30 {
     max-width: 100%;
     width: 80%;
+    margin: 3px;
   }
   .commit-btn {
     width: 80% !important;
     margin-left: 10% !important;
+    margin: 3px;
   }
   #sidebar-commit-message {
-    width: 100% !important;
+    width: 95% !important;
   }
   .deploy-btn-icon {
     padding: 0 3px;
+  }
+  .sidebar-commit-row {
+    margin: 0 !important;
+    margin-bottom: 5px !important;
   }
 }
 
@@ -312,7 +317,7 @@ html, body {
 
 /* sidebar commit */
 .commit-btn {
-  width: 30%;
+  width: 35%;
   float: left;
   display: inline-block;
   padding-left: 5px;
@@ -325,13 +330,13 @@ html, body {
 }
 
 #sidebar-commit-message {
-  border: 1px solid #63655F;
-  padding: 7px;
-  background: #A9AAA5;;
+  border: 1px solid #3B3D3B;
+  padding: 0.45rem 0.2rem;
+  background: rgba(255, 255, 255, 0.1);
   width: 57%;
   float: right;
   display: inline-block;
-  color: #1D1E16;
+  color: #cccccc;
   line-height: 1 !important;
   font-family: sans-serif;
   margin-right: 3%;
@@ -340,12 +345,31 @@ html, body {
 
 /* labels  */
 .sidebar-marker-label {
-  line-height: 1.5;
-  background: none repeat scroll 0% 0% #51534C;
-  font-size: 10px;
+  box-sizing: border-box;
+  height: 22px;
+  padding: 3px;
+  border-bottom: 1px solid #1a1919;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  cursor: default;
+  position: relative;
+  z-index: 100;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  color: #c6ecbc;
+  background-color: #303130;
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, 0.64)), color-stop(1, #2e2e2e));
+  background-image: -moz-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, 0.64)), color-stop(1, #2e2e2e));
+
+  /* line-height: 1.5; */
+  /* background: none repeat scroll 0% 0% #51534C; */
+  /* font-size: 10px; */
   text-align: center;
-  margin: 10px 0px;
-  text-transform: uppercase;
+/* margin: 10px 0px; */
+/* text-transform: uppercase; */
 }
 /* end labels  */
 
@@ -409,51 +433,48 @@ html, body {
 /* end contextmenu */
 
 #nucleus_file_tree {
-  background: #51534C;
+  background: rgba(255,255,255,0.1);
 }
 
+/* user status box hints */
+.hint:after, [data-hint]:after {
+  content: attr(data-hint);
+  background: #272822;
+  color: white;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 12px;
+  white-space: nowrap;
+}
+.hint--left:before {
+  border-left-color: #272822;
+}
+/* end user status box hints */
+
 .jstree-default .jstree-clicked {
-  background: rgba(151, 153, 144, 1);
-  border-radius: 2px;
-  box-shadow: 0px 0px 1px #999 inset;
-  color: #222;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
 .vakata-context li > a:hover {
-  position: relative;
-  background-color: rgba(151, 153, 144, 1);
-  -moz-box-shadow: 0 0 2px #0a6aa1;
-  -webkit-box-shadow: 0 0 2px #0a6aa1;
-  box-shadow: 0 0 2px #0a6aa1;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
 .vakata-context .vakata-context-separator > a,
 .vakata-context .vakata-context-separator > a:hover {
-  background: rgba(151, 153, 144, 1);
-  border: 0;
-  border-top: 1px solid #e2e3e3;
-  height: 1px;
-  min-height: 1px;
-  max-height: 1px;
-  padding: 0;
-  margin: 0 0 0 2.4em;
-  border-left: 1px solid #e0e0e0;
-  -moz-text-shadow: 0 0 0 transparent;
-  -webkit-text-shadow: 0 0 0 transparent;
-  text-shadow: 0 0 0 transparent;
-  -moz-box-shadow: 0 0 0 transparent;
-  -webkit-box-shadow: 0 0 0 transparent;
-  box-shadow: 0 0 0 transparent;
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
 
 .jstree-default .jstree-hovered {
-  background: rgba(151, 153, 144, 1);
-  border-radius: 2px;
-  box-shadow: inset 0 0 1px #ccc;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
 .jstree-default .jstree-disabled.jstree-hovered {
@@ -513,7 +534,7 @@ html, body {
   width: 80%;
   float: right;
   height: 35px;
-  background: #2F3129;
+  background: #252525;
 }
 .button-group {
   margin-top: 3px;
@@ -527,7 +548,6 @@ html, body {
   float: left;
 }
 .nuc-btn-topbar {
-  border: 1px solid #63655F;
   border-radius: 0px;
   background: transparent;
   color: #D2D2D2;
@@ -537,15 +557,18 @@ html, body {
   color: #fff;
   text-decoration: none;
 }
-.nuc-btn-topbar:active {
-  background: none repeat scroll 0% 0% rgba(158, 161, 149, 1);
+
+.nuc-btn-save i{
+  color: #37AA73;
+}
+.nuc-btn-save:active i{
   color: #fff;
 }
-.nuc-btn-save {
-  border: 1px solid #37AA73;
+.nuc-btn-discard i{
+  color: #AA3737;
 }
-.nuc-btn-discard {
-  border: 1px solid #AA3737;
+.nuc-btn-discard:active i{
+  color: #fff;
 }
 /* end topbar */
 

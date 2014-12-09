@@ -22,13 +22,13 @@
 <template name="nucleus_topbar">
   <div id="nucleus_topbar">
     <div class="button-group button-group-left">
-      <a id="nucleus_show_terminal" class="nuc-btn-custom nuc-btn-topbar " href="#">
+      <a id="nucleus_show_terminal" class="nuc-btn-custom nuc-btn-topbar nuc-btn-dark" href="#">
         <i class="fa fa-terminal"></i>
       </a>
     </div>
     <div class="button-group button-group-right">
-      <a id="nucleus_save_file" class="nuc-btn-custom nuc-btn-topbar {{file_dirty 'save'}}" href="">Save</a>
-      <a id="nucleus_discard_file" class="nuc-btn-custom nuc-btn-topbar {{file_dirty 'discard'}}" href="">Discard</a>
+      <a id="nucleus_save_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'save'}}" href=""><i class="fa fa-life-saver"></i> Save</a>
+      <a id="nucleus_discard_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'discard'}}" href=""><i class="fa fa-refresh"></i> Discard</a>
     </div>
   </div>
 </template>
@@ -79,7 +79,7 @@
       <a id="commit_changes" class="nuc-btn-custom nuc-btn-dark commit-btn">
         <i class="fa fa-circle-o-notch"></i>
         Commit</a>
-      <input id="sidebar-commit-message" placeholder="Enter Commit Message" type="text" />
+      <input id="sidebar-commit-message" placeholder="Commit Message" type="text" />
     </div>
 
 

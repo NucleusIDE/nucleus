@@ -136,37 +136,65 @@ Template.nucleus_toolbar.helpers({
   }
 });
 
+var spinBtn = function($el) {
+  $el.find('i').attr('class', 'fa fa-spinner fa-1 fa-spin');
+};
+var unSpinBtn = function($el, newClass) {
+  $el.find('i').attr('class', newClass);
+};
+
 Template.nucleus_toolbar.events({
   "click #commit_changes": function(e) {
-    var commitMessage = $(".sidebar-commit-message").val();
-    if(!commitMessage) { FlashMessages.sendError("Please Enter Commit Message"); return;}
+    var $btn = $("#commit_changes");
+    var btnClasses = $btn.find('i').attr('class');
+    spinBtn($btn);
+
+    var commitMessage = $("#sidebar-commit-message").val();
+    if(!commitMessage) {
+      unSpinBtn($btn, btnClasses);
+      FlashMessages.sendError("Please Enter Commit Message");
+      return;
+    }
 
     Meteor.call("nucleusCommitAllChanges", commitMessage, function(err, res) {
+      unSpinBtn($btn, btnClasses);
       if (res === 1) FlashMessages.sendSuccess("Changes Committed Successfully");
       else if (res === 0) FlashMessages.sendWarning("Nothing to Commit");
       else FlashMessages.sendError("Something Went Wrong with Git Commit");
 
-      $(".sidebar-commit-message").val("");
+      $("#sidebar-commit-message").val("");
     });
   },
   "click #push_changes": function(e) {
+    var $btn = $("#push_changes");
+    var btnClasses = $btn.find('i').attr('class');
+    spinBtn($btn);
     Meteor.call("nucleusPushChanges", function(err, res) {
+      unSpinBtn($btn, btnClasses);
       if (res === 1) FlashMessages.sendSuccess("Changes Pushed Successfully");
       else if (res === 0) FlashMessages.sendWarning("Nothing To Push");
       else FlashMessages.sendError("Something Went Wrong With Git Push");
     });
   },
   "click #pull_changes": function(e) {
+    var $btn = $("#pull_changes");
+    var btnClasses = $btn.find('i').attr('class');
+    spinBtn($btn);
     Meteor.call("nucleusPullChanges", function(err, res) {
+      unSpinBtn($btn, btnClasses);
       if (res === 1) FlashMessages.sendSuccess("New Changes Pulled Successfully");
       else if (res === 0) FlashMessages.sendWarning("Already Up-to-date");
       else FlashMessages.sendError("Something Went Wrong While Pulling Changes");
     });
   },
   "click #mup_deploy": function(e) {
+    var $btn = $("#mup_deploy");
+    var btnClasses = $btn.find('i').attr('class');
+    spinBtn($btn);
     e.preventDefault();
     var should_mup_setup = true;
     Meteor.call("nucleusMupDeploy", should_mup_setup, function(err, res) {
+      unSpinBtn($btn, btnClasses);
       if (res === 1) FlashMessages.sendSuccess("Deployed Successfully");
       else FlashMessages.sendError("Something Went Wrong While Deploying. Please make sure you have mup.json in project root and it has correct settings.");
     });
