@@ -110,6 +110,7 @@ Template.editor.setMode = function() {
     NucleusEditor.setModeForExt(ext);
     //Events get unregistered on document change
     NucleusEditor.registerAllEvents();
+    NucleusEditor.editor.scrollToRow(0);
 
     //We need to re-assign the window height on document change otherwise editor falls back to height given in css.
     //Sharejs does dom overwrite may be
@@ -216,6 +217,7 @@ Deps.autorun(function() {
   if (!selectedFile) return;
 
   NucleusClient.editFile(selectedFile);
+
 });
 
 
