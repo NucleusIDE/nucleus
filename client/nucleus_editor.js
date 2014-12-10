@@ -39,7 +39,7 @@ var showLabelOnMouseMove = function(e) {
         y1 = Math.min(z2, z4),
         y2 = Math.max(z2, z4);
 
-    return (x1 <= x && x <= x2) && (y1 <= y && y <= y2);
+    return (x1-3 <= x && x <= x2+3) && (y1 <= y && y <= y2);
   };
 
   //get rectangles for all extra cursors present in the ace editor. Every online user has a cursor.
