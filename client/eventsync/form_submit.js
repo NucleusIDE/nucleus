@@ -11,12 +11,15 @@ FormSubmitEvent = function(appName) {
       utils = NucleusEventManager.getUtils(APP_NAME);
 
   this.initialize = function () {
+    return;
     var browserEvent = this.syncBrowserEvent;
     NucleusEventManager.addEvent($document.body, "submit", browserEvent);
     NucleusEventManager.addEvent($document.body, "reset", browserEvent);
   };
 
   this.tearDown = function () {
+    return;
+
     var browserEvent = this.syncBrowserEvent;
     NucleusEventManager.removeEvent($document.body, "submit", browserEvent);
     NucleusEventManager.removeEvent($document.body, "reset", browserEvent);
