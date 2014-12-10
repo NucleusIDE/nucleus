@@ -38,6 +38,12 @@ Utils = {
       var hex = color_in_hex;
       color_in_hex = '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
     }
+    color_in_hex = color_in_hex.replace('#', '');
+
+    var complementory = ('000000' + (('0xffffff' ^ '0x'+ color_in_hex).toString(16))).slice(-6);
+
+    return '#'+complementory;
+
 
     var rgbToHex = function (r, g, b) {
       var componentToHex = function (c) {
