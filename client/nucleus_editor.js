@@ -327,9 +327,8 @@ var NucleusEditorFactory = function() {
    * * `cursorRange` *{Ace Range}* : This is retrieved from `NucleusEditor.extraCursors`
    */
   this.removeCursor = function(cursorRange) {
-    if(!cursorRange || !cursorRange.start || !cursorRange.end) return;
-    cursorRange.start.detach();
-    cursorRange.end.detach();
+    cursorRange.start && cursorRange.start.detach();
+    cursorRange.end && cursorRange.end.detach();
     this.getSession().removeMarker(cursorRange.id);
   };
 

@@ -266,7 +266,7 @@ NucleusSidebar = {
     //Clear extra cursors of
     var deadUserCursors = _.difference(Object.keys(NucleusEditor.extraCursors), userIds);
     _.each(deadUserCursors, function(deadCursor) {
-      NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor]);
+      NucleusEditor.removeCursor(NucleusEditor.extraCursors[deadCursor].range);
     });
 
     Meteor.setTimeout(function() {
