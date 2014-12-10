@@ -355,8 +355,8 @@ Template.buddy_list.helpers({
     return users.map(function(user) {
       var filepath = user.getCurrentFilepath();
 
-      var nick = user.getNick()+'('+filepath+')';
-      nick = Utils.shortenText(nick, 25);
+      var nick = user.getNick()+' (' + Utils.shortenText(filepath, 20, 'inverted')+')';
+      nick = Utils.shortenText(nick, 30, 'middle');
 
       return {
         filepath: filepath,

@@ -136,11 +136,15 @@ Utils = {
 
     return rgbToHex(temprgb.r, temprgb.g, temprgb.b);
   },
-  shortenText: function(str, max) {
+  shortenText: function(str, max, mode) {
     if(!str) return false;
+    mode = mode || 'normal';
 
     if (str.length > max) {
-      return str.substr(0, parseInt(max/2)-3) + '...' + str.substr(str.length-parseInt(max/2), str.length);
+      if(mode == 'middle')
+        return str.substr(0, parseInt(max/2)-3) + '...' + str.substr(str.length-parseInt(max/2), str.length);
+      if(mode == 'inverted')
+        return '...' + str.substr(str.length-(max-3), max);
     }
     return str;
   }
