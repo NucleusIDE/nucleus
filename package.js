@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Realtime collaborative development for the web",
-  version: "0.1.2",
+  version: "0.1.4",
   name: "channikhabra:nucleus",
   git: 'https://github.com/channikhabra/meteor-nucleus'
 });
