@@ -113,14 +113,14 @@ html, body {
   position: absolute;
   background-color: #f00;
   border-left: 2px solid #f00;
-  animation: blink 3s steps(5, start) infinite;
-  -webkit-animation: blink 3s steps(5, start) infinite;
+  animation: nuc-blink 0.5s steps(5, start) infinite;
+  -webkit-animation: nuc-blink 0.5s steps(5, start) infinite;
 }
 
-@keyframes blink {
+@keyframes nuc-blink {
   to { visibility: hidden; }
 }
-@-webkit-keyframes blink {
+@-webkit-keyframes nuc-blink {
   to { visibility: hidden; }
 }
 
@@ -579,6 +579,13 @@ html, body {
 .terminal .cmd {
   background: rgba(30, 33, 44, 0.92);
 }
+.cmd .cursor.blink {
+  -webkit-animation: blink 1s infinite steps(1, start);
+  -moz-animation: blink 1s infinite steps(1, start);
+  -ms-animation: blink 1s infinite steps(1, start);
+  animation: blink 1s infinite steps(1, start);
+}
+
 /* end nucleus terminal */
 
 /*!
@@ -598,3 +605,4 @@ html, body {
   height: 50px;
   transition: opacity 1s ease;
 }
+

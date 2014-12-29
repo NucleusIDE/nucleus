@@ -285,6 +285,8 @@ var NucleusEditorFactory = function() {
     position: absolute;\
     background-color: " + color + ";\
     border-left: 2px solid "+ color + ";\
+    animation: nuc-blink 0.8s steps(5, start) infinite; \
+    -webkit-animation: nuc-blink 0.8s steps(5, start) infinite; \
   }";
     //Check documentation for `NucleusEditor.addStyleRule()`
     this.addStyleRule(cursorCss);
@@ -299,7 +301,7 @@ var NucleusEditorFactory = function() {
 
     cursorRange.start = doc.createAnchor(cursorRange.start);
     cursorRange.end = doc.createAnchor(cursorRange.end);
-    cursorRange.id = session.addMarker(cursorRange, curClass + " blink" + " cursor-"+nick, "text");
+    cursorRange.id = session.addMarker(cursorRange, curClass + " cursor-"+nick, "text");
     return {range: cursorRange, class: curClass};
   };
 
