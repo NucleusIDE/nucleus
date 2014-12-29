@@ -28,7 +28,7 @@ CrashWatcher = {
   },
   spawn_app_crash_watcher: function() {
     var app_dir = Nucleus.config.projectDir,
-        app_url = 'localhost:3000';
+        app_url = Meteor.absoluteUrl();
 
     //let's launch nuc-watch-meteor from inside the nucleus instead of explicitly calling it
     var watcher = spawn("nuc-watch-meteor", ["", "-d", app_dir, "-u", app_url], {detatched: true});
