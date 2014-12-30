@@ -8,6 +8,10 @@ Click = function(appName) {
       $document = NucleusClient.getWindow(APP_NAME).document,
       utils = NucleusEventManager.getUtils(APP_NAME);
 
+  if (APP_NAME.toLowerCase() == 'nucleus') {
+    return new NucleusFileEvent();
+  }
+
   /**
    * Add the click event listener to body of the window of given app
    */

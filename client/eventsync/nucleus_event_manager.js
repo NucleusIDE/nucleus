@@ -133,7 +133,7 @@ var EventManager = function() {
       this.login('app').tearDown();
     }
     if(window.name === 'Nucleus') {
-      console.log("TEaring down nucleus");
+      console.log("Tearing down nucleus");
       this.click('nucleus').tearDown();
       this.scroll('nucleus').tearDown();
       this.forms('nucleus').tearDown();

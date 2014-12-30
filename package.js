@@ -55,6 +55,7 @@ Package.on_use(function (api, where) {
     'client/eventsync/nucleus_event_manager.js',
     'client/eventsync/utils.js',
     'client/eventsync/clicks.js',
+    'client/eventsync/nucleus_file_changes.js',
     'client/eventsync/scroll.js',
 
     'client/eventsync/forms.js',

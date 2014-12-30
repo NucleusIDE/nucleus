@@ -10,7 +10,7 @@
  * * target:                       Object `{tagName: 'DIV', index: 0}` (can have extra params 'type' and 'checked' for checkbox/selec/radio)
  * * position:                     Object (for scroll)
  *
- * * value:                        String (for form inputs)
+ * * value:                        String (for form inputs and nucleus-file-change events)
  *
  * * type:                         String (used for
  *   * location: popstate or null,

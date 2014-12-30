@@ -217,7 +217,6 @@ Deps.autorun(function() {
   if (!selectedFile) return;
 
   NucleusClient.editFile(selectedFile);
-
 });
 
 
