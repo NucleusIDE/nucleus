@@ -90,5 +90,5 @@ Package.on_use(function (api, where) {
 
   api.export && api.export(['NucleusUser'], ['server', 'client']);
   api.export && api.export(['Nucleus'], ['server']);
-  api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager'], ['client']);
+  api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager', 'NucleusSidebar'], ['client']);
 });

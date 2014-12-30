@@ -37,14 +37,20 @@ NucleusSidebar = {
     var self = this;
 
     var $el = $('#'+elemId);
+    var doubleEvent = false;
+
     $el.on("select_node.jstree", function(e,data) {
-      if(document.getElementById(data.node.id).getAttribute("data-type") === 'folder') {
-        if(data.node.state.opened)
-          NucleusClient.jsTree.close_node(data.node);
-        else
-          NucleusClient.jsTree.open_node(data.node);
-      }
-      if(document.getElementById(data.node.id).getAttribute("data-type") === 'file') {
+      // if(data.node.data.type === 'folder') {
+      //   if(data.node.state.opened) {
+      //     console.log("SHOULD CLOSE NODE", data);
+      //     NucleusClient.jsTree.close_node(data.node);
+      //   }
+      //   else {
+      //     console.log("SHOULD OPEN NODE", data);
+      //     NucleusClient.jsTree.open_node(data.node);
+      //   }
+      // }
+      if(data.node.data.type === 'file') {
         Session.set("nucleus_selected_file", data.selected[0]);
       }
     });
