@@ -9,12 +9,10 @@ var EVENT_NAME  = "click",
 NucleusFileEvent = function() {
   this.initialize = function() {
     this.reactiveComp = this.syncFileChangeEvent();
-    console.log("INITIALIZING FILE CHANGE EVENT", this.reactiveComp);
   };
 
   this.tearDown = function() {
     this.reactiveComp.stop();
-    console.log("TEARING DOWN FILE CHANGE EVENT");
   };
 
   this.syncFileChangeEvent = function() {
@@ -22,7 +20,6 @@ NucleusFileEvent = function() {
       var newFile = Session.get("nucleus_selected_file");
 
       if (NucleusEventManager.canEmitEvents) {
-        console.log("TRIGGERING FILE CHANGE EVENT");
         Deps.nonreactive(function() {
           var ev = new NucleusEvent();
           ev.setName(EVENT_NAME);
@@ -36,13 +33,10 @@ NucleusFileEvent = function() {
   };
 
   this.handleEvent = function (event) {
-    console.log("HANDLING FILE CHANGE EVENT");
-
     NucleusEventManager.canEmitEvents = false;
 
     var newFile = event.value;
     Session.set("nucleus_selected_file", newFile);
-    console.log("NEW FILE IS ", newFile);
   };
 
 };

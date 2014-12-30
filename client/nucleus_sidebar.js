@@ -34,7 +34,10 @@ NucleusSidebar = {
    * * `elemId` *{string}*: Id of the element on which `jsTree` is created
    */
   initializeJsTree: function(elemId) {
-    $('#'+elemId).on("select_node.jstree", function(e,data) {
+    var self = this;
+
+    var $el = $('#'+elemId);
+    $el.on("select_node.jstree", function(e,data) {
       if(document.getElementById(data.node.id).getAttribute("data-type") === 'folder') {
         if(data.node.state.opened)
           NucleusClient.jsTree.close_node(data.node);
@@ -46,7 +49,11 @@ NucleusSidebar = {
       }
     });
 
-    return $('#'+elemId).jstree({
+    $el.on("open_node.jstree", function(e) {
+      self.clearDeadUsers();
+    });
+
+    return $el.jstree({
       "plugins" : [ "themes", "contextmenu", "sort"],
       'core' : {
         // <!-- 'data' : NucleusClient.getJstreeJSON(), //this doesn't work when jstree.js is kept in meteor package -->
