@@ -1,23 +1,23 @@
 Package.describe({
-  summary: "Realtime collaborative development for the web",
-  version: "0.1.2",
-  name: "channikhabra:nucleus",
-  git: 'https://github.com/channikhabra/meteor-nucleus'
+  summary: "Realtime Collaborative IDE for Meteor",
+  version: "0.1.3",
+  name: "nucleuside:nucleus",
+  git: 'https://github.com/nucleuside/nucleus'
 });
 
 Npm.depends({
   'fibers': '1.0.2',
-  'nuc-watch-meteor': 'https://github.com/channikhabra/nuc-watch-meteor/archive/0f3f2d5ebd1231582f5c7bc966fabb3bf30c27c0.tar.gz'
+  'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/7f9155924cc07ce89ba3710c6ad76caca6d19783.tar.gz'
 });
 
 Package.on_use(function (api, where) {
   api.versionsFrom("METEOR@0.9.1");
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session',
            'mrt:moment@2.8.1',
-           'channikhabra:stupid-models@0.0.3',
-           'channikhabra:live-update@0.1.0',
+           'nucleuside:smart-models@0.0.7',
+           'nucleuside:live-update@0.1.1',
            'mizzao:sharejs@0.6.1',
-           'channikhabra:terminal@0.1.1',
+           'nucleuside:terminal@0.1.2',
            'mrt:flash-messages@0.2.4']);
 
   api.add_files([
