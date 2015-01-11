@@ -1,9 +1,10 @@
 Package.describe({
   summary: "Realtime Collaborative IDE for Meteor",
-  version: "0.1.4",
+  version: "0.1.5",
   name: "nucleuside:nucleus",
   git: 'https://github.com/nucleuside/nucleus'
 });
+
 
 Npm.depends({
   'fibers': '1.0.2',
@@ -18,7 +19,8 @@ Package.on_use(function (api, where) {
            'nucleuside:live-update@0.1.1',
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.2',
-           'mrt:flash-messages@0.2.4']);
+           'mrt:flash-messages@0.2.4',
+			'iron:router']);
 
   api.add_files([
     'public/logo.png',

@@ -31,28 +31,28 @@ CrashWatcher = {
         app_url = 'localhost:3000';
 
     //let's launch nuc-watch-meteor from inside the nucleus instead of explicitly calling it
-    var watcher = spawn("nuc-watch-meteor", ["", "-d", app_dir, "-u", app_url], {detatched: true});
+    var watcher = spawn("nucleus-watch-meteor", ["", "-d", app_dir, "-u", app_url], {detatched: true});
 
     watcher.stdout.setEncoding("utf-8");
     watcher.stderr.setEncoding("utf-8");
 
     var errHandler = function(err) {
-      console.log("nuc-watch-meteor ERROR", err.message);
+      console.log("nucleus-watch-meteor ERROR", err.message);
     };
 
     watcher.stdout.on('err', errHandler);
     watcher.stderr.on('err', errHandler);
 
     watcher.stdout.on('data', function(data) {
-      console.log("Nuc-Watch-Meteor: [stdout]", data);
+      console.log("Nucleus-Watch-Meteor: [stdout]", data);
     });
 
     watcher.stderr.on('data', function(data) {
-      console.log("Nuc-Watch-Meteor: [strerr]", data);
+      console.log("Nucleus-Watch-Meteor: [strerr]", data);
     });
 
     watcher.on('close', function(code) {
-      console.log("nuc-watch-meteor ended with code", code);
+      console.log("Nucleus-watch-meteor ended with code", code);
     });
 
     watcher.unref();

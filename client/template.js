@@ -28,9 +28,13 @@ Template.nucleus_nick_prompt.rendered = function() {
 };
 
 
+Template.nucleus_nick_prompt.rendered = function() {
+	if($.cookie('nick')) NucleusUser.new($.cookie('nick'));
+};
+
 Template.nucleus_nick_prompt.helpers({
   no_nuc_user: function() {
-    return ! NucleusUser.me();
+	return !NucleusUser.me();
   }
 });
 

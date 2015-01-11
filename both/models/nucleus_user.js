@@ -126,7 +126,7 @@ NucleusUser.new = function(nick) {
   if (existingUser) return false;
 
   var newUser = new NucleusUser();
-  newUser.nick = nick;
+  newUser.nick = $.cookie('nick') || nick;
   newUser.setCwd(NucleusClient.getScratchDoc());
   newUser.color = Utils.getRandomColor();
   newUser.save();

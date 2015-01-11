@@ -3,6 +3,12 @@
  *
  */
 
+Meteor.startup(function() {
+	Router.route('nucleus', {
+	   path: '/nucleus',
+	   layoutTemplate: 'nucleus'
+	});
+});
 
 var NucleusClientFactory = function() {
   /**
