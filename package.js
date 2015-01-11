@@ -20,7 +20,7 @@ Package.on_use(function (api, where) {
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.2',
            'mrt:flash-messages@0.2.4',
-			'iron:router@1.0.6']);
+			'iron:router@0.9.0 || 1.0.0']);
 
   api.add_files([
     'public/logo.png',
@@ -49,6 +49,7 @@ Package.on_use(function (api, where) {
     'client/nucleus_client.js',
     'client/nucleus_editor.js',
     'client/nucleus_sidebar.js',
+	'client/keepalive.js',
 
     'client/template.css',
     'client/template.html',
@@ -86,7 +87,8 @@ Package.on_use(function (api, where) {
     'server/crash_watcher.js',
     'server/nucleus.js',
     'server/methods.js',
-    'chat/server/publishers.js',
+	'server/keepalive.js',
+    'chat/server/publishers.js'
   ], ['server']);
 
   api.export && api.export(['NucleusUser'], ['server', 'client']);
