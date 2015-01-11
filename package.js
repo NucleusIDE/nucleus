@@ -20,7 +20,7 @@ Package.on_use(function (api, where) {
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.2',
            'mrt:flash-messages@0.2.4',
-			'iron:router']);
+			'iron:router@1.0.6']);
 
   api.add_files([
     'public/logo.png',
