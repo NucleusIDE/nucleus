@@ -123,12 +123,20 @@ NucleusUser.new = function(nick) {
    */
 
   var existingUser = NucleusUsers.findOne({nick: nick});
-  if (existingUser) return false;
+  if(existingUser) {
+	  if(!$.cookie('nick')) return false;
+	  else { //set remembered user as the user
+		  $.cookie("nucleus_user", existingUser._id);
+		  Session.set("nucleus_user", existingUser._id);
+		  return existingUser;
+	  }
+  }
 
   var newUser = new NucleusUser();
-  newUser.nick = nick;
+  newUser.nick = $.cookie('nick') || nick;
   newUser.setCwd(NucleusClient.getScratchDoc());
   newUser.color = Utils.getRandomColor();
+  newUser.status = 3;
   newUser.save();
 
   $.cookie("nucleus_user", newUser._id);

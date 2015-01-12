@@ -3,6 +3,12 @@
  *
  */
 
+Meteor.startup(function() {
+	Router.route('nucleus', {
+	   path: '/nucleus',
+	   layoutTemplate: 'nucleus'
+	});
+});
 
 var NucleusClientFactory = function() {
   /**
@@ -345,7 +351,7 @@ var NucleusClientFactory = function() {
    * Get all online users. All users in `NucleusUsers` collection are online users since we remove any user who leaves the nucleus as soon as they leave it.
    */
   this.getOnlineUsers = function() {
-    return NucleusUsers.find();
+    return NucleusUsers.find({status: 3});
   };
 
   /**

@@ -5,6 +5,7 @@ Package.describe({
   git: 'https://github.com/nucleuside/nucleus'
 });
 
+
 Npm.depends({
   'fibers': '1.0.2',
   'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/f3716eaa97ef7fbe6959f216d5d6490b29667f7c.tar.gz'
@@ -18,8 +19,9 @@ Package.on_use(function (api, where) {
            'nucleuside:live-update@0.1.1',
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.3',
-           'mrt:flash-messages@0.2.4']);
-
+           'mrt:flash-messages@0.2.4',
+			'iron:router@0.9.0 || 1.0.0']);
+			
   api.add_files([
     'public/logo.png',
   ], 'client', {isAsset: true});
@@ -47,6 +49,7 @@ Package.on_use(function (api, where) {
     'client/nucleus_client.js',
     'client/nucleus_editor.js',
     'client/nucleus_sidebar.js',
+	'client/keepalive.js',
 
     'client/template.css',
     'client/template.html',
@@ -84,7 +87,8 @@ Package.on_use(function (api, where) {
     'server/crash_watcher.js',
     'server/nucleus.js',
     'server/methods.js',
-    'chat/server/publishers.js',
+	'server/keepalive.js',
+    'chat/server/publishers.js'
   ], ['server']);
 
   api.export && api.export(['NucleusUser'], ['server', 'client']);
