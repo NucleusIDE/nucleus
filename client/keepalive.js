@@ -7,6 +7,6 @@ Meteor.startup(function() {
 	
 	Meteor.setInterval(function() {
 		console.log('KEEPALIVE CLIENT');
-		Meteor.call('keepalive', NucleusUser.me().nick, Statuses.ONLINE);
+		if(NucleusUser.me()) Meteor.call('keepalive', NucleusUser.me().nick, Statuses.ONLINE);
 	}, 30*1000);
 });
