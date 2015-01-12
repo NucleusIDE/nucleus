@@ -31,9 +31,9 @@ mongo-livedata@1.0.7
 mrt:flash-messages@0.2.4
 mrt:moment@2.8.1
 nucleuside:live-update@0.1.1
-nucleuside:nucleus@0.1.4
+nucleuside:nucleus@0.1.7
 nucleuside:smart-models@0.0.7
-nucleuside:terminal@0.1.2
+nucleuside:terminal@0.1.3
 observe-sequence@1.0.4
 ordered-dict@1.0.2
 random@1.0.2
