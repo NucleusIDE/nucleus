@@ -87,7 +87,8 @@ Package.on_use(function (api, where) {
     'server/crash_watcher.js',
     'server/nucleus.js',
     'server/methods.js',
-	'server/keepalive.js',
+		'server/keepalive.js',
+		'server/permissions.js',
     'chat/server/publishers.js'
   ], ['server']);
 

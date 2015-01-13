@@ -143,3 +143,4 @@ NucleusUser.new = function(nick) {
   Session.set("nucleus_user", newUser._id);
   return newUser;
 };
+

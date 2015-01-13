@@ -11,7 +11,7 @@ Template.nucleus.helpers({
 
 
 //Set the height of sidebar to be the height of window. I couldn't get it working in CSS
-Template.sidebar.rendered = function() {
+Template.nucleus_sidebar.rendered = function() {
   $("#sidebar").height($(window).height());
 };
 //Set the maxHeight of jstree so it won't take all the space when expanded. It make a cool effect
@@ -28,6 +28,7 @@ Template.nucleus_nick_prompt.rendered = function() {
   });
   $("#nick").focus();
 };
+
 
 
 
