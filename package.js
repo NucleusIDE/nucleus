@@ -31,6 +31,7 @@ Package.on_use(function (api, where) {
   ], 'client');
 
   api.add_files([
+		'both/nucleus_global.js',
     'both/utilities.js',
     'both/collections.js',
     'chat/both/chat_model.js',
@@ -92,7 +93,7 @@ Package.on_use(function (api, where) {
     'chat/server/publishers.js'
   ], ['server']);
 
-  api.export && api.export(['NucleusUser'], ['server', 'client']);
+  api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
   api.export && api.export(['Nucleus'], ['server']);
   api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager'], ['client']);
 });

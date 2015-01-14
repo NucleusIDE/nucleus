@@ -43,7 +43,6 @@ Meteor.methods({
         newContents = doc.data.snapshot,
         fut = new Future();
 
-
     fs.readFile(filepath, {encoding: 'utf-8'}, function(err, contents) {
       //check if the new changes have been made in the editor or user is just being a dick
       if (_.isEqual(contents, newContents)) {
