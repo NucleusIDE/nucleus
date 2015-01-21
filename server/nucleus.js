@@ -2,6 +2,12 @@
  * # Nucleus
  */
 
+Meteor.startup(function() {
+	Nucleus.initialize({
+
+	    preventAppCrashes: false
+	  });
+});
 
 fs = Npm.require('fs'),
 path = Npm.require('path'),
@@ -34,13 +40,20 @@ NucleusFactory = function() {
 
   this.configure = function(config) {
     _.extend(Nucleus.config, config);
-    Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
+    
+	Nucleus.config.projectDir = process.env.PWD;
+	
+	var pathParts = process.env.PWD.split('/');
+	Nucleus.config.project = pathParts[pathParts.length - 1];
+	
+	console.log('Project DIR: ' + Nucleus.config.projectDir);
+	//Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
   };
 
   //This method is called on nucleus initialization on the server (in the app).
   this.initialize = function(config) {
     config && this.configure(config);
-    this.nucleusCloneRepo();
+    //this.nucleusCloneRepo();
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
   };
@@ -209,11 +222,11 @@ NucleusFactory = function() {
   this.nucleusCloneRepo = function(git, project) {
     git = git || Nucleus.config.git;
     project = project || Nucleus.config.project;
-    var projectDir = this.config.projectDir = path.join(homeDir, ".nucleus/",project);
+    var projectDir = this.config.projectDir;
 
     if (! git) return;
 
-    var nucleusDirExists = fs.existsSync(nucleusDir);
+    var nucleusDirExists = fs.existsSync(nucleusDir); 
     var repoAlreadyCloned = fs.existsSync(projectDir);
     var command = "cd " + nucleusDir + " && git clone " + git + " " + project + " && cd " + project +" && git remote add nucleus " + git;
 

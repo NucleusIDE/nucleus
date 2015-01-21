@@ -11,7 +11,7 @@ Template.nucleus.helpers({
 
 
 //Set the height of sidebar to be the height of window. I couldn't get it working in CSS
-Template.sidebar.rendered = function() {
+Template.nucleus_sidebar.rendered = function() {
   $("#sidebar").height($(window).height());
 };
 //Set the maxHeight of jstree so it won't take all the space when expanded. It make a cool effect
@@ -19,6 +19,8 @@ Template.nucleus_tree_widget.rendered = function() {
   $("#nucleus_file_tree").css({maxHeight: ($(window).height()*50)/100});
 };
 Template.nucleus_nick_prompt.rendered = function() {
+	if($.cookie('nick')) NucleusUser.new($.cookie('nick'));
+	
   //This is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success
   $("#nick").css({
     boxShadow: "0 0 29px 0px rgba(17,153,230, 0.9)",
@@ -28,9 +30,12 @@ Template.nucleus_nick_prompt.rendered = function() {
 };
 
 
+
+
+
 Template.nucleus_nick_prompt.helpers({
   no_nuc_user: function() {
-    return ! NucleusUser.me();
+		return !NucleusUser.me();
   }
 });
 

@@ -2,7 +2,7 @@
   {{#if showNucleus}}
   {{> nucleus_nick_prompt}}
   {{> nucleus_terminal}}
-  {{> sidebar}}
+  {{> nucleus_sidebar}}
   {{> nucleus_topbar}}
   {{> editor}}
   {{/if}}
@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<template name="sidebar">
+<template name="nucleus_sidebar">
   <div id="sidebar">
     {{> nucleus_tree_widget}}
     {{> nucleus_toolbar}}
