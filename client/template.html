@@ -1,7 +1,7 @@
 <template name="nucleus">
   {{#if showNucleus}}
   {{> nucleus_nick_prompt}}
-  {{> nucleus_terminal}}
+  {{> terminal}}
   {{> nucleus_sidebar}}
   {{> nucleus_topbar}}
   {{> editor}}
@@ -52,9 +52,9 @@
 
 <template name="editor">
   <div id="nuc-editor">
-		<div class="user_nick_cursor_label">
+    <div class="user_nick_cursor_label">
       Label
-		</div>
+    </div>
     {{> sharejsAce docid=docid onRender=config onConnect=setMode id="nucleus_editor"}}
   </div>
 </template>
@@ -65,14 +65,14 @@
     <div class="sidebar-marker-label">
       Git Controls
     </div>
-    
+
     <div class="sidebar-row" style="text-align: center;">
       <a id="pull_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-down"></i>
-        Pull</a>    
+        Pull</a>
       <a id="push_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-up"></i>
-        Push</a>    
+        Push</a>
     </div>
 
     <div class="sidebar-row sidebar-commit-row">
@@ -86,12 +86,12 @@
     <div class="sidebar-marker-label">
       Event Sync
     </div>
-    
+
     <div class="sidebar-row" style="text-align: center;">
       <a id="sync_app_events" class="{{recievingEvents 'app'}} nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa {{fa_recievingEvents 'app'}}"></i>
-        App 
-      </a>    
+        App
+      </a>
       <a id="sync_nucleus_events" class="{{recievingEvents 'nucleus'}} nuc-btn-custom nuc-btn-dark  nuc-btn-30">
         <i style="font-size: 16px;padding: 0;margin-left: -10px;" class="fa {{fa_recievingEvents 'nucleus'}}"></i>
         Nucleus
@@ -101,14 +101,14 @@
     <div class="sidebar-marker-label">
       Deploy
     </div>
-    
+
     <div class="sidebar-row" style="text-align: center;">
       <a id="mup_deploy" class="nuc-btn-custom nuc-btn-dark  nuc-btn-80">
         <i class="fa fa-bolt deploy-btn-icon"></i>
         mup Deploy
-      </a>    
+      </a>
     </div>
-    
+
   </div>
 
   <div id="flash_messages">
@@ -141,7 +141,7 @@
   <div class="chat_msg">
     <b><span class="chat_msg_nick">{{nick}}</span>:</b>
     <span class="chat_msg_content">{{message}}</span>
-  </div>  
+  </div>
 </template>
 
 
@@ -157,10 +157,10 @@
 </template>
 
 
-<template name="nucleus_terminal">
+<template name="terminal">
   {{#if show_terminal}}
   <div class="nucleus_terminal">
-    {{> terminal}}
+    {{> nucleus_terminal}}
   </div>
   {{/if}}
 </template>
@@ -168,7 +168,6 @@
 
 <template name="nucleus_ribbon">
   <div id="nucleus_client_init" class="nucleus-make-me-ribbon-wrapper {{this.location}}">
-    <img src="/packages/channikhabra_nucleus/public/logo.png" title="Make me with Nucleus" />
+    <img src="/packages/nucleuside_nucleus/public/logo.png" title="Make me with Nucleus" />
   </div>
 </template>
-

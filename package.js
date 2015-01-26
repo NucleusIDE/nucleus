@@ -18,10 +18,10 @@ Package.on_use(function (api, where) {
            'nucleuside:smart-models@0.0.8',
            'nucleuside:live-update@0.1.1',
            'mizzao:sharejs@0.6.1',
-           'nucleuside:terminal@0.1.3',
+           'nucleuside:terminal@0.1.0',
            'mrt:flash-messages@0.2.4',
-			'iron:router@0.9.0 || 1.0.0']);
-			
+      'iron:router@0.9.0 || 1.0.0']);
+
   api.add_files([
     'public/logo.png',
   ], 'client', {isAsset: true});
@@ -31,7 +31,7 @@ Package.on_use(function (api, where) {
   ], 'client');
 
   api.add_files([
-		'both/nucleus_global.js',
+    'both/nucleus_global.js',
     'both/utilities.js',
     'both/collections.js',
     'chat/both/chat_model.js',
@@ -50,7 +50,7 @@ Package.on_use(function (api, where) {
     'client/nucleus_client.js',
     'client/nucleus_editor.js',
     'client/nucleus_sidebar.js',
-	'client/keepalive.js',
+  'client/keepalive.js',
 
     'client/template.css',
     'client/template.html',
@@ -88,8 +88,8 @@ Package.on_use(function (api, where) {
     'server/crash_watcher.js',
     'server/nucleus.js',
     'server/methods.js',
-		'server/keepalive.js',
-		'server/permissions.js',
+    'server/keepalive.js',
+    'server/permissions.js',
     'chat/server/publishers.js'
   ], ['server']);
 
