@@ -3,10 +3,10 @@
  */
 
 Meteor.startup(function() {
-	Nucleus.initialize({
+  Nucleus.initialize({
 
-	    preventAppCrashes: false
-	  });
+      preventAppCrashes: false
+    });
 });
 
 fs = Npm.require('fs'),
@@ -40,14 +40,14 @@ NucleusFactory = function() {
 
   this.configure = function(config) {
     _.extend(Nucleus.config, config);
-    
-	Nucleus.config.projectDir = process.env.PWD;
-	
-	var pathParts = process.env.PWD.split('/');
-	Nucleus.config.project = pathParts[pathParts.length - 1];
-	
-	console.log('Project DIR: ' + Nucleus.config.projectDir);
-	//Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
+
+  Nucleus.config.projectDir = process.env.PWD;
+
+  var pathParts = process.env.PWD.split('/');
+  Nucleus.config.project = pathParts[pathParts.length - 1];
+
+  console.log('Project DIR: ' + Nucleus.config.projectDir);
+  //Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
   };
 
   //This method is called on nucleus initialization on the server (in the app).
@@ -56,6 +56,7 @@ NucleusFactory = function() {
     //this.nucleusCloneRepo();
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
+    NucleusGit = new Git(this.config);
   };
 
   //This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
@@ -201,6 +202,7 @@ NucleusFactory = function() {
     var projectDir = this.config.projectDir;
     message = message || "Changes from nucleus.";
     var fut = new Future();
+
     child.exec('cd ' + projectDir + ' && git add . --all && git commit -m "' + message +'"', function(err, stdout, stderr) {
       if (err) {
         if (err.killed === false && err.code === 1 && err.signal === null) {
@@ -226,7 +228,7 @@ NucleusFactory = function() {
 
     if (! git) return;
 
-    var nucleusDirExists = fs.existsSync(nucleusDir); 
+    var nucleusDirExists = fs.existsSync(nucleusDir);
     var repoAlreadyCloned = fs.existsSync(projectDir);
     var command = "cd " + nucleusDir + " && git clone " + git + " " + project + " && cd " + project +" && git remote add nucleus " + git;
 

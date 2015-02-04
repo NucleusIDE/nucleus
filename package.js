@@ -87,6 +87,7 @@ Package.on_use(function (api, where) {
   api.add_files([
     'server/crash_watcher.js',
     'server/nucleus.js',
+    'server/git_operations.js',
     'server/methods.js',
     'server/keepalive.js',
     'server/permissions.js',
