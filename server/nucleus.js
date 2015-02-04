@@ -139,9 +139,6 @@ NucleusFactory = function() {
 
 
   var getTopmostGitDir = function(filepath) {
-    if (! /packages/.test(filepath))
-      return false;
-
     var dir = this.config.projectDir;
 
     var getPackageDir = function(filepath) {
