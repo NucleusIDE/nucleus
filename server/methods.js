@@ -136,7 +136,7 @@ Meteor.methods({
     /**
      * We use selectedFile to see if the file belongs to a package. If it does, we try to make the commit for the package instead of the app itself
      */
-    return Nucleus.pushChanges();
+    return Nucleus.pushChanges(selectedFile);
   },
   nucleusPullChanges: function() {
     return Nucleus.pullChanges();
