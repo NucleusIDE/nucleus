@@ -172,7 +172,7 @@ NucleusFactory = function() {
   // * `-1` - Error occured
   this.pushChanges = function(selectedFile) {
     var dir = this.config.projectDir;
-
+    console.log("SELECTED FILE IS", selectedFile);
     if (/package/.test(selectedFile)) {
       if (NucleusGit.isGitRepo(path.dirname(selectedFile))) {
         dir = path.dirname(selectedFile);
