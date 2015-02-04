@@ -15,7 +15,7 @@ Package.on_use(function (api, where) {
   api.versionsFrom("METEOR@0.9.1");
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session',
            'mrt:moment@2.8.1',
-           'nucleuside:smart-models@0.0.8',
+           'nucleuside:smart-models@0.0.6',
            'nucleuside:live-update@0.1.1',
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.0',
