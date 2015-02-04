@@ -164,11 +164,9 @@ Template.nucleus_toolbar.events({
 
     Meteor.call("nucleusCommitAllChanges", commitMessage, Session.get("nucleus_selected_file"), function(err, res) {
       unSpinBtn($btn, btnClasses);
-      if (res === 1) FlashMessages.sendSuccess("Changes Committed Successfully");
+      if (res === 1) {FlashMessages.sendSuccess("Changes Committed Successfully"); $("#sidebar-commit-message").val("");}
       else if (res === 0) FlashMessages.sendWarning("Nothing to Commit");
       else FlashMessages.sendError("Something Went Wrong with Git Commit");
-
-      $("#sidebar-commit-message").val("");
     });
   },
   "click #push_changes": function(e) {
@@ -197,7 +195,7 @@ Template.nucleus_toolbar.events({
     var $btn = $("#mup_deploy");
     var btnClasses = $btn.find('i').attr('class');
     spinBtn($btn);
-    e.preventDefault();
+    e.preventDefault(;)
     var should_mup_setup = true;
     Meteor.call("nucleusMupDeploy", should_mup_setup, function(err, res) {
       unSpinBtn($btn, btnClasses);
