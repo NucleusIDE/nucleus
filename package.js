@@ -85,9 +85,9 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
+    'server/git_operations.js',
     'server/crash_watcher.js',
     'server/nucleus.js',
-    'server/git_operations.js',
     'server/methods.js',
     'server/keepalive.js',
     'server/permissions.js',
@@ -95,6 +95,6 @@ Package.on_use(function (api, where) {
   ], ['server']);
 
   api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
-  api.export && api.export(['Nucleus'], ['server']);
+  api.export && api.export(['Nucleus', 'NucleusGit'], ['server']);
   api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager'], ['client']);
 });

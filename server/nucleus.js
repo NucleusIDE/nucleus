@@ -56,7 +56,6 @@ NucleusFactory = function() {
     //this.nucleusCloneRepo();
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
-    NucleusGit = new Git(this.config);
   };
 
   //This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
@@ -198,26 +197,17 @@ NucleusFactory = function() {
   // * `0` - No new changes to commit.
   // * `1` - Committed new changes with message `message`
   // * `-1` - Error occurred
-  this.commitChanges = function(message) {
-    var projectDir = this.config.projectDir;
+  this.commitChanges = function(message, selectedFile) {
+    var path = this.config.projectDir;
     message = message || "Changes from nucleus.";
-    var fut = new Future();
 
-    child.exec('cd ' + projectDir + ' && git add . --all && git commit -m "' + message +'"', function(err, stdout, stderr) {
-      if (err) {
-        if (err.killed === false && err.code === 1 && err.signal === null) {
-          fut.return(0);
-
-        } else {
-          console.log(err);
-          fut.return(-1);
-        }
-      } else {
-        console.log(stdout, stderr);
-        fut.return(1);
+    if (/package/.test(selectedFile)) {
+      if (NucleusGit.isGitRepo(path.dirname(selectedFile))) {
+        path = path.dirname(selectedFile);
       }
-    });
-    return fut.wait();
+    }
+
+    return NucleusGit.commit(path, message);
   };
 
   //Clone the `git` remote repo in `Nucleus.config.projectDir`. It won't attempt to clone the repo if `Nucleus.config.projectDir` already exists. If the `Nucleus.config.projectDir` already exists, it attempts to pull new changes instead.
