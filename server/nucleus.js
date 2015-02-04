@@ -198,16 +198,16 @@ NucleusFactory = function() {
   // * `1` - Committed new changes with message `message`
   // * `-1` - Error occurred
   this.commitChanges = function(message, selectedFile) {
-    var path = this.config.projectDir;
+    var dir = this.config.projectDir;
     message = message || "Changes from nucleus.";
 
     if (/package/.test(selectedFile)) {
       if (NucleusGit.isGitRepo(path.dirname(selectedFile))) {
-        path = path.dirname(selectedFile);
+        dir = path.dirname(selectedFile);
       }
     }
 
-    return NucleusGit.commit(path, message);
+    return NucleusGit.commit(dir, message);
   };
 
   //Clone the `git` remote repo in `Nucleus.config.projectDir`. It won't attempt to clone the repo if `Nucleus.config.projectDir` already exists. If the `Nucleus.config.projectDir` already exists, it attempts to pull new changes instead.

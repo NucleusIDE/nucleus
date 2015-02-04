@@ -11,10 +11,10 @@ Git.prototype.isGitRepo = function(path) {
   return fs.existsSync(path+'/.git');
 };
 
-Git.prototype.commit = function(path, message) {
+Git.prototype.commit = function(dir, message) {
   var fut = new Future();
 
-  child.exec('cd ' + path + ' && git add . --all && git commit -m "' + message +'"', function(err, stdout, stderr) {
+  child.exec('cd ' + dir + ' && git add . --all && git commit -m "' + message +'"', function(err, stdout, stderr) {
     if (err) {
       if (err.killed === false && err.code === 1 && err.signal === null) {
         fut.return(0);
