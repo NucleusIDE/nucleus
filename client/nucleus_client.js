@@ -4,10 +4,10 @@
  */
 
 Meteor.startup(function() {
-	Router.route('nucleus', {
-	   path: '/nucleus',
-	   layoutTemplate: 'nucleus'
-	});
+  Router.route('nucleus', {
+     path: '/nucleus',
+     layoutTemplate: 'nucleus'
+  });
 });
 
 var NucleusClientFactory = function() {
@@ -21,38 +21,6 @@ var NucleusClientFactory = function() {
       nucleusClientDep = new Deps.Dependency;
 
 
-  /**
-   * below commented out code can be used to define nucleus route. But I think we rather have user create nucleus route explicitly so she would be aware that she need to protect this route herself.
-   */
-  // if(Package['iron:router']) {
-
-  //   var nucRouteInterval = Meteor.setInterval(function() {
-  //     console.log("EXECUTING INTERVAL");
-  //     if(! Template.nucleus) return;
-
-  //     Router.map(function() {
-  //       console.log("DEFINING ROUTE");
-  //       this.route("nucleus", {
-  //         path: "/nucleus",
-  //         template: "nucleus",
-  //         layoutTemplate: "nucleus"
-  //       });
-  //     });
-  //     Meteor.clearInterval(nucRouteInterval);
-
-  //   }, 200);
-
-
-  //   // Router.route('/nucleus', function() {
-  //   //   console.log("INSIDE NUCLEUS ROUTE");
-  //   //   this.layout('nucleus');
-  //   //   this.render('nucleus');
-  //   // }, {
-  //   //   name: 'nucleus'
-  //   // });
-  // }
-
-
   this.config = {
     nucleusUrl: window.location.origin + '/nucleus',
     windowName: 'Nucleus',
@@ -63,34 +31,6 @@ var NucleusClientFactory = function() {
 
   this.configure = function(config) {
     _.extend(this.config, config);
-
-    if(Package['iron:router']) {
-      console.log("IRON ROUTER IS PRESENT");
-
-      /* below methods I tried to get rid of iron-router route creation in the app, but it's apparently not possible at the moment. Next task was to have http auth system, which would take a password and would ask for that password before allowing to enter the website. I don't think it's a good way of doing stuff. Iron-router is used by most apps, I prefer hiding nucleus behind iron-router's auth which is to be set by user herself.
-       */
-
-      // Router.map(function() {
-      //   console.log("DEFINING ROUTE");
-      //   this.route("nucleus", {
-      //     path: "/nucleus",
-      //     template: "nucleus",
-      //     layoutTemplate: "nucleus"
-      //   });
-      // });
-
-      // Router.route('/nucleus', function() {
-      //   console.log("INSIDE NUCLEUS ROUTE");
-      //   this.layout('nucleus');
-      //   this.render('nucleus');
-      // }, {
-      //   name: 'nucleus'
-      // });
-
-    } else {
-      console.log('IRON ROUTE IS NOT PRESENT');
-    }
-
   };
 
   this.initialize = function(config) {
