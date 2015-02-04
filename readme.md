@@ -70,7 +70,3 @@ NucleusClient.configure({
 ```
 * **project** : This is the name of the project under which this app will be cloned in `~/.nucleus/` directory
 * **git**: This is the remote git url of your project. This url is cloned and source code is provided in nucleus editor for editing. Note that this same url is used to push changes back, so it's advised to put your auth creds here as for now nucleus doesn't have option to have different git creds for different users. We have login with github planned for a future phase, so this is a temporary hitch. 
-
-
-# Test
-## Test commit from within nucleus
