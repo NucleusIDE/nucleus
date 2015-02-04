@@ -48,10 +48,21 @@ Git.prototype.push = function(dir) {
   return fut.wait();
 };
 
-var handleError = function(err, msg) {
-  console.log(format("Error: %s", msg));
-  console.log(format("Error: %s", err.message));
-};
+Git.prototype.pull = function(dir) {
+  var fut = new Future();
+  child.exec("cd " + dir + " && git pull origin master", function(err, stdout, stderr) {
+    if (err) {console.log(err); fut.return(-1); }
+    else {
+      if(stdout.search(/Already up-to-date/) >= 0)
+        fut.return(0);
+      else
+        fut.return(1);
 
+      console.log("STDOUT:", stdout);
+      console.log("STDERR", stderr);
+    }
+  });
+  return fut.wait();
+};
 
 NucleusGit = new Git(this.config);

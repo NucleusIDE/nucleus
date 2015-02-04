@@ -138,6 +138,32 @@ NucleusFactory = function() {
   };
 
 
+  var getTopmostGitDir = function(filepath) {
+    if (! /packages/.test(filepath))
+      return false;
+
+    var dir = this.config.projectDir;
+
+    var getPackageDir = function(filepath) {
+      var tempDir = path.dirname(filepath);
+      if (path.basename(path.dirname(tempDir)) == 'packages') {
+        return tempDir;
+      } else {
+        tempDir = path.dirname(tempDir);
+        return getPackageDir(tempDir);
+      }
+    };
+
+    if (/packages/.test(filepath)) {
+      var packageDir = getPackageDir(filepath);
+      if (NucleusGit.isGitRepo(packageDir)) {
+        dir = packageDir;
+      }
+    }
+
+    return dir;
+  };
+
   //`git pull` changes from the remote git. These git methods are used behind the git UI in nucleus. I am in favor of using a terminal based UI instead of buttons.
   // Button based git flow is holy-grail of unknown errors that might occur in the app
   //
@@ -147,22 +173,9 @@ NucleusFactory = function() {
   // * `0` - No new changes created by function
   // * `1` - Pulled new changes
   // * `-1` - Error occured
-  this.pullChanges = function(projectDir) {
-    projectDir = projectDir || this.config.projectDir;
-    var fut = new Future();
-    child.exec("cd " + projectDir + " && git pull origin master", function(err, stdout, stderr) {
-      if (err) {console.log(err); fut.return(-1); }
-      else {
-        if(stdout.search(/Already up-to-date/) >= 0)
-          fut.return(0);
-        else
-          fut.return(1);
-
-        console.log("STDOUT:", stdout);
-        console.log("STDERR", stderr);
-      }
-    });
-    return fut.wait();
+  this.pullChanges = function(selectedFile) {
+    var dir = getTopmostGitDir(selectedFile);
+    return NucleusGit.pull(dir);
   };
 
   // Push new  changes to `master` branch of `origin` remote in `Nucleus.config.projectDir`.
@@ -171,14 +184,7 @@ NucleusFactory = function() {
   // * `1` - Pushed new changes
   // * `-1` - Error occured
   this.pushChanges = function(selectedFile) {
-    var dir = this.config.projectDir;
-    console.log("SELECTED FILE IS", selectedFile);
-    if (/package/.test(selectedFile)) {
-      if (NucleusGit.isGitRepo(path.dirname(selectedFile))) {
-        dir = path.dirname(selectedFile);
-      }
-    }
-
+    var dir = getTopmostGitDir(selectedFile);
     return NucleusGit.push(dir);
   };
 
@@ -193,15 +199,7 @@ NucleusFactory = function() {
   // * `1` - Committed new changes with message `message`
   // * `-1` - Error occurred
   this.commitChanges = function(message, selectedFile) {
-    var dir = this.config.projectDir;
-    message = message || "Changes from nucleus.";
-
-    if (/package/.test(selectedFile)) {
-      if (NucleusGit.isGitRepo(path.dirname(selectedFile))) {
-        dir = path.dirname(selectedFile);
-      }
-    }
-
+    var dir = getTopmostGitDir(selectedFile);
     return NucleusGit.commit(dir, message);
   };
 

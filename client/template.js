@@ -186,7 +186,7 @@ Template.nucleus_toolbar.events({
     var $btn = $("#pull_changes");
     var btnClasses = $btn.find('i').attr('class');
     spinBtn($btn);
-    Meteor.call("nucleusPullChanges", function(err, res) {
+    Meteor.call("nucleusPullChanges", Session.get("nucleus_selected_file"), function(err, res) {
       unSpinBtn($btn, btnClasses);
       if (res === 1) FlashMessages.sendSuccess("New Changes Pulled Successfully");
       else if (res === 0) FlashMessages.sendWarning("Already Up-to-date");
