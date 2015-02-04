@@ -56,6 +56,7 @@ var NucleusClientFactory = function() {
     //let's override nucleusWindow's LiveUpdate.refresh so it won't re-render the editor page
     var nucOverrideInterval = Meteor.setInterval(function() {
       if(nucleusWindow.Meteor && nucleusWindow.LiveUpdate) {
+
         nucleusWindow.LiveUpdate.refreshPage = function() {
           return false;
         };
