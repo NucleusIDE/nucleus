@@ -171,28 +171,17 @@ NucleusFactory = function() {
   // * `1` - Pushed new changes
   // * `-1` - Error occured
   this.pushChanges = function(projectDir) {
-    projectDir = projectDir || this.config.projectDir;
-    var fut = new Future();
+    var dir = projectDir || this.config.projectDir;
 
-    child.exec("cd " + projectDir + " && git push origin master", function(err, stdout, stderr) {
-      if (err) {
-        console.log(err);
-        fut.return(-1);
-      } else if (stderr.search(/Everything up-to-date/) >= 0)
-        fut.return(0);
-      else
-        fut.return(1);
-
-      console.log("STDOUT:", stdout, "STDERR:", stderr);
-    });
-    return fut.wait();
+    return NucleusGit.push(dir);
   };
 
   //Commit new  changes in `master` branch in `Nucleus.config.projectDir`.
+  //We use selectedFile to see if the file belongs to a package. If it does, we try to make the commit for the package instead of the app itself
   //
   //Accepts:
   // * **message** - commit message
-  //
+  // * **selectedFile**  -  File presently selected in Nucleus
   //Returns
   // * `0` - No new changes to commit.
   // * `1` - Committed new changes with message `message`

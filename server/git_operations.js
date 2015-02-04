@@ -31,8 +31,21 @@ Git.prototype.commit = function(dir, message) {
   return fut.wait();
 };
 
-Git.prototype.push = function(path) {
+Git.prototype.push = function(dir) {
+  var fut = new Future();
 
+  child.exec("cd " + dir + " && git push origin master", function(err, stdout, stderr) {
+    if (err) {
+      console.log(err);
+      fut.return(-1);
+    } else if (stderr.search(/Everything up-to-date/) >= 0)
+      fut.return(0);
+    else
+      fut.return(1);
+
+    console.log("STDOUT:", stdout, "STDERR:", stderr);
+  });
+  return fut.wait();
 };
 
 var handleError = function(err, msg) {
