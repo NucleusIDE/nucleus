@@ -162,7 +162,7 @@ NucleusFactory = function() {
     }
 
     return dir;
-  };
+  }.bind(this);
 
   //`git pull` changes from the remote git. These git methods are used behind the git UI in nucleus. I am in favor of using a terminal based UI instead of buttons.
   // Button based git flow is holy-grail of unknown errors that might occur in the app
