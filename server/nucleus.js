@@ -170,8 +170,14 @@ NucleusFactory = function() {
   // * `0` - No new commits to push.
   // * `1` - Pushed new changes
   // * `-1` - Error occured
-  this.pushChanges = function(projectDir) {
-    var dir = projectDir || this.config.projectDir;
+  this.pushChanges = function(selectedFile) {
+    var dir = this.config.projectDir;
+
+    if (/package/.test(selectedFile)) {
+      if (NucleusGit.isGitRepo(path.dirname(selectedFile))) {
+        dir = path.dirname(selectedFile);
+      }
+    }
 
     return NucleusGit.push(dir);
   };

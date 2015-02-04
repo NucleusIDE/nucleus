@@ -175,7 +175,7 @@ Template.nucleus_toolbar.events({
     var $btn = $("#push_changes");
     var btnClasses = $btn.find('i').attr('class');
     spinBtn($btn);
-    Meteor.call("nucleusPushChanges", function(err, res) {
+    Meteor.call("nucleusPushChanges", Session.get("nucleus_selected_file"), function(err, res) {
       unSpinBtn($btn, btnClasses);
       if (res === 1) FlashMessages.sendSuccess("Changes Pushed Successfully");
       else if (res === 0) FlashMessages.sendWarning("Nothing To Push");
