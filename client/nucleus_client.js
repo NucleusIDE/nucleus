@@ -157,7 +157,9 @@ var NucleusClientFactory = function() {
    * *Arguments:*
    * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
    */
-  this.evalNucleusDoc = function(nucDoc) {
+  this.evalNucleusDoc = function(docId) {
+    var nucDoc = NucleusDocuments.findOne(docId);
+
     var filepath = nucDoc.filepath,
         doc = ShareJsDocs.findOne(nucDoc.doc_id),
         newFileContent = doc.data.snapshot;
@@ -167,6 +169,7 @@ var NucleusClientFactory = function() {
       return;
       this.updateCSS();
     } else {
+      this.getWindow('app').eval('');
       LiveUpdate.refreshFile(newFileContent, this.getFileType(filepath));
     }
   };
@@ -370,7 +373,7 @@ var NucleusClientFactory = function() {
 Deps.autorun(function() {
   Meteor.subscribe('nucleusPublisher');
   NucleusDocuments.find({shouldEval: true}).forEach(function(doc) {
-    NucleusClient.evalNucleusDoc(doc);
+    NucleusClient.getWindow('app').eval('NucleusClient.evalNucleusDoc("'+doc._id+'")');
     NucleusClient.unmarkDocForEval(doc);
   });
 });
