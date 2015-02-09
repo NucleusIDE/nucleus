@@ -13,7 +13,6 @@ Meteor.startup(function() {
 
   Meteor.startup(function() {
     Meteor.setInterval(function () {
-      console.log('KEEPALIVE INTERVAL');
       var offline_threshold = moment().toDate().getTime() - (120*1000);
 
       Meteor.users.update(
