@@ -64,6 +64,9 @@ var NucleusClientFactory = function() {
       }
     }, 500);
 
+    //Configure LiveUpdate to be used as a library so it won't re-render the templates itself
+    LiveUpdate.use_as_lib(true);
+
     return false;
   };
 
@@ -118,6 +121,11 @@ var NucleusClientFactory = function() {
     return splitArr[splitArr.length-1] === 'css';
   };
 
+  this.getFileType = function (filepath) {
+    var splitArr = filepath.split(".");
+    return splitArr[splitArr.length-1];
+  };
+
   /**
    * Mark `nucDoc` for eval on client side.
    *
@@ -127,10 +135,8 @@ var NucleusClientFactory = function() {
   this.markDocForEval = function(nucDoc) {
     var filepath = nucDoc.filepath,
         isClientFile = this.isClientFile(filepath);
-    if (isClientFile || !this.isServerFile(filepath) && this.isCSSFile(filepath)) {
+    if (isClientFile || !this.isServerFile(filepath)) {
       NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true}});
-    } else {
-      FlashMessages.sendWarning("This file can't be evaled in realtime. Changes will be visible on next deploy.");
     }
   };
 
@@ -152,14 +158,17 @@ var NucleusClientFactory = function() {
    * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
    */
   this.evalNucleusDoc = function(nucDoc) {
-    return; //since we are using meteor development version on server, we don't need to live update CSS either, since meteor itself does it now
     var filepath = nucDoc.filepath,
         doc = ShareJsDocs.findOne(nucDoc.doc_id),
-        newJs = doc.data.snapshot;
-    if (this.isCSSFile(filepath))
+        newFileContent = doc.data.snapshot;
+
+    if (this.isCSSFile(filepath)) {
+      //TODO: Do client side push for CSS
+      return;
       this.updateCSS();
-    else
-      console.log("EVALING", filepath);
+    } else {
+      LiveUpdate.refreshFile(newFileContent, this.getFileType(filepath));
+    }
   };
 
   /**
