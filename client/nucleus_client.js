@@ -65,7 +65,7 @@ var NucleusClientFactory = function() {
     }, 500);
 
     //Configure LiveUpdate to be used as a library so it won't re-render the templates itself
-    LiveUpdate.use_as_lib(true);
+    LiveUpdate.useAsLib(true);
 
     return false;
   };
