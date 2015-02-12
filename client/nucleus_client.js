@@ -110,7 +110,7 @@ var NucleusClientFactory = function() {
    * Check if `filepath` is a server file.
    */
   this.isServerFile = function(filepath) {
-    var serverRegex = new RegExp("\/"+this.config.clientDir+"\/");
+    var serverRegex = new RegExp("\/"+this.config.serverDir+"\/");
     return serverRegex.test(filepath);
   };
   /**
@@ -135,6 +135,7 @@ var NucleusClientFactory = function() {
   this.markDocForEval = function(nucDoc) {
     var filepath = nucDoc.filepath,
         isClientFile = this.isClientFile(filepath);
+
     if (isClientFile || !this.isServerFile(filepath)) {
       NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true}});
     }
