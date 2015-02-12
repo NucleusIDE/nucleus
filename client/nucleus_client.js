@@ -373,8 +373,8 @@ var NucleusClientFactory = function() {
 Deps.autorun(function() {
   Meteor.subscribe('nucleusPublisher');
   NucleusDocuments.find({shouldEval: true}).forEach(function(doc) {
-    NucleusClient.getWindow('app').eval('NucleusClient.evalNucleusDoc("'+doc._id+'")');
     NucleusClient.unmarkDocForEval(doc);
+    NucleusClient.getWindow('app').eval('NucleusClient.evalNucleusDoc("'+doc._id+'")');
   });
 });
 
