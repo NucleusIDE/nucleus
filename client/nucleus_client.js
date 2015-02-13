@@ -170,8 +170,7 @@ var NucleusClientFactory = function () {
       return;
       this.updateCSS();
     } else {
-      this.getWindow('app').eval('');
-      LiveUpdate.refreshFile(newFileContent, this.getFileType(filepath));
+      LiveUpdate.refreshFile(newFileContent, this.getFileType(filepath), oldDocContent);
     }
   };
 
