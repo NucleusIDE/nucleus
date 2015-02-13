@@ -47,18 +47,18 @@ Meteor.methods({
       //check if the new changes have been made in the editor or user is just being a dick
       if (_.isEqual(contents, newContents)) {
         console.log("NO NEW CHANGES TO SAVE");
-        fut.return(0);
+        fut.return({status: 0});
         return fut.wait();
       }
 
       fs.writeFile(filepath, newContents, function(err) {
         if(err) {
           console.log("ERROR OCCURED WHEN WRITING FILE",err);
-          fut.return(-1);
+          fut.return({status: -1});
         }
         else {
           console.log("FILE SAVED SUCCESSFULLY");
-          fut.return(1);
+          fut.return({status: 1, oldDocContent: contents});
         }
       });
     });
