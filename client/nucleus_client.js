@@ -143,12 +143,23 @@ var NucleusClientFactory = function () {
       if (this.getFileType(filepath) == 'html') {
         evalString = 'NucleusClient.evalNucleusDoc("' + nucDoc._id + '")';
       } else {
-        oldDocContent = oldDocContent.replace(/\n/mg, '').replace(/\"/mg, '\\"');
-        evalString = 'NucleusClient.evalNucleusDoc("' + nucDoc._id +'", "' + oldDocContent + '")';
+        //oldDocContent = oldDocContent.replace(/\n/mg, '').replace(/\"/mg, '\\"');
       }
+
+      NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true, last_snapshot: oldDocContent}});
 
       NucleusClient.getWindow('app').eval(evalString);
     }
+  };
+
+  /**
+   * Unmark `nucDoc` from eval on client side. See `NucleusClient.markDocForEval` above
+   *
+   * *Arguments:*
+   * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
+   */
+  this.unmarkDocForEval = function (nucDoc) {
+    NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false}});
   };
 
   /**
@@ -158,12 +169,13 @@ var NucleusClientFactory = function () {
    * *Arguments:*
    * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
    */
-  this.evalNucleusDoc = function (docId, oldDocContent) {
+  this.evalNucleusDoc = function (docId) {
     var nucDoc = NucleusDocuments.findOne(docId);
 
     var filepath = nucDoc.filepath,
         doc = ShareJsDocs.findOne(nucDoc.doc_id),
-        newFileContent = doc.data.snapshot;
+        newFileContent = doc.data.snapshot,
+        oldDocContent = nucDoc.last_snapshot;
 
     if (this.isCSSFile(filepath)) {
       //TODO: Do client side push for CSS
@@ -393,6 +405,12 @@ var NucleusClientFactory = function () {
  */
 Deps.autorun(function () {
   Meteor.subscribe('nucleusPublisher');
+
+  //below approach is required to eval the new changes for al connected clients and not for present client only
+  NucleusDocuments.find({shouldEval: true}).forEach(function (doc) {
+    NucleusClient.unmarkDocForEval(doc);
+    NucleusClient.getWindow('app').eval('NucleusClient.evalNucleusDoc("' + doc._id + '")');
+  });
 });
 
 
