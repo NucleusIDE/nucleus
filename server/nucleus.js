@@ -227,46 +227,6 @@ NucleusFactory = function() {
     //      this.pullChanges(projectDir);
   };
 
-  //This method is obsolete. We use this method to get the latest CSS from the filesystem, and manually push it into the app. But since we have started running meteor in dev mode on the nucleus server, it is no longer needed as meteor itself live-push all the CSS. Note that this method is faster than meteor's, but it won't load packages'
-  this.getAllCSS = function(options) {
-    var tree = this.getDirTree(),
-        packagesToInclude = options && options.packagesToInclude,
-        cssFiles = [],
-        collectedCss = '';
-
-    var collectCSSFiles = function(filetree) {
-      if (filetree.name.indexOf(".") !== 0) {
-        if (path.extname(filetree.path).replace(".", "") === 'css')
-          cssFiles.push(filetree.path);
-
-        _.each(filetree.children, function(node) {
-          collectCSSFiles(node);
-        });
-      }
-    };
-    var collectCSSFilesFromPackages = function(packages) {
-      packages = packages || [];
-      _.each(packages, function(package) {
-        var packageDir = path.join(this.config.projectDir, "packages/"+package);
-        var tree = this.getDirTree({rootDir: packageDir, parent: "#", traverseSymlinks: true});
-        collectCSSFiles(tree);
-      }.bind(this));
-    }.bind(this);
-
-    collectCSSFilesFromPackages(packagesToInclude);
-    collectCSSFiles(tree); //populates cssFiles with filepath of all CSS files
-
-    //TODO: make this better and more meteor like
-    _.each(cssFiles, function(cssfile) {
-      var contents = this.getFileContents(cssfile);
-      console.log("FETCHING : ", cssfile);
-      collectedCss += contents;
-    }.bind(this));
-
-
-    return collectedCss;
-  };
-
   //Let's keep mup deploy here until we have a clear/bigger deployment strategy
   this.mupDeploy = function(mup_setup) {
     var projectDir = this.config.projectDir;

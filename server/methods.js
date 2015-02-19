@@ -141,9 +141,6 @@ Meteor.methods({
   nucleusPullChanges: function(selectedFile) {
     return Nucleus.pullChanges(selectedFile);
   },
-  nucleusGetAllCSS: function(options) {
-    return Nucleus.getAllCSS(options);
-  },
   nucleusMupDeploy: function(mup_setup) {
     return Nucleus.mupDeploy(mup_setup);
   },
