@@ -139,16 +139,7 @@ var NucleusClientFactory = function () {
         isClientFile = this.isClientFile(filepath);
 
     if (isClientFile || !this.isServerFile(filepath)) {
-      var evalString = '';
-      if (this.getFileType(filepath) == 'html') {
-        evalString = 'NucleusClient.evalNucleusDoc("' + nucDoc._id + '")';
-      } else {
-        //oldDocContent = oldDocContent.replace(/\n/mg, '').replace(/\"/mg, '\\"');
-      }
-
       NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true, last_snapshot: oldDocContent}});
-
-      NucleusClient.getWindow('app').eval(evalString);
     }
   };
 
@@ -178,12 +169,33 @@ var NucleusClientFactory = function () {
         oldDocContent = nucDoc.last_snapshot;
 
     if (this.isCSSFile(filepath)) {
-      //TODO: Do client side push for CSS
-      return;
       this.updateCSS();
     } else {
       LiveUpdate.refreshFile(newFileContent, this.getFileType(filepath), oldDocContent);
     }
+  };
+
+  /**
+   * Live Update the CSS of app. This method removes the old css *link* from the app, and will fetch concatenated CSS from server, which is updated CSS from all CSS files. Then it creates a new *style* element and appends new fetched CSS to the document.
+   */
+  this.updateCSS = function () {
+    var nucleusStyle = document.createElement("style"),
+        window = this.getAppWindow();
+    if (window.document.getElementById("nucleus-style")) window.document.getElementById("nucleus-style").remove();
+    nucleusStyle.id = "nucleus-style";
+
+    /*
+     * clear old CSS
+     * This works because Meteor injects only one stylesheet <link>
+     */
+    _.each(window.document.querySelectorAll("link"), function (link) {
+      if (link.rel === 'stylesheet') link.href = '';
+    });
+
+    Meteor.call("nucleusGetAllCSS", {packagesToInclude: this.config.suckCSSFromPackages}, function (err, res) {
+      nucleusStyle.innerHTML = res;
+      window.document.head.appendChild(nucleusStyle);
+    });
   };
 
   /**
@@ -295,29 +307,6 @@ var NucleusClientFactory = function () {
         FlashMessages.sendSuccess("File Saved Successfully");
       }
       if (res.status === 2) FlashMessages.sendError("Something went Wrong when Saving File");
-    });
-  };
-
-  /**
-   * Live Update the CSS of app. This method removes the old css *link* from the app, and will fetch concatenated CSS from server, which is updated CSS from all CSS files. Then it creates a new *style* element and appends new fetched CSS to the document.
-   */
-  this.updateCSS = function () {
-    var nucleusStyle = document.createElement("style"),
-        window = this.getAppWindow();
-    if (window.document.getElementById("nucleus-style")) window.document.getElementById("nucleus-style").remove();
-    nucleusStyle.id = "nucleus-style";
-
-    /*
-     * clear old CSS
-     * This works because Meteor injects only one stylesheet <link>
-     */
-    _.each(window.document.querySelectorAll("link"), function (link) {
-      if (link.rel === 'stylesheet') link.href = '';
-    });
-
-    Meteor.call("nucleusGetAllCSS", {packagesToInclude: this.config.suckCSSFromPackages}, function (err, res) {
-      nucleusStyle.innerHTML = res;
-      window.document.head.appendChild(nucleusStyle);
     });
   };
 
