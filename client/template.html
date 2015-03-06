@@ -159,9 +159,19 @@
 
 <template name="terminal">
   {{#if show_terminal}}
+  {{#if terminal_initialized}}
   <div class="nucleus_terminal">
     {{> nucleus_terminal}}
   </div>
+  {{else}}
+  <div style="color: #fff;
+              background: rgb(58, 58, 58);
+              padding: 10px;
+              font-size: 13px;">
+    <h4 style="font-size: 16px;">Please configure Nucleus Terminal (on server) with</h4>
+    <code>Nucleus.Terminal.configure({user: '', password: ''})</code>
+  </div>
+  {{/if}}
   {{/if}}
 </template>
 

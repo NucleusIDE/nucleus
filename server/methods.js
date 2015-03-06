@@ -155,5 +155,8 @@ Meteor.methods({
   },
   nucleusRenameFile: function(oldpath, newpath) {
     return Nucleus.renameFile(oldpath, newpath);
+  },
+  nucleusIsTerminalConfigured: function() {
+    return Nucleus.config.terminalInitialized;
   }
 });

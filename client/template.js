@@ -406,6 +406,13 @@ Template.nucleus_topbar.events({
     NucleusClient.editFile(selectedFile, true);
   },
   "click #nucleus_show_terminal": function() {
+    Meteor.call('nucleusIsTerminalConfigured', function(err, res) {
+      if (err) {
+        throw err;
+      }
+      Session.set('nucleus_terminal_ready', res);
+    });
+
     var showTerminal = Session.get("nucleus_show_terminal") || false;
     Session.set("nucleus_show_terminal", !showTerminal);
   }
@@ -418,9 +425,12 @@ Template.nucleus_topbar.events({
 ////////////////////
 // START TERMINAL //
 ////////////////////
-Template.nucleus_terminal.helpers({
+Template.terminal.helpers({
   show_terminal: function() {
     return Session.get("nucleus_show_terminal");
+  },
+  terminal_initialized: function() {
+    return Session.get('nucleus_terminal_ready');
   }
 });
 //////////////////

@@ -5,8 +5,8 @@
 Meteor.startup(function() {
   Nucleus.initialize({
 
-      preventAppCrashes: false
-    });
+    preventAppCrashes: false
+  });
 });
 
 fs = Npm.require('fs'),
@@ -20,12 +20,33 @@ Future = Npm.require('fibers/future');
  */
 NucleusFactory = function() {
   var homeDir = process.env.HOME,
-      nucleusDir = path.join(homeDir, ".nucleus");
+      nucleusDir = path.join(homeDir, ".nucleus"),
+      self = this;
 
   this.config = {
     git: '',
     project: '',
-    preventAppCrashes: true
+    preventAppCrashes: true,
+    terminalInitialized: false
+  };
+
+  this.Terminal = {};
+  this.Terminal.configure = function(options) {
+    var terminalUsername = options.user,
+        terminalPassword = options.password;
+
+    if (!terminalUsername || ! terminalPassword) {
+      self.config.terminalInitialized = false;
+      return;
+    }
+
+    //Setup terminal. Terminal starts a different server protected by username and password given below.
+    NucleusTerminal.initialize({
+      username: terminalUsername,
+      password: terminalPassword
+    });
+
+    self.config.terminalInitialized = true;
   };
 
   this.getFileExtension = function (filepath) {
@@ -41,13 +62,13 @@ NucleusFactory = function() {
   this.configure = function(config) {
     _.extend(Nucleus.config, config);
 
-  Nucleus.config.projectDir = process.env.PWD;
+    Nucleus.config.projectDir = process.env.PWD;
 
-  var pathParts = process.env.PWD.split('/');
-  Nucleus.config.project = pathParts[pathParts.length - 1];
+    var pathParts = process.env.PWD.split('/');
+    Nucleus.config.project = pathParts[pathParts.length - 1];
 
-  console.log('Project DIR: ' + Nucleus.config.projectDir);
-  //Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
+    console.log('Project DIR: ' + Nucleus.config.projectDir);
+    //Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
   };
 
   //This method is called on nucleus initialization on the server (in the app).
