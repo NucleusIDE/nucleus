@@ -1,304 +1,282 @@
 body {
-  margin: 0px !important;
-  padding: 0px !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
-
 a {
   text-decoration: none;
 }
-
-html, body {
+html,
+body {
   height: 100%;
 }
-
 /* CSS declarations go here */
+
 #sidebar {
   position: relative;
-  width: 20%;
-  float: left;
-  min-height: 100%;
-  color: rgb(211,211,211);
-  /* background: #272822; */
-  background: #252525;
-  overflow: scroll;
   top: 0;
   bottom: 0;
+  float: left;
+  overflow: scroll;
+  width: 20%;
+  min-height: 100%;
+  color: rgb(211, 211, 211);
+  /* background: #272822; */
+  
+  background: #252525;
 }
-
 .nucleus_tree_node {
   overflow: scroll;
   width: 100%;
 }
-
 #nucleus_file_tree {
-  max-height: 350px;
   overflow: scroll;
+  max-height: 350px;
 }
-
 .nuc-btn-sidebar {
   /* margin: 10px auto; */
+  
   width: 100%;
   border-radius: 0 !important;
 }
-
 #nuc-editor {
   width: 100%;
 }
-
 #nucleus_editor {
-  width: 80%;
   float: right;
-  height: 95vh; /* we need to set the height of editor upto which we want it to be scrollable (and visible). */
+  width: 80%;
+  height: 95vh;
+/* we need to set the height of editor upto which we want it to be scrollable (and visible). */
 }
-
 .alert {
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
 }
-
 #nucleus_nick_prompt {
-  background: rgba(2,2,2,0.6);
   position: absolute;
-  height: 100%;
-  float: left;
-  text-align: center;
-  padding: 185px;
   z-index: 9999;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
+  float: left;
+  height: 100%;
+  padding: 185px;
+  text-align: center;
+  background: rgba(2, 2, 2, .6);
 }
-
 #nick_form {
   height: 200px;
-  background: transparent;
-  border-radius: 10px;
   padding-top: 55px;
-}
-
-#nick {
-  color: #fff;
-  font-weight: 100;
-  /* text-shadow: 0 2px 15px #fff; */
-  margin: 0px auto;
-  margin-bottom: 35px;
+  border-radius: 10px;
   background: transparent;
-  box-shadow: 0 0 29px 0px rgba(17,153,230, 0.9);
-  border: 1px solid rgba(17,153,230,0.5);
+}
+#nick {
+  font-family: sans-serif;
+  font-size: 25px;
+  font-weight: 100;
   display: block;
   width: 70%;
+  /* text-shadow: 0 2px 15px #fff; */
+  
+  margin: 0 auto;
+  margin-bottom: 35px;
   padding: 10px;
-  border-radius: 5px;
-  font-size: 25px;
   text-align: center;
-  font-family: sans-serif;
+  color: #fff;
+  border: 1px solid rgba(17, 153, 230, .5);
+  border-radius: 5px;
+  background: transparent;
+  box-shadow: 0 0 29px 0 rgba(17, 153, 230, .9);
 }
-
 #nick:focus {
   outline: none;
 }
-
 .user-status-box {
   position: relative;
+  display: inline;
+  float: right;
   width: 20px;
   height: 20px;
-  display: inline;
-  background: transparent;
   margin-right: 5px;
-  float: right;
   transition: opacity 500ms;
+  background: transparent;
 }
-
 .extra-cursor {
   position: absolute;
-  background-color: #f00;
+  -webkit-animation: nuc-blink .5s steps(5, start) infinite;
+  animation: nuc-blink .5s steps(5, start) infinite;
   border-left: 2px solid #f00;
-  animation: nuc-blink 0.5s steps(5, start) infinite;
-  -webkit-animation: nuc-blink 0.5s steps(5, start) infinite;
+  background-color: #f00;
 }
-
 @keyframes nuc-blink {
-  to { visibility: hidden; }
+  to {
+    visibility: hidden;
+  }
 }
 @-webkit-keyframes nuc-blink {
-  to { visibility: hidden; }
+  to {
+    visibility: hidden;
+  }
 }
-
 .user_nick_cursor_label {
-  display: none;
   position: absolute;
-  background-color: #fff;
   z-index: 9;
+  display: none;
+  background-color: #fff;
 }
-
-
 /* CHAT BOX */
+
 .chat_box {
   font-size: 14px;
 }
 .chat_history {
-  width: 100%;
-  padding: 5px;
   overflow: scroll;
+  width: 100%;
   height: 171px;
-  background: rgba(222,222,222,0.2);
+  padding: 5px;
+  background: rgba(222, 222, 222, .2);
 }
 .chat_input {
-  padding: 8px !important;
-  background: #3A3A3A;
   width: 100%;
   height: 35px;
-  border: 0px none;
+  padding: 8px !important;
   color: rgba(169, 170, 165, 1) !important;
+  border: 0 none;
   outline: none;
+  background: #3a3a3a;
 }
 /* END CHAT BOX */
-
 /* FOOTER CONTROL BOX */
-.active-box {
-  background: #3A3A3A;
-}
 
+.active-box {
+  background: #3a3a3a;
+}
 .footer_controls {
   position: absolute;
-  left: 0;
   right: 0;
   bottom: 0;
+  left: 0;
   height: 40px;
-  background: none repeat scroll 0% 0% #1D1E16;
+  padding: 0;
   text-align: center;
-  padding: 0px;
+  background: none repeat scroll 0 0 #1d1e16;
 }
-
 .footer_controls a {
+  display: inline-block;
+  margin-top: -5px;
+  margin-left: -5px;
+  padding: 10px 15px;
   cursor: pointer;
   color: rgba(169, 170, 165, 1);
-  padding: 10px 15px;
-  display: inline-block;
-  margin-left: -5px;
-  margin-top: -5px;
 }
 .footer_controls a:hover {
   color: #fff;
 }
-
 .footer_popup {
   position: absolute;
+  right: 0;
   bottom: 40px;
   left: 0;
-  right: 0;
   height: 215px;
-  background: #252525;
   padding: 5px;
+  background: #252525;
 }
 /* END FOOTER CONTROL BOX */
-
 /* BUDDY BOX */
+
 .buddy_list {
-  list-style-type: none;
-  padding: 2px 0px;
   height: 205px;
-  background: rgba(255,255,255,0.1);
+  padding: 2px 0;
+  list-style-type: none;
+  background: rgba(255, 255, 255, .1);
 }
 .buddy_list li {
   padding: 10px;
 }
 .buddy-color-box {
+  display: inline block;
+  float: left;
   width: 20px;
   height: 20px;
-  display: inline block;
   transition: opacity 500ms;
-  float: left;
 }
 .buddy_name {
-  margin: 0 15px;
   font-size: 14px;
+  margin: 0 15px;
 }
 .buddy_detail {
   cursor: pointer;
 }
 /* END BUDDY BOX */
-
-
 /* buttons */
 
 .sidebar-row {
-  width: 100%;
   position: relative;
+  width: 100%;
 }
-
 .nuc-btn-custom {
   font-family: sans-serif;
-  display: inline-block;
-  padding: 6px 12px;
-  margin-bottom: 0px;
   font-size: 14px;
   font-weight: normal;
   line-height: 1.42857;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
+  display: inline-block;
+  margin-bottom: 0;
+  padding: 6px 12px;
   cursor: pointer;
-  -moz-user-select: none;
   -webkit-user-select: none;
+  -moz-user-select: none;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
   background-image: none;
 }
-
 .nuc-btn-dark {
-  border: 1px solid #3B3D3B;
-  border-radius: 0px;
+  color: #d2d2d2;
+  border: 1px solid #3b3d3b;
+  border-radius: 0;
   background: #303130;
-  color: #D2D2D2;
 }
-
 .nuc-btn-dark:active {
+  color: #fff;
   background-color: #494949;
-  color: #fff;  
 }
 .nuc-btn-dark:hover {
-  color: #fff;
   text-decoration: none;
-}
-
-.nuc-btn-dark-active {
-  background-color: #494949;
   color: #fff;
 }
-
+.nuc-btn-dark-active {
+  color: #fff;
+  background-color: #494949;
+}
 .nuc-btn-30 {
   width: 30%;
   max-width: 30%;
   margin: 8px 3px;
 }
-
 .nuc-btn-80 {
   width: 80%;
   margin: 10px 5%;
 }
-
 .pull-right {
   float: right;
 }
 .pull-left {
   float: left;
 }
-
 .deploy-btn-icon {
   font-size: 16px;
-  padding: 0 10px;
   margin-left: -10px;
+  padding: 0 10px;
 }
-
 @media (max-width: 1220px) {
   .nuc-btn-30 {
-    max-width: 100%;
     width: 80%;
+    max-width: 100%;
     margin: 3px;
   }
   .commit-btn {
     width: 80% !important;
-    margin-left: 10% !important;
     margin: 3px;
+    margin-left: 10% !important;
   }
   #sidebar-commit-message {
     width: 95% !important;
@@ -311,132 +289,126 @@ html, body {
     margin-bottom: 5px !important;
   }
 }
-
 /* end buttons */
-
 /* sidebar commit */
+
 .commit-btn {
-  width: 35%;
+  display: inline-block;
   float: left;
-  display: inline-block;
-  padding-left: 5px;
+  width: 35%;
   margin-left: 3%;
+  padding-left: 5px;
 }
-
 .sidebar-commit-row {
+  overflow: hidden;
+  /* clear fix */
+  
   margin: 10px 0;
-  overflow: hidden; /* clear fix */
 }
-
 #sidebar-commit-message {
-  border: 1px solid #3B3D3B;
-  padding: 0.45rem 0.2rem;
-  background: rgba(255, 255, 255, 0.1);
-  width: 57%;
-  float: right;
-  display: inline-block;
-  color: #cccccc;
-  line-height: 1 !important;
   font-family: sans-serif;
+  line-height: 1 !important;
+  display: inline-block;
+  float: right;
+  width: 57%;
   margin-right: 3%;
+  padding: .45rem .2rem;
+  color: #ccc;
+  border: 1px solid #3b3d3b;
+  background: rgba(255, 255, 255, .1);
 }
 /* end sidebar commit */
-
 /* labels  */
+
 .sidebar-marker-label {
+  font-size: 11px;
+  position: relative;
+  overflow: hidden;
   box-sizing: border-box;
   height: 22px;
   padding: 3px;
-  border-bottom: 1px solid #1a1919;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  vertical-align: top;
   cursor: default;
-  position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.06);
-  font-size: 11px;
-  color: #c6ecbc;
-  background-color: #303130;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, 0.64)), color-stop(1, #2e2e2e));
-  background-image: -moz-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, 0.64)), color-stop(1, #2e2e2e));
   text-align: center;
+  vertical-align: top;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #c6ecbc;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  border-bottom: 1px solid #1a1919;
+  background-color: #303130;
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, .64)), color-stop(1, #2e2e2e));
+  background-image: -moz-gradient(linear, left bottom, left top, color-stop(0, rgba(31, 31, 31, .64)), color-stop(1, #2e2e2e));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .06);
 }
 /* end labels  */
-
 /* jstree theme  */
-
 /* contextmenu */
-.vakata-context { 
-  z-index:999 !important; 
-}
 
-.vakata-context, .vakata-context ul {
-  margin: 0;
-  padding: 0px;
+.vakata-context {
+  z-index: 999 !important;
+}
+.vakata-context,
+.vakata-context ul {
   position: absolute;
-  background: rgba(256, 256, 256, 0.8);
-  box-shadow: inset 0px 0px 17px 60px rgba(151,153,144, 0.6);
-  border: 0px;
+  margin: 0;
+  padding: 0;
+  border: 0;
   border-radius: 5px;
+  background: rgba(256, 256, 256, .8);
+  box-shadow: inset 0 0 17px 60px rgba(151, 153, 144, .6);
 }
-
 .vakata-context li > a .vakata-contextmenu-sep {
-  background: transparent;
   border-left: none;
+  background: transparent;
 }
-
 .vakata-context li > a {
-  display: block;
-  /* padding: 0 30%; */
-  text-decoration: none;
-  width: auto;
-  color: #222;
-  white-space: nowrap;
   line-height: 2.4em;
-  text-shadow: 0px 0px 0px white;
-  border-radius: 0px;
+  display: block;
+  width: auto;
+  white-space: nowrap;
+  /* padding: 0 30%; */
+  
+  text-decoration: none;
+  color: #222;
+  border-radius: 0;
+  text-shadow: 0 0 0 white;
 }
-
-.vakata-context .vakata-context-separator > a, .vakata-context .vakata-context-separator > a:hover {
+.vakata-context .vakata-context-separator > a,
+.vakata-context .vakata-context-separator > a:hover {
   border-top: none !important;
   border-left: none !important;
 }
-
 .vakata-context .vakata-contextmenu-disabled a,
 .vakata-context .vakata-contextmenu-disabled a:hover {
-  color: rgba(256,256,256,0.7);
-  background-color: transparent;
+  color: rgba(256, 256, 256, .7);
   border: 0;
+  background-color: transparent;
   box-shadow: 0 0 0;
-  text-shadow: 0px 0px 1px #222;
+  text-shadow: 0 0 1px #222;
 }
-
-.vakata-context .vakata-context-hover > a, .vakata-context .vakata-context-hover > a:hover {
+.vakata-context .vakata-context-hover > a,
+.vakata-context .vakata-context-hover > a:hover {
   position: relative;
-  background-color: rgba(256,256, 256, 0.7);
   border-radius: 5px;
+  background-color: rgba(256, 256, 256, .7);
   box-shadow: none;
 }
-
-
-
 /* end contextmenu */
 
 #nucleus_file_tree {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, .1);
 }
-
 /* user status box hints */
-.hint:after, [data-hint]:after {
-  content: attr(data-hint);
-  background: #272822;
-  color: white;
-  padding: 8px 10px;
+
+.hint:after,
+[data-hint]:after {
   font-size: 12px;
   line-height: 12px;
+  padding: 8px 10px;
+  content: attr(data-hint);
   white-space: nowrap;
+  color: white;
+  background: #272822;
 }
 .hint--left:before {
   border-left-color: #272822;
@@ -444,140 +416,128 @@ html, body {
 /* end user status box hints */
 
 .jstree-default .jstree-clicked {
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .1);
 }
-
 .vakata-context li > a:hover {
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .1);
 }
-
 .vakata-context .vakata-context-separator > a,
 .vakata-context .vakata-context-separator > a:hover {
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .1);
 }
-
-
 .jstree-default .jstree-hovered {
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .1);
 }
-
 .jstree-default .jstree-disabled.jstree-hovered {
   background: transparent;
   box-shadow: none;
 }
-
 .jstree-default.jstree-checkbox-no-clicked .jstree-clicked.jstree-hovered {
   background: rgba(151, 153, 144, 1);
 }
 .jstree-default > .jstree-wholerow-ul .jstree-hovered,
 .jstree-default > .jstree-wholerow-ul .jstree-clicked {
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
-  border-radius: 0;
 }
 .jstree-default .jstree-wholerow-hovered {
   background: rgba(151, 153, 144, 1);
 }
-
 /* end jstree theme  */
-
 /* flash messages */
 
 #flash_messages {
   position: fixed;
-  bottom: 10px;
-  right: 3%;
   z-index: 999;
+  right: 3%;
+  bottom: 10px;
   min-width: 20%;
 }
-
 .alert {
-  margin-top: 10px;
-  background: rgba(121,121,121,0.5);
   font-size: 12px;
   line-height: 2;
+  margin-top: 10px;
+  background: rgba(121, 121, 121, .5);
 }
-
 .alert.alert-success.alert-dismissable {
-  background: rgba(70,121,70,0.5);
+  background: rgba(70, 121, 70, .5);
 }
 .alert.alert-error.alert-dismissable {
-  background: rgba(218, 67, 67, 0.4);
+  background: rgba(218, 67, 67, .4);
 }
 .alert.alert-info.alert-dismissable {
-  background: rgba(35, 206, 218, 0.5);
+  background: rgba(35, 206, 218, .5);
 }
 .alert.alert-warning.alert-dismissable {
-  background: rgba(218, 206, 65, 0.4);
+  background: rgba(218, 206, 65, .4);
 }
-
 /* end flash messages */
-
 /* topbar */
+
 #nucleus_topbar {
-  width: 80%;
   float: right;
+  width: 80%;
   height: 35px;
   background: #252525;
 }
 .button-group {
   margin-top: 3px;
-  margin-right: 5px;  
+  margin-right: 5px;
 }
 .button-group-right {
   float: right;
 }
 .button-group-left {
-  margin-left: 10px;
   float: left;
+  margin-left: 10px;
 }
 .nuc-btn-topbar {
-  border-radius: 0px;
-  background: transparent;
-  color: #D2D2D2;
   padding: 3px 15px;
+  color: #d2d2d2;
+  border-radius: 0;
+  background: transparent;
 }
 .nuc-btn-topbar:hover {
-  color: #fff;
   text-decoration: none;
-}
-
-.nuc-btn-save i{
-  color: #37AA73;
-}
-.nuc-btn-save:active i{
   color: #fff;
 }
-.nuc-btn-discard i{
-  color: #AA3737;
+.nuc-btn-save i {
+  color: #37aa73;
 }
-.nuc-btn-discard:active i{
+.nuc-btn-save:active i {
+  color: #fff;
+}
+.nuc-btn-discard i {
+  color: #aa3737;
+}
+.nuc-btn-discard:active i {
   color: #fff;
 }
 /* end topbar */
-
 /* nucleus terminal */
+
 .nucleus_terminal {
-  height: auto;
   position: fixed;
   z-index: 9;
-  left: 0;
   right: 0;
-  bottom: 0;  
+  bottom: 0;
+  left: 0;
+  height: auto;
 }
 #shell-panel {
-  background: rgba(30, 33, 44, 0.82) !important;
+  background: rgba(30, 33, 44, .82) !important;
 }
 .terminal .cmd {
-  background: rgba(30, 33, 44, 0.92);
+  background: rgba(30, 33, 44, .92);
 }
 .cmd .cursor.blink {
   -webkit-animation: blink 1s infinite steps(1, start);
@@ -585,24 +545,40 @@ html, body {
   -ms-animation: blink 1s infinite steps(1, start);
   animation: blink 1s infinite steps(1, start);
 }
-
 /* end nucleus terminal */
-
 /*!
  * Nucleus make me ribbon. 
  */
+
 .nucleus-make-me-ribbon-wrapper {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  overflow: hidden;
   width: 50px;
   height: 50px;
-  overflow: hidden;
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
   cursor: pointer;
 }
-
-.nucleus-make-me-ribbon-wrapper img{
+.nucleus-make-me-ribbon-wrapper img {
   height: 50px;
   transition: opacity 1s ease;
 }
+/* Nucleus video chat film */
 
+.nucleus-video-chat-film {
+  position: absolute;
+  z-index: 9;
+  top: 35px;
+  right: 0;
+  bottom: 0;
+  width: 15%;
+  min-height: 100vh;
+  background: rgb(58, 58, 58);
+}
+
+#remote-nucleus-videos video {
+  height: 25%;
+}
+#local-nucleus-video {
+  height: 25%;
+}

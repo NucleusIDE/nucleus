@@ -2,6 +2,7 @@
   {{#if showNucleus}}
   {{> nucleus_nick_prompt}}
   {{> terminal}}
+  {{> nucleus_video_chat_film}}
   {{> nucleus_sidebar}}
   {{> nucleus_topbar}}
   {{> editor}}
@@ -11,8 +12,8 @@
 <template name="nucleus_nick_prompt">
   {{#if no_nuc_user}}
   <div id="nucleus_nick_prompt">
-    <div id="nick_form" action="#">
-      <input id="nick" type="text" placeholder="Enter Nick and press Enter"/>
+  <div id="nick_form" action="#">
+  <input id="nick" type="text" placeholder="Enter Nick and press Enter"/>
       <!-- <a id="as_a_guest" href="#">Visit as Guest</a> -->
     </div>
   </div>
@@ -21,13 +22,13 @@
 
 <template name="nucleus_topbar">
   <div id="nucleus_topbar">
-    <div class="button-group button-group-left">
-      <a id="nucleus_show_terminal" class="nuc-btn-custom nuc-btn-topbar nuc-btn-dark" href="#">
-        <i class="fa fa-terminal"></i>
+  <div class="button-group button-group-left">
+  <a id="nucleus_show_terminal" class="nuc-btn-custom nuc-btn-topbar nuc-btn-dark" href="#">
+  <i class="fa fa-terminal"></i>
       </a>
     </div>
     <div class="button-group button-group-right">
-      <a id="nucleus_save_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'save'}}" href=""><i class="fa fa-life-saver"></i> Save</a>
+  <a id="nucleus_save_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'save'}}" href=""><i class="fa fa-life-saver"></i> Save</a>
       <a id="nucleus_discard_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'discard'}}" href=""><i class="fa fa-refresh"></i> Discard</a>
     </div>
   </div>
@@ -35,25 +36,25 @@
 
 <template name="nucleus_sidebar">
   <div id="sidebar">
-    {{> nucleus_tree_widget}}
+  {{> nucleus_tree_widget}}
     {{> nucleus_toolbar}}
-    {{> footer_controls}}
+      {{> footer_controls}}
   </div>
 </template>
 
 <template name="nucleus_tree_widget">
   <div class="sidebar-marker-label">
-    File System
+  File System
   </div>
   <div id="nucleus_file_tree">
-    {{{tree}}}
+  {{{tree}}}
   </div>
 </template>
 
 <template name="editor">
   <div id="nuc-editor">
-    <div class="user_nick_cursor_label">
-      Label
+  <div class="user_nick_cursor_label">
+  Label
     </div>
     {{> sharejsAce docid=docid onRender=config onConnect=setMode id="nucleus_editor"}}
   </div>
@@ -62,122 +63,142 @@
 <template name="nucleus_toolbar">
   <div id="nucleus-toolbar">
 
-    <div class="sidebar-marker-label">
-      Git Controls
+  <div class="sidebar-marker-label">
+  Git Controls
     </div>
 
     <div class="sidebar-row" style="text-align: center;">
-      <a id="pull_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
-        <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-down"></i>
+  <a id="pull_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
+  <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-down"></i>
         Pull</a>
-      <a id="push_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
-        <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-up"></i>
+  <a id="push_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
+  <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-up"></i>
         Push</a>
-    </div>
+  </div>
 
     <div class="sidebar-row sidebar-commit-row">
-      <a id="commit_changes" class="nuc-btn-custom nuc-btn-dark commit-btn">
-        <i class="fa fa-circle-o-notch"></i>
+  <a id="commit_changes" class="nuc-btn-custom nuc-btn-dark commit-btn">
+  <i class="fa fa-circle-o-notch"></i>
         Commit</a>
-      <input id="sidebar-commit-message" placeholder="Commit Message" type="text" />
+  <input id="sidebar-commit-message" placeholder="Commit Message" type="text" />
     </div>
 
-
     <div class="sidebar-marker-label">
-      Event Sync
+  Event Sync
     </div>
 
     <div class="sidebar-row" style="text-align: center;">
-      <a id="sync_app_events" class="{{recievingEvents 'app'}} nuc-btn-custom nuc-btn-dark nuc-btn-30">
-        <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa {{fa_recievingEvents 'app'}}"></i>
+  <a id="sync_app_events" class="{{recievingEvents 'app'}} nuc-btn-custom nuc-btn-dark nuc-btn-30">
+  <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa {{fa_recievingEvents 'app'}}"></i>
         App
-      </a>
+  </a>
       <a id="sync_nucleus_events" class="{{recievingEvents 'nucleus'}} nuc-btn-custom nuc-btn-dark  nuc-btn-30">
-        <i style="font-size: 16px;padding: 0;margin-left: -10px;" class="fa {{fa_recievingEvents 'nucleus'}}"></i>
+  <i style="font-size: 16px;padding: 0;margin-left: -10px;" class="fa {{fa_recievingEvents 'nucleus'}}"></i>
         Nucleus
-      </a>
+  </a>
     </div>
 
     <div class="sidebar-marker-label">
-      Deploy
+  Deploy
     </div>
 
     <div class="sidebar-row" style="text-align: center;">
-      <a id="mup_deploy" class="nuc-btn-custom nuc-btn-dark  nuc-btn-80">
-        <i class="fa fa-bolt deploy-btn-icon"></i>
+  <a id="mup_deploy" class="nuc-btn-custom nuc-btn-dark  nuc-btn-80">
+  <i class="fa fa-bolt deploy-btn-icon"></i>
         mup Deploy
-      </a>
+  </a>
+    </div>
+
+
+    <div class="sidebar-marker-label">
+  Video Chat
+    </div>
+    <div class="sidebar-row">
+  {{> nucleus_video_chat_controls}}
     </div>
 
   </div>
 
   <div id="flash_messages">
-    {{> flashMessages}}
+  {{> flashMessages}}
   </div>
 
 </template>
 
-
 <template name="footer_controls">
   <div class="footer_popup">
-    {{> footer_popup_template}}
+  {{> footer_popup_template}}
   </div>
   <div class="footer_controls">
-    <a class="show_chatbox {{activeBox 'chatbox'}}"><i class="fa fa-comments fa-2x"></i></a>
+  <a class="show_chatbox {{activeBox 'chatbox'}}"><i class="fa fa-comments fa-2x"></i></a>
     <a class="show_buddy_list {{activeBox 'buddy_list'}}"><i class="fa fa-users fa-2x"></i></a>
   </div>
 </template>
 
 <template name="chatbox">
   <div class="chat_box">
-    <div class="chat_history"></div>
+  <div class="chat_history"></div>
     <div class="get_chat_message">
-      <input class='chat_input' type="text" placeholder="Enter Chat Message here" />
+  <input class='chat_input' type="text" placeholder="Enter Chat Message here" />
     </div>
   </div>
 </template>
 
 <template name="chat_message">
   <div class="chat_msg">
-    <b><span class="chat_msg_nick">{{nick}}</span>:</b>
+  <b><span class="chat_msg_nick">{{nick}}</span>:</b>
     <span class="chat_msg_content">{{message}}</span>
   </div>
 </template>
 
-
 <template name="buddy_list">
   <ul class="buddy_list">
-    {{#each buddies}}
-    <li class="buddy_detail">
-      <span class="buddy-color-box" style="{{statusBoxStyle}}"></span>
+  {{#each buddies}}
+  <li class="buddy_detail">
+  <span class="buddy-color-box" style="{{statusBoxStyle}}"></span>
       <span class="buddy_name">{{nick}}</span>
     </li>
     {{/each}}
   </ul>
 </template>
 
-
 <template name="terminal">
   {{#if show_terminal}}
   {{#if terminal_initialized}}
   <div class="nucleus_terminal">
-    {{> nucleus_terminal}}
+  {{> nucleus_terminal}}
   </div>
   {{else}}
   <div style="color: #fff;
               background: rgb(58, 58, 58);
               padding: 10px;
               font-size: 13px;">
-    <h4 style="font-size: 16px;">Please configure Nucleus Terminal (on server) with</h4>
+  <h4 style="font-size: 16px;">Please configure Nucleus Terminal (on server) with</h4>
     <code>Nucleus.Terminal.configure({user: '', password: ''})</code>
   </div>
   {{/if}}
   {{/if}}
 </template>
 
-
 <template name="nucleus_ribbon">
   <div id="nucleus_client_init" class="nucleus-make-me-ribbon-wrapper {{this.location}}">
-    <img src="/packages/nucleuside_nucleus/public/logo.png" title="Make me with Nucleus" />
+  <img src="/packages/nucleuside_nucleus/public/logo.png" title="Make me with Nucleus" />
   </div>
+</template>
+
+<template name="nucleus_video_chat_controls">
+  <div class="sidebar-row" style="text-align: center;">
+    <a id="start-video-chat" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
+      <i style="font-size:19px;" class="fa {{chat_start_stop_icon}}"></i>
+    </a>
+  </div>
+</template>
+
+<template name="nucleus_video_chat_film">
+  {{#if show_video_chat_film}}
+  <div class="nucleus-video-chat-film">
+    <video id="local-nucleus-video"></video>
+    <div id="remote-nucleus-videos"></div>
+  </div>
+  {{/if}}
 </template>

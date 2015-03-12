@@ -460,3 +460,33 @@ Template.nucleus_ribbon.events({
 /////////////////////////
 // end nucleus ribbon  //
 /////////////////////////
+
+
+//////////////////////////
+// START VIDEO CONTROLS //
+//////////////////////////
+
+Template.nucleus_video_chat_controls.helpers({
+  "chat_start_stop_icon": function() {
+    if (Session.get('vibrate-chat-active')) {
+      return 'fa-stop';
+    }
+    return 'fa-video-camera';
+  }
+});
+
+Template.nucleus_video_chat_controls.events({
+  "click #start-video-chat": function(e) {
+    Session.set('webrtc-chat-active', ! Session.get('webrtc-chat-active'));
+  }
+});
+
+Template.nucleus_video_chat_film.helpers({
+  "show_video_chat_film": function() {
+    return Session.get('webrtc-chat-active');
+  }
+});
+
+////////////////////////
+// END VIDEO CONTROLS //
+////////////////////////
