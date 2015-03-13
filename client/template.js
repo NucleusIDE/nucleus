@@ -465,7 +465,6 @@ Template.nucleus_ribbon.events({
 //////////////////////////
 // START VIDEO CONTROLS //
 //////////////////////////
-
 Template.nucleus_video_chat_controls.helpers({
   "chat_start_stop_icon": function() {
     if (Session.get('vibrate-chat-active')) {
@@ -486,6 +485,41 @@ Template.nucleus_video_chat_film.helpers({
     return Session.get('webrtc-chat-active');
   }
 });
+
+Tracker.autorun(function() {
+  var chatActive = Session.get('webrtc-chat-active');
+
+  if (chatActive) {
+    var rtcInterval = Meteor.setInterval(function() {
+      if (typeof SimpleWebRTC === 'undefined') {
+        return;
+      }
+
+      Meteor.clearInterval(rtcInterval);
+
+      window.nucleucWebrtc = new SimpleWebRTC({
+        debug: false,
+        url: 'http://localhost:8080',
+        localVideoEl: 'local-nucleus-video',
+        remoteVideosEl: 'remote-nucleus-videos',
+        autoRequestMedia: true
+      });
+
+      window.nucleucWebrtc.on('readyToCall', function () {
+        window.nucleucWebrtc.joinRoom('nucleus_room');
+      });
+    }, 100);
+  } else {
+    if (!window.nucleucWebrtc) {
+      console.log("Webrtc is not defined");
+      return;
+    }
+
+    window.nucleucWebrtc.leaveRoom('nucleus_room');
+    window.nucleucWebrtc.stopLocalVideo();
+  }
+});
+
 
 ////////////////////////
 // END VIDEO CONTROLS //
