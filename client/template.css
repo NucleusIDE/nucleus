@@ -582,3 +582,33 @@ body {
 #local-nucleus-video {
   height: 25%;
 }
+
+.incoming-call {
+  color: rgb(82, 196, 82);
+  border-color: rgb(82, 196, 82);
+  animation-name: greenPulse;
+  animation-duration: 2s;
+  -moz-animation-name: greenPulse;
+  -moz-animation-duration: 2s;
+  -webkit-animation-name: greenPulse;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes greenPulse{
+  from {
+    border-color:#749a02;
+    color:#749a02;
+    -webkit-box-shadow:0 0 9px #333;
+  }
+  50% {
+    border-color: #91bd09;
+    color: #91bd09;
+    -webkit-box-shadow:0 0 18px #91bd09;
+  }
+  to {
+    border-color: #749a02;
+    color: #749a02;
+    -webkit-box-shadow:0 0 9px #333;
+  }
+}
