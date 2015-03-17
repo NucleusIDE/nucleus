@@ -612,3 +612,44 @@ body {
     -webkit-box-shadow:0 0 9px #333;
   }
 }
+
+/*  MASTER-PROMTP */
+.nucleus-master-prompt {
+  position: absolute;
+  top: 35px;
+  right: 10%;
+  z-index: 9;
+  min-width: 600px;
+  max-width: 600px;
+  width: 600px;
+  background: #3A3A3A;
+  border: 1px solid #3b3d3b;
+}
+
+.nucleus-master-prompt input {
+  position: relative;
+  width: 100%;
+  color: rgb(166, 166, 166) !important;
+  background: rgb(58, 58, 58) !important;
+  font-size: 19px !important;
+  padding: 10px !important;
+}
+
+.nucleus-master-prompt ul {
+  background: rgb(37, 37, 37);
+  color: rgb(177, 177, 177);
+}
+
+.nucleus-master-prompt ul li {
+  padding: 10px;
+  border-bottom: 1px solid #3b3d3b;
+  cursor: pointer;
+}
+
+.nucleus-master-prompt ul li:hover {
+   background: rgba(50, 60, 70, 0.32);
+}
+
+.nucleus-master-prompt ul li:active {
+   background: rgba(50, 60, 70, 0.43);
+}
