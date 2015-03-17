@@ -230,7 +230,7 @@ Keybindings = function(NucleusClient) {
         name: tokens.join('+'),
         bindKey: {
           win: tokens.join('-'),
-          mac: tokens.join('-').replace('ctrl', 'command')
+          mac: tokens.join('-').replace('meta', 'cmd')
         },
         exec: function(editor) {
           cb(editor);
@@ -249,8 +249,12 @@ Keybindings = function(NucleusClient) {
   var origAddKbd = this.KbdManager.add.bind(this.KbdManager);
 
   this.KbdManager.add = function(kbd, cb, opt) {
+    //Normalize kbd to be useable with our ShortcutManager.
+    //It's converted to be used with Ace Editor in addKbdToAce
+    kbd = kbd.toLowerCase().replace(/(cmd)|(command)/g, 'meta');
+
     origAddKbd(kbd, cb, opt);
-    addKbdToAce(kbd, cb, opt);
+    // addKbdToAce(kbd, cb, opt);
   };
 };
 
