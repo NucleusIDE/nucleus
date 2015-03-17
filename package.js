@@ -22,6 +22,12 @@ Package.on_use(function (api, where) {
            'mrt:flash-messages@0.2.4',
            'iron:router@0.9.0 || 1.0.0']);
 
+  //Add core nucleus plugin files
+  //It is safe to put them here because these are actually executed only after NucleusClient is initialized
+  api.add_files([
+    'client/plugins/NucleusClient.kbd.js'
+  ], 'client');
+
   api.add_files([
     'public/logo.png',
   ], 'client', {isAsset: true});
@@ -49,8 +55,8 @@ Package.on_use(function (api, where) {
 
     'client/plugin-manager.js',
 
-    'client/nucleus_client.js',
     'client/nucleus_editor.js',
+    'client/nucleus_client.js',
     'client/nucleus_sidebar.js',
     'client/keepalive.js',
 
@@ -96,10 +102,6 @@ Package.on_use(function (api, where) {
     'chat/server/publishers.js'
   ], ['server']);
 
-  //Add core nucleus plugins
-  api.add_files([
-    'client/plugins/NucleusClient.kbd.js'
-  ], 'client');
 
   api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
   api.export && api.export(['Nucleus', 'NucleusGit'], ['server']);

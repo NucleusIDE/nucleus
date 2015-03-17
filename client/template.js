@@ -453,7 +453,7 @@ Template.nucleus_ribbon.rendered = function() {
 Template.nucleus_ribbon.events({
   "click #nucleus_client_init": function(e) {
     e.preventDefault();
-    NucleusClient.initialize();
+    NucleusClient.popup();
   }
 });
 /////////////////////////

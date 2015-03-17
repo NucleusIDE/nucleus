@@ -1,5 +1,5 @@
 var ShortcutManager = {
-  'all_shortcuts':{},//All the shortcuts are stored in this array
+  '_all_shortcuts':{},//All the shortcuts are stored in this array
   'add': function(shortcut_combination,callback,opt) {
     //Provide a set of default options
     var default_options = {
@@ -68,7 +68,7 @@ var ShortcutManager = {
         ".":">",
         "/":"?",
         "\\":"|"
-      }
+      };
       //Special Keys - and their codes
       var special_keys = {
         'esc':27,
@@ -122,7 +122,7 @@ var ShortcutManager = {
         'f10':121,
         'f11':122,
         'f12':123
-      }
+      };
 
       var modifiers = {
         shift: { wanted:false, pressed:false},
@@ -170,10 +170,10 @@ var ShortcutManager = {
       }
 
       if(kp == keys.length &&
-            modifiers.ctrl.pressed == modifiers.ctrl.wanted &&
-            modifiers.shift.pressed == modifiers.shift.wanted &&
-            modifiers.alt.pressed == modifiers.alt.wanted &&
-            modifiers.meta.pressed == modifiers.meta.wanted) {
+         modifiers.ctrl.pressed == modifiers.ctrl.wanted &&
+         modifiers.shift.pressed == modifiers.shift.wanted &&
+         modifiers.alt.pressed == modifiers.alt.wanted &&
+         modifiers.meta.pressed == modifiers.meta.wanted) {
         callback(e);
 
         if(!opt['propagate']) { //Stop the event
@@ -190,7 +190,7 @@ var ShortcutManager = {
         }
       }
     }
-    this.all_shortcuts[shortcut_combination] = {
+    this._all_shortcuts[shortcut_combination] = {
       'callback':func,
       'target':ele,
       'event': opt['type']
@@ -204,8 +204,8 @@ var ShortcutManager = {
   //Remove the shortcut - just specify the shortcut and I will remove the binding
   'remove':function(shortcut_combination) {
     shortcut_combination = shortcut_combination.toLowerCase();
-    var binding = this.all_shortcuts[shortcut_combination];
-    delete(this.all_shortcuts[shortcut_combination])
+    var binding = this._all_shortcuts[shortcut_combination];
+    this._all_shortcuts[shortcut_combination] = null;
     if(!binding) return;
     var type = binding['event'];
     var ele = binding['target'];
@@ -217,10 +217,43 @@ var ShortcutManager = {
   }
 };
 
-Keybindings = function() {
+Keybindings = function(NucleusClient) {
   this.KbdManager = ShortcutManager;
 
-  this.exec = function(NucleusClient) {
-    NucleusClient.kbd = this.KbdManager;
+  var addKbdToAce = function(kbd, cb, opt) {
+    if (!kbd) return;
+
+    var kbdTokens = kbd.split('+').map(function(token){ return token.toLowerCase(); });
+
+    var getAceCommandFromTokens = function(tokens) {
+      var command = {
+        name: tokens.join('+'),
+        bindKey: {
+          win: tokens.join('-'),
+          mac: tokens.join('-').replace('ctrl', 'command')
+        },
+        exec: function(editor) {
+          cb(editor);
+        }
+      };
+
+      return command;
+    };
+
+    var aceCommand = getAceCommandFromTokens(kbdTokens);
+    window.kbd = aceCommand;
+    console.log('Adding KBD to Ace', aceCommand);
+
+    NucleusClient.Editor.addCommands([aceCommand]);
   };
+  var origAddKbd = this.KbdManager.add.bind(this.KbdManager);
+
+  this.KbdManager.add = function(kbd, cb, opt) {
+    origAddKbd(kbd, cb, opt);
+    addKbdToAce(kbd, cb, opt);
+  };
+};
+
+Keybindings.prototype.exec = function(NucleusClient) {
+  NucleusClient.kbd = this.KbdManager;
 };
