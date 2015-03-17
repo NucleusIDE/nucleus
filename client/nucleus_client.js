@@ -206,7 +206,6 @@ var NucleusClientFactory = function () {
     Meteor.call("nucleusGetFileList", function (err, res) {
       //so that this.getFileTree() won't run infinitely for reactive computations
       if (!_.isEqual(res, fileTree)) {
-        console.log('Setting filetree');
         nucleusClientDep.changed();
         fileTree = res;
       }

@@ -14,6 +14,7 @@ Npm.depends({
 Package.on_use(function (api, where) {
   api.versionsFrom("METEOR@0.9.1");
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session',
+           'reactive-var',
            'mrt:moment@2.8.1',
            'nucleuside:smart-models@0.0.6',
            'nucleuside:live-update@0.1.1',
@@ -26,7 +27,8 @@ Package.on_use(function (api, where) {
   //It is safe to put them here because these are actually executed only after NucleusClient is initialized
   api.add_files([
     'client/plugins/NucleusClient.kbd.js',
-    'client/plugins/fuzzy-find-file.js'
+    'client/plugins/master-prompt.js',
+    'client/plugins/fuzzy-find-file.js',
   ], 'client');
 
   api.add_files([
