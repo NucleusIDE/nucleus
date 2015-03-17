@@ -222,6 +222,10 @@ Deps.autorun(function() {
   if (!selectedFile) return;
 
   NucleusClient.editFile(selectedFile);
+  var ext =  selectedFile.split('.').reverse()[0];
+  console.log('Setting Mode for', ext);
+  NucleusEditor.setModeForExt(ext);
+
 });
 
 

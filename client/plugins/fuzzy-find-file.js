@@ -44,8 +44,7 @@ FuzzyFindFile.prototype.fuzzyFind = function(term) {
  * This method is called by master-prompt when user selects an item
  */
 FuzzyFindFile.prototype.itemSelected = function(filepath) {
-  console.log('EDIT', filepath);
-  // NucleusClient.editFile(filepath);
+  NucleusClient.editFile(filepath);
 };
 
 FuzzyFindFile.prototype.promptResults = FuzzyFindFile.prototype.fuzzyFind;
