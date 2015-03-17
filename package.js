@@ -20,7 +20,7 @@ Package.on_use(function (api, where) {
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.0',
            'mrt:flash-messages@0.2.4',
-      'iron:router@0.9.0 || 1.0.0']);
+           'iron:router@0.9.0 || 1.0.0']);
 
   api.add_files([
     'public/logo.png',
@@ -47,10 +47,12 @@ Package.on_use(function (api, where) {
     'client/lib/font-awesome/css/font-awesome.css',
     'client/lib/hint.css',
 
+    'client/plugin-manager.js',
+
     'client/nucleus_client.js',
     'client/nucleus_editor.js',
     'client/nucleus_sidebar.js',
-  'client/keepalive.js',
+    'client/keepalive.js',
 
     'client/template.css',
     'client/template.html',

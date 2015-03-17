@@ -365,6 +365,12 @@ var NucleusClientFactory = function () {
     });
   };
 
+  /**
+   * Add Plugin manager to Nucleus and put 'registerPlugin' on this for convinience
+   */
+  this.PluginManager = new NucleusPluginManager();
+  this.registerPlugin = this.PluginManager.registerPlugin;
+
   return this;
 };
 
