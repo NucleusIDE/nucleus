@@ -10,7 +10,7 @@ MasterPrompt = function(NucleusClient) {
   this.promptIn = new ReactiveVar();
   this.promptOut = new ReactiveVar();
   this.showPrompt = new ReactiveVar();
-  this.selectedPlugin = null; //input is sent to selectedPlugin and output is shown in prompt
+  this.selectedPlugin = new ReactiveVar(null); //input is sent to selectedPlugin and output is shown in prompt
 };
 
 MasterPrompt.prototype.registerPlugin = function(plugin) {
@@ -25,19 +25,27 @@ MasterPrompt.prototype.registerPlugin = function(plugin) {
   }
 
   NucleusClient.kbd.add(plugin.kbd, function() {
-    this.showPromptWith(plugin);
+    this.togglePrompt(plugin);
   }.bind(this));
 
   this._registeredPlugins.push(plugin);
 };
 
+MasterPrompt.prototype.togglePrompt = function(plugin) {
+  if (this.showPrompt.get() && this.selectedPlugin.get() == plugin) {
+    return this.hidePrompt();
+  }
+  this.showPromptWith(plugin);
+
+};
+
 MasterPrompt.prototype.showPromptWith = function(plugin) {
-  this.selectedPlugin = plugin;
+  this.selectedPlugin.set(plugin);
   this.showPrompt.set(true);
 };
 
 MasterPrompt.prototype.hidePrompt = function() {
-  this.selectedPlugin = null;
+  this.selectedPlugin.set(null);
   this.showPrompt.set(false);
 };
 
@@ -46,8 +54,14 @@ MasterPrompt.prototype.exec = function(NucleusClient) {
   var self = this;
 
   Tracker.autorun(function() {
-    var input = self.promptIn.get();
+    var selectedPlugin = self.selectedPlugin.get();
 
-    console.log(input);
+    if (! selectedPlugin)
+      return;
+
+    var input = self.promptIn.get(),
+        output = selectedPlugin.promptResults(input);
+
+    self.promptOut.set(output);
   });
 };

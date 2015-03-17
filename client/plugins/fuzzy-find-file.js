@@ -3,6 +3,8 @@ FuzzyFindFile = function(NucleusClient) {
 
   this.fileList = [];
 
+  this.kbd = 'ctrl+p'; //required by MasterPrompt
+
   //Run this.updateFilesList in autorun because it uses NucleusClient.getFileTree which is reactive
   //This will update this.filetree whenever NucleusClient's filetree changes
   Tracker.autorun(this.updateFilesList.bind(this));
@@ -33,15 +35,13 @@ FuzzyFindFile.prototype.fuzzyFind = function(term) {
   return this.fileList.filter(function(text) {
     var pattern = term.replace(/\s+/g, '').split('').join('.*');
     return text.match(new RegExp(pattern, 'i'));
+  }).map(function(filepath) {
+    return filepath.split('/').slice(-5).join('/');
   });
 };
 
+FuzzyFindFile.prototype.promptResults = FuzzyFindFile.prototype.fuzzyFind;
+
 FuzzyFindFile.prototype.exec = function() {
-  var self = this;
-
-  Tracker.autorun(function() {
-    var q = Session.get('q');
-    console.log(self.fuzzyFind(q));
-  });
-
+  NucleusClient.MasterPrompt.registerPlugin(this);
 };
