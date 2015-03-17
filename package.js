@@ -96,6 +96,11 @@ Package.on_use(function (api, where) {
     'chat/server/publishers.js'
   ], ['server']);
 
+  //Add core nucleus plugins
+  api.add_files([
+    'client/plugins/NucleusClient.kbd.js'
+  ], 'client');
+
   api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
   api.export && api.export(['Nucleus', 'NucleusGit'], ['server']);
   api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager', 'LiveUpdate'], ['client']);
