@@ -36,8 +36,16 @@ FuzzyFindFile.prototype.fuzzyFind = function(term) {
     var pattern = term.replace(/\s+/g, '').split('').join('.*');
     return text.match(new RegExp(pattern, 'i'));
   }).map(function(filepath) {
-    return filepath.split('/').slice(-5).join('/');
+    return {display: filepath.split('/').slice(-4).join('/'), value: filepath};
   });
+};
+
+/**
+ * This method is called by master-prompt when user selects an item
+ */
+FuzzyFindFile.prototype.itemSelected = function(filepath) {
+  console.log('EDIT', filepath);
+  // NucleusClient.editFile(filepath);
 };
 
 FuzzyFindFile.prototype.promptResults = FuzzyFindFile.prototype.fuzzyFind;

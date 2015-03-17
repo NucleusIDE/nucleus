@@ -591,12 +591,20 @@ Template.nucleus_master_prompt.events({
       39, //right
     ];
 
-    if (_.contains(special_keys, e.keycode)) {
+    if (e.keyCode == 27) {
+      NucleusClient.MasterPrompt.hidePrompt();
+    }
+
+    if (_.contains(special_keys, e.keyCode)) {
       return;
     }
 
     var val = e.currentTarget.value;
     NucleusClient.MasterPrompt.promptIn.set(val);
+  },
+  'click .nucleus-master-prompt li': function(e) {
+    e.preventDefault();
+    NucleusClient.MasterPrompt.itemSelected(e.currentTarget.getAttribute('data-value'));
   }
 });
 

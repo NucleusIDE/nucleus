@@ -49,6 +49,10 @@ MasterPrompt.prototype.hidePrompt = function() {
   this.showPrompt.set(false);
 };
 
+MasterPrompt.prototype.itemSelected = function(val) {
+  this.selectedPlugin.get().itemSelected(val);
+};
+
 MasterPrompt.prototype.exec = function(NucleusClient) {
   NucleusClient.MasterPrompt = this;
   var self = this;
