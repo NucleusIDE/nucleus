@@ -568,7 +568,13 @@ Tracker.autorun(function() {
 
 Template.nucleus_master_prompt.helpers({
   nucleus_show_master_prompt: function() {
+    Meteor.setTimeout(function() {
+      $('#nucleus-master-prompt-input').focus();
+    }, 100);
     return NucleusClient.MasterPrompt.showPrompt.get();
+  },
+  results: function() {
+    return NucleusClient.MasterPrompt.promptOut.get();
   }
 });
 
