@@ -14,14 +14,13 @@ NucleusPluginManager.prototype.registerPlugin = function(plugin) {
     throw new Meteor.Error('plugin must be an object or function.');
   }
 
-  if (!pluginObj.hasOwnProperty('exec') && !_.isFunction(pluginObj.exec)) {
+  if (!pluginObj.hasOwnProperty('exec') || !_.isFunction(pluginObj.exec)) {
     throw new Meteor.Error('plugin must have `exec` function');
   }
 
-  pluginObj.exec(NucleusClient);
-
   //Register a plugin only once.
-  if (this.registerPlugin.indexOf(plugin) < 0) {
+  if (this._registeredPlugins.indexOf(plugin) < 0) {
+    pluginObj.exec(NucleusClient);
     this._registeredPlugins.push(plugin);
   }
 };

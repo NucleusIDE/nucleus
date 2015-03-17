@@ -4,7 +4,6 @@
 
 Template.nucleus.helpers({
   showNucleus: function() {
-    console.log("NUCLEUS URL IS", NucleusClient.config.nucleusUrl);
     return true;
   }
 });
@@ -534,7 +533,6 @@ Tracker.autorun(function() {
     }, 100);
   } else {
     if (!window.nucleucWebrtc) {
-      console.log("Webrtc is not defined");
       return;
     }
 
