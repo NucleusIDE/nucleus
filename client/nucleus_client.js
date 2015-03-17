@@ -6,7 +6,10 @@
 Meteor.startup(function () {
   Router.route('nucleus', {
     path: '/nucleus',
-    layoutTemplate: 'nucleus'
+    layoutTemplate: 'nucleus',
+    onBeforeAction: function() {
+      NucleusClient.initialize({}, window);
+    }
   });
 });
 
@@ -20,7 +23,6 @@ var NucleusClientFactory = function () {
       currentFileContents,
       nucleusClientDep = new Deps.Dependency;
 
-
   this.config = {
     nucleusUrl: window.location.origin + '/nucleus',
     windowName: 'Nucleus',
@@ -33,18 +35,22 @@ var NucleusClientFactory = function () {
     _.extend(this.config, config);
   };
 
-  this.initialize = function (config) {
-    this.configure(config);
-
+  this.popup = function() {
     //url where nucleus template is expected
     var url = this.config.nucleusUrl,
-    //name of Nucleus window. Not significant
-        windowName = this.config.windowName,
-    //nucleus window which has nucleus editor.
-        nucleusWindow = window.open(url, windowName, 'height=550,width=900');
+        //name of Nucleus window. Not significant
+        windowName = this.config.windowName;
+        //nucleus window which has nucleus editor.
+    this.nucleusWindow = window.open(url, windowName, 'height=550,width=900');
     if (window.focus) {
-      nucleusWindow.focus();
+      this.nucleusWindow.focus();
     }
+
+    return this.nucleusWindow;
+  };
+
+  this.initialize = function (config, nucleusWindow) {
+    this.configure(config);
 
     //Configure flash messages. We are using `mrt:flash-messages` package for flash messages
     FlashMessages.configure({
@@ -68,6 +74,14 @@ var NucleusClientFactory = function () {
 
     //Configure LiveUpdate to be used as a library so it won't re-render the templates itself
     LiveUpdate.useAsLib(true);
+
+    this.Editor = NucleusEditor;
+
+    /**
+     * Add Plugin manager to Nucleus and put 'registerPlugin' on this for convinience
+     */
+    this.PluginManager = new NucleusPluginManager(this);
+    this.registerPlugin = this.PluginManager.registerPlugin.bind(this.PluginManager);
 
     return false;
   };
@@ -364,12 +378,6 @@ var NucleusClientFactory = function () {
       cb(null, res);
     });
   };
-
-  /**
-   * Add Plugin manager to Nucleus and put 'registerPlugin' on this for convinience
-   */
-  this.PluginManager = new NucleusPluginManager();
-  this.registerPlugin = this.PluginManager.registerPlugin.bind(this.PluginManager);
 
   return this;
 };
