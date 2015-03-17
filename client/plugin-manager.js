@@ -2,7 +2,8 @@ NucleusPluginManager = function(NucleusClient) {
   this.NucleusClient = NucleusClient;
 
   this._corePlugins = [
-    Keybindings
+    Keybindings,
+    FuzzyFindFile //depends on Keybindings
   ];
   this._registeredPlugins = [];
 

@@ -25,7 +25,8 @@ Package.on_use(function (api, where) {
   //Add core nucleus plugin files
   //It is safe to put them here because these are actually executed only after NucleusClient is initialized
   api.add_files([
-    'client/plugins/NucleusClient.kbd.js'
+    'client/plugins/NucleusClient.kbd.js',
+    'client/plugins/fuzzy-find-file.js'
   ], 'client');
 
   api.add_files([

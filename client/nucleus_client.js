@@ -40,7 +40,7 @@ var NucleusClientFactory = function () {
     var url = this.config.nucleusUrl,
         //name of Nucleus window. Not significant
         windowName = this.config.windowName;
-        //nucleus window which has nucleus editor.
+    //nucleus window which has nucleus editor.
     this.nucleusWindow = window.open(url, windowName, 'height=550,width=900');
     if (window.focus) {
       this.nucleusWindow.focus();
@@ -203,15 +203,15 @@ var NucleusClientFactory = function () {
    * Reactively set `filetree`
    */
   this.setFileTree = function () {
-    var makeYou = this;
     Meteor.call("nucleusGetFileList", function (err, res) {
       //so that this.getFileTree() won't run infinitely for reactive computations
       if (!_.isEqual(res, fileTree)) {
+        console.log('Setting filetree');
         nucleusClientDep.changed();
         fileTree = res;
       }
     });
-  }.bind(this);
+  };
 
   /**
    * jstree isn't working when used with JSON from within a meteor package. So, let's create HTML (ul>li) instead.
