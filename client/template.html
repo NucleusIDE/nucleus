@@ -5,7 +5,7 @@
   {{> nucleus_video_chat_film}}
   {{> nucleus_sidebar}}
   {{> nucleus_topbar}}
-  {{> master_prompt}}
+  {{> nucleus_master_prompt}}
   {{> editor}}
   {{/if}}
 </template>
@@ -204,10 +204,10 @@
   {{/if}}
 </template>
 
-<template name="master_prompt">
+<template name="nucleus_master_prompt">
   {{#if nucleus_show_master_prompt}}
   <div class="nucleus-master-prompt">
-    <input name="" type="text" value="" />
+    <input id="nucleus-master-prompt-input" name="" type="text" value="" />
     <ul>
       {{#each results}}
       {{text}}

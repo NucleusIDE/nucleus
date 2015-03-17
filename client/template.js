@@ -560,3 +560,40 @@ Tracker.autorun(function() {
 ////////////////////////
 // END VIDEO CONTROLS //
 ////////////////////////
+
+
+/////////////////////////////////
+// START NUCLEUS MASTER PROMPT //
+/////////////////////////////////
+
+Template.nucleus_master_prompt.helpers({
+  nucleus_show_master_prompt: function() {
+    return NucleusClient.MasterPrompt.showPrompt.get();
+  }
+});
+
+Template.nucleus_master_prompt.events({
+  'keyup #nucleus-master-prompt-input': function(e) {
+    e.preventDefault();
+
+    var special_keys = [
+      27, //esc
+      9, //'tab'
+      38, //up
+      39, //down
+      37, //left
+      39, //right
+    ];
+
+    if (_.contains(special_keys, e.keycode)) {
+      return;
+    }
+
+    var val = e.currentTarget.value;
+    NucleusClient.MasterPrompt.promptIn.set(val);
+  }
+});
+
+/////////////////////////////////
+//  END NUCLEUS MASTER PROMPT //
+/////////////////////////////////
