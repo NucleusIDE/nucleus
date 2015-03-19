@@ -8,11 +8,6 @@ Template.nucleus.helpers({
   }
 });
 
-
-//Set the height of sidebar to be the height of window. I couldn't get it working in CSS
-Template.nucleus_sidebar.rendered = function() {
-  $("#sidebar").height($(window).height());
-};
 //Set the maxHeight of jstree so it won't take all the space when expanded. It make a cool effect
 Template.nucleus_tree_widget.rendered = function() {
   $("#nucleus_file_tree").css({maxHeight: ($(window).height()*50)/100});
@@ -27,10 +22,6 @@ Template.nucleus_nick_prompt.rendered = function() {
   });
   $("#nick").focus();
 };
-
-
-
-
 
 Template.nucleus_nick_prompt.helpers({
   no_nuc_user: function() {
@@ -92,14 +83,10 @@ Template.nucleus_tree_widget.helpers({
   }
 });
 
-Template.editor.rendered = function() {
-  $("#nucleus_editor").height($(window).height() - 35);
-};
-
 Template.editor.config = function () {
   return function(editor) {
     // This method gets called when sharejs has initialized the ace-editor. `editor` argument here is the ace-instance provided by sharejs. We use it to initialize `NucleusEditor`
-    NucleusEditor.initilize(editor);
+    NucleusEditor.initialize(editor);
   };
 };
 
@@ -118,12 +105,6 @@ Template.editor.setMode = function() {
     //Events get unregistered on document change
     NucleusEditor.registerAllEvents();
     NucleusEditor.editor.scrollToRow(0);
-
-    //We need to re-assign the window height on document change otherwise editor falls back to height given in css.
-    //Sharejs does dom overwrite may be
-    Meteor.setTimeout(function() {
-      $("#nucleus_editor").height($(window).height() - 35);
-    }, 200);
   };
 };
 

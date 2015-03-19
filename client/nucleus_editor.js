@@ -89,7 +89,7 @@ var NucleusEditorFactory = function() {
   /**
    * We initialize the `NucleusEditor` in template.js when we get ace-editor instance from shareJs
    */
-  this.initilize = function(aceInstance) {
+  this.initialize = function(aceInstance) {
     this.setEditor(aceInstance);
     this.setTheme('monokai');
 
