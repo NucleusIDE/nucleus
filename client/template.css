@@ -615,7 +615,7 @@ body {
   z-index: 9;
   top: 35px;
   right: 10%;
-  overflow: scroll;
+  overflow: hidden;
   width: 600px;
   min-width: 600px;
   max-width: 600px;
@@ -634,7 +634,12 @@ body {
 }
 .nucleus-master-prompt ul {
   color: rgb(177, 177, 177);
+  position: relative;
+  top: 45px;
   background: rgb(37, 37, 37);
+  height: inherit;
+  max-height: inherit;
+  overflow: scroll;
 }
 .nucleus-master-prompt ul li {
   padding: 10px;
