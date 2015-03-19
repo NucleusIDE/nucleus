@@ -619,7 +619,7 @@ body {
   width: 600px;
   min-width: 600px;
   max-width: 600px;
-  height: 45px;
+  min-height: 45px;
   max-height: 60vh;
   border: 1px solid #3b3d3b;
   background: #3a3a3a;
