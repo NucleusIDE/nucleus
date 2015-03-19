@@ -615,7 +615,7 @@ body {
 
 /*  MASTER-PROMTP */
 .nucleus-master-prompt {
-  position: absolute;
+  position: fixed;
   top: 35px;
   right: 10%;
   z-index: 9;
@@ -624,11 +624,13 @@ body {
   width: 600px;
   background: #3A3A3A;
   border: 1px solid #3b3d3b;
+  max-height: 60vh;
+  overflow: scroll;
 }
 
 .nucleus-master-prompt input {
-  position: relative;
-  width: 100%;
+  position: fixed;
+  width: inherit;
   color: rgb(166, 166, 166) !important;
   background: rgb(58, 58, 58) !important;
   font-size: 19px !important;
