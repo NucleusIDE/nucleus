@@ -8,9 +8,34 @@
 MasterPrompt = function(NucleusClient) {
   this._registeredPlugins = [];
   this.promptIn = new ReactiveVar();
-  this.promptOut = new ReactiveVar();
+  this.promptOut = new ReactiveVar([]);
   this.showPrompt = new ReactiveVar();
   this.selectedPlugin = new ReactiveVar(null); //input is sent to selectedPlugin and output is shown in prompt
+  this.selectedPromptItem = new ReactiveVar(0);  //item which user has selected
+
+  this.selectedPromptItem.inc = function() {
+    var curVal = this.get(),
+        resLength = NucleusClient.MasterPrompt.promptOut.get().length;
+
+    if (curVal >= resLength) {
+      curVal = resLength;
+    } else {
+      curVal += 1;
+    }
+
+    this.set(curVal);
+  };
+  this.selectedPromptItem.dec = function() {
+    var curVal = this.get();
+
+    if (curVal <= 0) {
+      curVal = 0;
+    } else {
+      curVal -= 1;
+    }
+
+    this.set(curVal);
+  };
 };
 
 MasterPrompt.prototype.registerPlugin = function(plugin) {

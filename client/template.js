@@ -558,7 +558,18 @@ Template.nucleus_master_prompt.helpers({
     return NucleusClient.MasterPrompt.showPrompt.get();
   },
   results: function() {
-    return NucleusClient.MasterPrompt.promptOut.get();
+    if (! NucleusClient.MasterPrompt.promptOut.get().length)
+      return [];
+
+    var res = NucleusClient.MasterPrompt.promptOut.get().map(function(item, index) {
+      return _.extend(item, {index: index});
+    });
+
+    return res;
+  },
+  selected_item_class: function() {
+    var className = 'nucleus-master-prompt-active';
+    return this.index == NucleusClient.MasterPrompt.selectedPromptItem.get() ? className : '';
   }
 });
 
@@ -570,13 +581,26 @@ Template.nucleus_master_prompt.events({
       27, //esc
       9, //'tab'
       38, //up
-      39, //down
+      40, //down
       37, //left
       39, //right
     ];
 
-    if (e.keyCode == 27) {
+    switch(e.keyCode) {
+    case 27:
       NucleusClient.MasterPrompt.hidePrompt();
+      break;
+    case 38:
+      NucleusClient.MasterPrompt.selectedPromptItem.dec();
+      break;
+    case 40:
+      NucleusClient.MasterPrompt.selectedPromptItem.inc();
+      break;
+    case 13:
+      var selectedVal = NucleusClient.MasterPrompt.promptOut.get()[NucleusClient.MasterPrompt.selectedPromptItem.get()].value;
+      NucleusClient.MasterPrompt.itemSelected(selectedVal);
+      NucleusClient.MasterPrompt.hidePrompt();
+      break;
     }
 
     if (_.contains(special_keys, e.keyCode)) {
@@ -589,6 +613,7 @@ Template.nucleus_master_prompt.events({
   'click .nucleus-master-prompt li': function(e) {
     e.preventDefault();
     NucleusClient.MasterPrompt.itemSelected(e.currentTarget.getAttribute('data-value'));
+    NucleusClient.MasterPrompt.hidePrompt();
   }
 });
 

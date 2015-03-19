@@ -646,9 +646,14 @@ body {
   cursor: pointer;
   border-bottom: 1px solid #3b3d3b;
 }
+
 .nucleus-master-prompt ul li:hover {
   background: rgba(50, 60, 70, .32);
 }
 .nucleus-master-prompt ul li:active {
   background: rgba(50, 60, 70, .43);
+}
+
+.nucleus-master-prompt-active {
+  background: rgba(70, 80, 90, .32);
 }
