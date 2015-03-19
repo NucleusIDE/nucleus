@@ -77,6 +77,7 @@ MasterPrompt.prototype.showPromptWith = function(plugin) {
 MasterPrompt.prototype.hidePrompt = function() {
   this.selectedPlugin.set(null);
   this.showPrompt.set(false);
+  this.selectedPromptItem.set(0);
 };
 
 MasterPrompt.prototype.itemSelected = function(val) {
