@@ -3,7 +3,7 @@ FuzzyFindFile = function(NucleusClient) {
 
   this.fileList = [];
 
-  this.kbd = 'ctrl+p'; //required by MasterPrompt
+  this.kbd = ['ctrl+p', 'cmd+p']; //required by MasterPrompt
 
   //Run this.updateFilesList in autorun because it uses NucleusClient.getFileTree which is reactive
   //This will update this.filetree whenever NucleusClient's filetree changes

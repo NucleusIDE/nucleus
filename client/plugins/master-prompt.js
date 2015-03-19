@@ -17,26 +17,31 @@ MasterPrompt.prototype.registerPlugin = function(plugin) {
   /**
    * Register `plugin` to use MasterPrompt.
    * `plugin` must be an object with these two properties:
-   * - kbd  * string representing the keybinding when prompt shall be called
+   * - kbd  * string or array of strings representing the keybinding when prompt shall be called
    * - promptResults  * function accepting prompt input and returning array of outputs
    */
-  if (!_.isString(plugin['kbd'] || !_.isFunction(plugin['promptResults']))) {
-    throw new Meteor.Error('Plugin must have `kbd` (string) and `promptResults` (function) properties');
-  }
-
-  NucleusClient.kbd.add(plugin.kbd, function() {
-    this.togglePrompt(plugin);
-  }.bind(this));
+  var self = this;
+  if (_.isArray(plugin.kbd))
+    plugin.kbd.forEach(function(kbd) {
+      NucleusClient.kbd.add(kbd, function() {
+        self.togglePrompt(plugin);
+      });
+    });
+  else
+    NucleusClient.kbd.add(plugin.kbd, function() {
+      this.togglePrompt(plugin);
+    }.bind(this));
 
   this._registeredPlugins.push(plugin);
 };
 
 MasterPrompt.prototype.togglePrompt = function(plugin) {
   if (this.showPrompt.get() && this.selectedPlugin.get() == plugin) {
-    return this.hidePrompt();
+    this.hidePrompt();
+    NucleusClient.Editor.editor.focus();
+    return;
   }
   this.showPromptWith(plugin);
-
 };
 
 MasterPrompt.prototype.showPromptWith = function(plugin) {
