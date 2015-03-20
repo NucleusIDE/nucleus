@@ -29,7 +29,7 @@ FuzzyFindFile.prototype.updateFilesList = function() {
       filepath = tree.path;
     }
 
-    return _.compact(_.flatten([filepath, getFileList(tree.children)]));
+    return _.uniq(_.compact(_.flatten([filepath, getFileList(tree.children)])));
   };
   this.fileList = getFileList(filetree);
 };
