@@ -11,7 +11,8 @@ FuzzyFindFile = function(NucleusClient) {
 };
 
 FuzzyFindFile.prototype.updateFilesList = function() {
-  var filetree = this.NucleusClient.getFileTree();
+  var filetree = this.NucleusClient.getFileTree(),
+      filepath = null;
   var getFileList = function(tree) {
     if (!tree)
       return [];
@@ -23,12 +24,12 @@ FuzzyFindFile.prototype.updateFilesList = function() {
     if (!tree.children)
       return [];
 
-    if (tree.type !== 'file') {
+    if (tree.type === 'file') {
       //we will later filter out all falsy values. We need only files in our list, so
-      tree.path = false;
+      filepath = tree.path;
     }
 
-    return _.compact(_.flatten([tree.path, getFileList(tree.children)]));
+    return _.compact(_.flatten([filepath, getFileList(tree.children)]));
   };
   this.fileList = getFileList(filetree);
 };
