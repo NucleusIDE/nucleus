@@ -131,6 +131,9 @@ var NucleusEditorFactory = function() {
   };
 
   this.setMode = function(mode) {
+    if (typeof mode == 'undefined')
+      mode = 'text';
+
     this.getSession().setMode("ace/mode/"+ mode);
   };
   this.setTheme = function(theme) {
@@ -151,7 +154,7 @@ var NucleusEditorFactory = function() {
     if (!ext)
       return;
 
-    var mode = this.aceModesForExts[ext] || ext;
+    var mode = this.aceModesForExts[ext] || 'text';
     this.setMode(mode);
   };
 
