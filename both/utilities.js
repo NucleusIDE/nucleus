@@ -153,5 +153,14 @@ Utils = {
         return '...' + str.substr(str.length-(max-3), max);
     }
     return str;
+  },
+  getExt: function(filepath) {
+    var splitArr = filepath.split('.').reverse();    //if there was no `.` in filepath, it will still return an array of length 1
+
+    if (splitArr.length > 1) {
+      return splitArr[0];
+    }
+
+    return null;
   }
 };
