@@ -65,7 +65,7 @@ var NucleusClientFactory = function () {
     var nucOverrideInterval = Meteor.setInterval(function () {
       if (nucleusWindow.Meteor && nucleusWindow.LiveUpdate) {
 
-        nucleusWindow.LiveUpdate.refreshPage = function () {
+        nucleusWindow.LiveUpdate.refreshFile = function () {
           return false;
         };
         Meteor.clearInterval(nucOverrideInterval);
