@@ -50,7 +50,8 @@ NucleusSidebar = {
       //     NucleusClient.jsTree.open_node(data.node);
       //   }
       // }
-      if(data.node.data.type === 'file') {
+      var nodeType = document.getElementById(data.node.id).getAttribute('data-type');
+      if(nodeType === 'file') {
         Session.set("nucleus_selected_file", data.selected[0]);
       }
     });
@@ -79,6 +80,7 @@ NucleusSidebar = {
               }
               FlashMessages.sendSuccess("File Renamed successfully.");
               NucleusClient.jsTree.set_id(node, newpath);
+              NucleusClient.Editor.setModeForExt(Utils.getExt(newpath));
             });
           }
 
