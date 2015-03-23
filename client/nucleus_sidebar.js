@@ -51,6 +51,7 @@ NucleusSidebar = {
       //   }
       // }
       var nodeType = document.getElementById(data.node.id).getAttribute('data-type');
+      console.log("NODE TYPE IS", nodeType);
       if(nodeType === 'file') {
         Session.set("nucleus_selected_file", data.selected[0]);
       }
@@ -71,7 +72,8 @@ NucleusSidebar = {
             var oldpath = node.id;
             var path = node.id.split("/");
             path.splice(-1);
-            var newpath = (path.join("/") + "/" + newname).trim();
+            var newpath = (path.join("/") + "/" + newname).trim(),
+                oldNodeType = node.nodeType;
 
             NucleusClient.renameFile(oldpath, newpath, function(err, res) {
               if (err) {
@@ -80,6 +82,7 @@ NucleusSidebar = {
               }
               FlashMessages.sendSuccess("File Renamed successfully.");
               NucleusClient.jsTree.set_id(node, newpath);
+              document.getElementById(node.id).setAttribute('data-type', oldNodeType);
             });
           }
 
@@ -131,13 +134,14 @@ NucleusSidebar = {
 
                   NucleusClient.createNewFile(newFilepath, function(err, res) {
                     if(err) {throw new Error("FILE CREATION ERROR", err);}
-                    console.log("NEW FILE NAME IS", res);
                     var newFilename = res.split("/").reverse()[0];
                     inst.set_text(newNode, newFilename);
                     inst.set_id(newNode, res);
                     document.getElementById(res).setAttribute("data-type", "file");
 
                     var newNodeObj = inst.get_node(newNode);
+
+                    newNode.nodeType = 'file';
                     inst.edit(newNodeObj);
                   });
                 }
@@ -176,6 +180,8 @@ NucleusSidebar = {
                     document.getElementById(res).setAttribute("data-type", "folder");
 
                     var newNodeObj = inst.get_node(newNode);
+                    newNode.nodeType = 'folder';
+
                     inst.edit(newNodeObj);
                   });
                 }
