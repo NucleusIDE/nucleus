@@ -174,6 +174,9 @@ NucleusSidebar = {
                     inst.set_text(newNode, newFilename);
                     inst.set_id(newNode, res);
                     document.getElementById(res).setAttribute("data-type", "folder");
+
+                    var newNodeObj = inst.get_node(newNode);
+                    inst.edit(newNodeObj);
                   });
                 }
               }
