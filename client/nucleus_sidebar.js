@@ -213,6 +213,7 @@ NucleusSidebar = {
                 if(err) { FlashMessages.sendError(err); return; }
 
                 inst.delete_node(obj);
+                Session.set('nucleus_selected_doc_id', 'scratch');
 
                 var filename = filepath.split("/")[filepath.split("/").length - 1];
                 FlashMessages.sendSuccess(filename + " Successfully Deleted.");
