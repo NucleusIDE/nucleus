@@ -80,7 +80,6 @@ NucleusSidebar = {
               }
               FlashMessages.sendSuccess("File Renamed successfully.");
               NucleusClient.jsTree.set_id(node, newpath);
-              NucleusClient.Editor.setModeForExt(Utils.getExt(newpath));
             });
           }
 

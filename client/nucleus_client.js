@@ -375,6 +375,8 @@ var NucleusClientFactory = function () {
         cb(err);
         return;
       }
+      NucleusClient.editFile(newpath);
+      NucleusClient.Editor.setModeForExt(Utils.getExt(newpath));
       cb(null, res);
     });
   };

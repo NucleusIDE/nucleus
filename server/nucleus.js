@@ -331,7 +331,10 @@ NucleusFactory = function() {
       return false;;
     }
 
-    return fs.renameSync(oldpath, newpath);
+    var renameFileOp = fs.renameSync(oldpath, newpath);
+    NucleusDocuments.update({filepath: oldpath}, {$set: {filepath: newpath}});
+
+    return true;
   };
 
 };
