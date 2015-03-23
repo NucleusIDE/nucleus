@@ -319,8 +319,12 @@ NucleusFactory = function() {
       child.exec("rm -rf "+filepath, function(err, res) {
         fut.return(res);
       });
-    else
+    else {
       fut.return(fs.unlinkSync(filepath));
+      var shareJsDocId = NucleusDocuments.findOne({filepath: filepath}).doc_id;
+      NucleusDocuments.remove({filepath: filepath});
+      ShareJsDocs.remove({_id: shareJsDocId});
+    }
 
     return fut.wait();
   };
