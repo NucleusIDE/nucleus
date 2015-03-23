@@ -321,8 +321,9 @@ NucleusFactory = function() {
       });
     else {
       fut.return(fs.unlinkSync(filepath));
-      var shareJsDocId = NucleusDocuments.findOne({filepath: filepath}).doc_id;
-      NucleusDocuments.remove({filepath: filepath});
+      var nucDoc = NucleusDocuments.findOne({filepath: filepath});
+      var shareJsDocId = nucDoc ? nucDoc.doc_id : null;
+      NucleusDocuments.remove({_id: nucDoc._id});
       ShareJsDocs.remove({_id: shareJsDocId});
     }
 
