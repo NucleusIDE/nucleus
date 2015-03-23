@@ -71,7 +71,7 @@ NucleusSidebar = {
             var oldpath = node.id;
             var path = node.id.split("/");
             path.splice(-1);
-            var newpath = path.join("/")+"/"+newname;
+            var newpath = (path.join("/") + "/" + newname).trim();
 
             NucleusClient.renameFile(oldpath, newpath, function(err, res) {
               if (err) {
@@ -132,10 +132,13 @@ NucleusSidebar = {
                   NucleusClient.createNewFile(newFilepath, function(err, res) {
                     if(err) {throw new Error("FILE CREATION ERROR", err);}
                     console.log("NEW FILE NAME IS", res);
-                    var newFilename = res.split("/")[res.split("/").length - 1];
+                    var newFilename = res.split("/").reverse()[0];
                     inst.set_text(newNode, newFilename);
                     inst.set_id(newNode, res);
                     document.getElementById(res).setAttribute("data-type", "file");
+
+                    var newNodeObj = inst.get_node(newNode);
+                    inst.edit(newNodeObj);
                   });
                 }
               },
