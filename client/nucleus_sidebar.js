@@ -13,6 +13,7 @@ NucleusSidebar = {
    */
   redrawJsTree: function(elemId) {
     $("#"+elemId).html(NucleusClient.getJstreeHTML());
+    NucleusClient.jsTree.redraw(true); return;
     NucleusClient.jsTree.destroy(true);
 
     var treeInterval = Meteor.setInterval(function() {
@@ -50,8 +51,7 @@ NucleusSidebar = {
       //     NucleusClient.jsTree.open_node(data.node);
       //   }
       // }
-      var nodeType = document.getElementById(data.node.id).getAttribute('data-type');
-      console.log("NODE TYPE IS", nodeType);
+      var nodeType = data.node.data.type || document.getElementById(data.node.id).getAttribute('data-type');
       if(nodeType === 'file') {
         Session.set("nucleus_selected_file", data.selected[0]);
       }
@@ -73,7 +73,7 @@ NucleusSidebar = {
             var path = node.id.split("/");
             path.splice(-1);
             var newpath = (path.join("/") + "/" + newname).trim(),
-                oldNodeType = node.nodeType;
+                oldNodeType = node.data ? node.data.type : null;
 
             NucleusClient.renameFile(oldpath, newpath, function(err, res) {
               if (err) {
@@ -82,6 +82,7 @@ NucleusSidebar = {
               }
               FlashMessages.sendSuccess("File Renamed successfully.");
               NucleusClient.jsTree.set_id(node, newpath);
+              console.log("SETTING NODE TYPE OF", document.getElementById(node.id), "TO", oldNodeType);
               document.getElementById(node.id).setAttribute('data-type', oldNodeType);
             });
           }
@@ -100,16 +101,16 @@ NucleusSidebar = {
         select_node: false,
         items : {
           "create" : {
-            "separator_before"	: false,
-            "separator_after"	: true,
-            "_disabled"			: false, //(this.check("create_node", data.reference, {}, "last")),
-            "label"				: "New",
+            "separator_before"  : false,
+            "separator_after" : true,
+            "_disabled"     : false, //(this.check("create_node", data.reference, {}, "last")),
+            "label"       : "New",
             "submenu" : {
               "file" : {
-                "separator_before"	: false,
-                "separator_after"	: false,
-                "label"				: "File",
-                "action"			: function (data) {
+                "separator_before"  : false,
+                "separator_after" : false,
+                "label"       : "File",
+                "action"      : function (data) {
                   //get jstree instance
                   var inst = $.jstree.reference(data.reference),
                       //node on which user has right-clicked
@@ -140,18 +141,18 @@ NucleusSidebar = {
                     document.getElementById(res).setAttribute("data-type", "file");
 
                     var newNodeObj = inst.get_node(newNode);
-
-                    newNode.nodeType = 'file';
+                    newNode.data = newNode.data || {};
+                    newNode.data.type = 'file';
                     inst.edit(newNodeObj);
                   });
                 }
               },
               "folder" : {
-                "separator_before"	: false,
-                "icon"				: false,
-                "separator_after"	: false,
-                "label"				: "Folder",
-                "action"			: function (data) {
+                "separator_before"  : false,
+                "icon"        : false,
+                "separator_after" : false,
+                "label"       : "Folder",
+                "action"      : function (data) {
                   var inst = $.jstree.reference(data.reference),
                       obj = inst.get_node(data.reference);
                   var isRootNode = (obj.parents.length === 1);
@@ -180,7 +181,8 @@ NucleusSidebar = {
                     document.getElementById(res).setAttribute("data-type", "folder");
 
                     var newNodeObj = inst.get_node(newNode);
-                    newNode.nodeType = 'folder';
+                    newNode.data = newNode.data || {};
+                    newNode.data.type = 'folder';
 
                     inst.edit(newNodeObj);
                   });
@@ -189,23 +191,23 @@ NucleusSidebar = {
             }
           },
           "rename" : {
-            "separator_before"	: false,
-            "separator_after"	: false,
-            "_disabled"			: false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
-            "label"				: "Rename",
-            "action"			: function (data) {
+            "separator_before"  : false,
+            "separator_after" : false,
+            "_disabled"     : false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
+            "label"       : "Rename",
+            "action"      : function (data) {
               var inst = $.jstree.reference(data.reference),
                   obj = inst.get_node(data.reference);
               inst.edit(obj);
             }
           },
           "remove" : {
-            "separator_before"	: false,
-            "icon"				: false,
-            "separator_after"	: false,
-            "_disabled"			: false, //(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),
-            "label"				: "Delete",
-            "action"			: function (data) {
+            "separator_before"  : false,
+            "icon"        : false,
+            "separator_after" : false,
+            "_disabled"     : false, //(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),
+            "label"       : "Delete",
+            "action"      : function (data) {
               var inst = $.jstree.reference(data.reference),
                   obj = inst.get_node(data.reference);
               var filepath = obj.id;
