@@ -82,8 +82,14 @@ NucleusSidebar = {
               }
               FlashMessages.sendSuccess("File Renamed successfully.");
               NucleusClient.jsTree.set_id(node, newpath);
-              console.log("SETTING NODE TYPE OF", document.getElementById(node.id), "TO", oldNodeType);
               document.getElementById(node.id).setAttribute('data-type', oldNodeType);
+              node.data = node.data || {};
+              node.data.type = oldNodeType;
+
+              if (oldNodeType === 'file') {
+                NucleusClient.editFile(newpath);
+                NucleusClient.Editor.setModeForExt(Utils.getExt(newpath));
+              }
             });
           }
 
@@ -178,6 +184,7 @@ NucleusSidebar = {
                     var newFilename = res.split("/")[res.split("/").length - 1];
                     inst.set_text(newNode, newFilename);
                     inst.set_id(newNode, res);
+                    //XXX: We probably don't even need setting these data-type attrs. Probably node.data is persistent
                     document.getElementById(res).setAttribute("data-type", "folder");
 
                     var newNodeObj = inst.get_node(newNode);
@@ -185,6 +192,7 @@ NucleusSidebar = {
                     newNode.data.type = 'folder';
 
                     inst.edit(newNodeObj);
+                    inst.open_node(newNodeObj);
                   });
                 }
               }
