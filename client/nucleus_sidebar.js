@@ -129,7 +129,8 @@ NucleusSidebar = {
                   var parent = inst.get_node(parentId);
 
                   //If the node on which user has clicked is a folder, set the parent to be that folder
-                  if(document.getElementById(obj.id).getAttribute('data-type') === 'folder') {
+                  var nodeType = obj.data.type || document.getElementById(obj.id).getAttribute('data-type');
+                  if(nodeType === 'folder') {
                     parent = obj;
                     parentId = obj.id;
                   }
@@ -144,7 +145,7 @@ NucleusSidebar = {
                     var newFilename = res.split("/").reverse()[0];
                     inst.set_text(newNode, newFilename);
                     inst.set_id(newNode, res);
-                    document.getElementById(res).setAttribute("data-type", "file");
+//                    document.getElementById(res).setAttribute("data-type", "file");
 
                     var newNodeObj = inst.get_node(newNode);
                     newNode.data = newNode.data || {};
