@@ -74,7 +74,9 @@ var NucleusEditorFactory = function() {
     'css': 'css',
     'json': 'json',
     'js': 'javascript',
-    'lock': 'json'
+    'lock': 'json',
+    'less': 'less',
+    'sass': 'sass'
   };
   //This part might be over-engineered, or might not be. Objective was to have a singular point for all the events that we have on the ace-editor
   this.events = {
