@@ -54,7 +54,7 @@ var NucleusClientFactory = function () {
 
     //Configure flash messages. We are using `mrt:flash-messages` package for flash messages
     FlashMessages.configure({
-      autoHide: false,
+      autoHide: true,
       hideDelay: 3000,
       autoScroll: true
     });
@@ -85,7 +85,6 @@ var NucleusClientFactory = function () {
 
     return false;
   };
-
 
   /**
    * Get name of the the *scratch* doc. This is the document which is opened in ace when user has just logged in and haven't yet opened any document.
@@ -152,8 +151,10 @@ var NucleusClientFactory = function () {
     var filepath = nucDoc.filepath,
         isClientFile = this.isClientFile(filepath);
 
+    var shouldEvalInNucleus = /\/packages\//.test(filepath.toLowerCase());
+
     if (isClientFile || !this.isServerFile(filepath)) {
-      NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true, last_snapshot: oldDocContent}});
+      NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true, last_snapshot: oldDocContent, shouldEvalInNucleus: shouldEvalInNucleus}});
     }
   };
 
@@ -164,7 +165,7 @@ var NucleusClientFactory = function () {
    * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
    */
   this.unmarkDocForEval = function (nucDoc) {
-    NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false}});
+    NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false, shouldEvalInNucleus: false}});
   };
 
   /**
@@ -392,6 +393,12 @@ Deps.autorun(function () {
   NucleusDocuments.find({shouldEval: true}).forEach(function (doc) {
     NucleusClient.unmarkDocForEval(doc);
     NucleusClient.getWindow('app').eval('NucleusClient.evalNucleusDoc("' + doc._id + '")');
+
+    if (doc.shouldEvalInNucleus) {
+      //we can keep this here because all files no matter where they are located are evaled for app
+      console.log("EVALING FILE IN NUCLEUS");
+      NucleusClient.getWindow('nucleus').eval('NucleusClient.evalNucleusDoc("' + doc._id + '")');
+    }
   });
 });
 
