@@ -64,13 +64,13 @@ var NucleusClientFactory = function () {
     //let's override nucleusWindow's LiveUpdate.refresh so it won't re-render the editor page
     var nucOverrideInterval = Meteor.setInterval(function () {
       if (nucleusWindow.Meteor && nucleusWindow.LiveUpdate) {
-
+        this.origLiveUpdateRefreshFile = this.getWindow('app').LiveUpdate.refreshFile;
         nucleusWindow.LiveUpdate.refreshFile = function () {
           return false;
         };
         Meteor.clearInterval(nucOverrideInterval);
       }
-    }, 500);
+    }.bind(this), 500);
 
     //Configure LiveUpdate to be used as a library so it won't re-render the templates itself
     LiveUpdate.useAsLib(true);
@@ -175,15 +175,20 @@ var NucleusClientFactory = function () {
    * *Arguments:*
    * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
    */
-  this.evalNucleusDoc = function (docId) {
+  this.evalNucleusDoc = function (docId, shouldEvalInNucleus) {
     var nucDoc = NucleusDocuments.findOne(docId);
-
+    if (!nucDoc) {
+      console.log('Cant find doc with id', docId);
+      return;
+    }
     var filepath = nucDoc.filepath,
         doc = ShareJsDocs.findOne(nucDoc.doc_id),
         newFileContent = doc.data.snapshot,
         oldDocContent = nucDoc.last_snapshot;
 
-    LiveUpdate.refreshFile({
+    var refreshFunc = shouldEvalInNucleus ? this.origLiveUpdateRefreshFile : LiveUpdate.refreshFile;
+
+    refreshFunc.call(LiveUpdate, {
       newContent: newFileContent,
       fileType: this.getFileType(filepath),
       oldContent: oldDocContent,
@@ -384,7 +389,7 @@ var NucleusClientFactory = function () {
 };
 
 /**
- * EVAL AUTORUN
+ * EVAL AUTO RUN
  */
 Deps.autorun(function () {
   Meteor.subscribe('nucleusPublisher');
@@ -396,8 +401,7 @@ Deps.autorun(function () {
 
     if (doc.shouldEvalInNucleus) {
       //we can keep this here because all files no matter where they are located are evaled for app
-      console.log("EVALING FILE IN NUCLEUS");
-      NucleusClient.getWindow('nucleus').eval('NucleusClient.evalNucleusDoc("' + doc._id + '")');
+      NucleusClient.evalNucleusDoc(doc._id, true);
     }
   });
 });

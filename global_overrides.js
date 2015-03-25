@@ -18,3 +18,4 @@ Meteor.Collection.prototype.insert = function() {
   }
   return originalInsert.apply(ctx, args);
 };
+  
