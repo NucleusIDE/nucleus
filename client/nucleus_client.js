@@ -401,7 +401,19 @@ Deps.autorun(function () {
 
     if (doc.shouldEvalInNucleus) {
       //we can keep this here because all files no matter where they are located are evaled for app
+
+      var oldCursorPosition = NucleusClient.Editor.editor.getCursorPosition(),
+          oldScrollPosition = [NucleusClient.Editor.editor.session.getScrollTop(), NucleusClient.Editor.editor.session.getScrollLeft()];
+
       NucleusClient.evalNucleusDoc(doc._id, true);
+      //Since we re-render the whole window in nucleus on file change, the window flickers a little
+      //and the cursor position is lost. Let's get the cursor position and set it back after the window flicker
+      Meteor.setTimeout(function() {
+        NucleusClient.Editor.editor.moveCursorToPosition(oldCursorPosition);
+        NucleusClient.Editor.editor.session.setScrollTop(oldScrollPosition[0]);
+        NucleusClient.Editor.editor.session.setScrollLeft(oldScrollPosition[1]);
+        NucleusClient.Editor.editor.focus();
+      }, 400);
     }
   });
 });

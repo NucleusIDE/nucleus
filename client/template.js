@@ -89,7 +89,6 @@ Template.editor.config = function () {
     NucleusEditor.initialize(editor);
   };
 };
-
 Template.editor.setMode = function() {
   return function(editor) {
     /**
@@ -113,7 +112,6 @@ Template.editor.helpers({
     return Session.get('nucleus_selected_doc_id') || 'scratch';
   }
 });
-
 Template.nucleus_toolbar.helpers({
   recievingEvents: function(app) {
     if (NucleusUser.me())

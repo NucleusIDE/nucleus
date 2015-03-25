@@ -10,18 +10,18 @@
   {{/if}}
 </template> 
 
-<template name="nucleus_nick_prompt">
+<template name="nucleus_nick_prompt"> 
   {{#if no_nuc_user}} 
-  <div id="nucleus_nick_prompt">
+  <div id="nucleus_nick_prompt"> 
     <div id="nick_form" action="#"> 
       <input id="nick" type="text" placeholder="Enter Nick and press Enter"/>
       <!-- <a id="as_a_guest" href="#">Visit as Guest</a> -->
-    </div>
-  </div>  
-  {{/if}} 
+    </div> 
+  </div> 
+  {{/if}}
 </template> 
   
-<template name="nucleus_topbar">
+<template name="nucleus_topbar"> 
   <div id="nucleus_topbar">
     <div class="button-group button-group-left">
       <a id="nucleus_show_terminal" class="nuc-btn-custom nuc-btn-topbar nuc-btn-dark" href="#">
@@ -39,13 +39,13 @@
   <div id="sidebar">
     {{> nucleus_tree_widget}}
     {{> nucleus_toolbar}} 
-    {{> footer_controls}}
+    {{> footer_controls}} 
   </div>
 </template>
 
 <template name="nucleus_tree_widget">
   <div class="sidebar-marker-label">
-    File System
+    File Systemetic
   </div>
   <div id="nucleus_file_tree">
     {{{tree}}}
@@ -74,7 +74,7 @@
         Pull</a>
       <a id="push_changes" class="nuc-btn-custom nuc-btn-dark nuc-btn-30">
         <i style="font-size: 16px;padding: 0 2px;margin-left: -10px;" class="fa fa-level-up"></i>
-        Push</a>
+        Push</a> 
     </div>
 
     <div class="sidebar-row sidebar-commit-row">
