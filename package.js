@@ -8,6 +8,7 @@ Package.describe({
 
 Npm.depends({
   'fibers': '1.0.2',
+  'github-oauth': '0.2.1',
   'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/f3716eaa97ef7fbe6959f216d5d6490b29667f7c.tar.gz'
 });
 
@@ -96,6 +97,7 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
+    'server/routes.js',
     'server/git_operations.js',
     'server/crash_watcher.js',
     'server/nucleus.js',
