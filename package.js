@@ -97,7 +97,7 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
-    'server/routes.js',
+    'server/login-routes.js',
     'server/git_operations.js',
     'server/crash_watcher.js',
     'server/nucleus.js',

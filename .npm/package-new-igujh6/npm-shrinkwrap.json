@@ -1,0 +1,58 @@
+{
+  "dependencies": {
+    "fibers": {
+      "version": "1.0.2"
+    },
+    "github-oauth": {
+      "version": "0.2.1",
+      "dependencies": {
+        "request": {
+          "version": "2.12.0",
+          "dependencies": {
+            "form-data": {
+              "version": "0.0.3",
+              "dependencies": {
+                "combined-stream": {
+                  "version": "0.0.3",
+                  "dependencies": {
+                    "delayed-stream": {
+                      "version": "0.0.5"
+                    }
+                  }
+                },
+                "async": {
+                  "version": "0.1.9"
+                }
+              }
+            },
+            "mime": {
+              "version": "1.2.7"
+            }
+          }
+        }
+      }
+    },
+    "nucleus-watch-meteor": {
+      "version": "https://github.com/NucleusIDE/nucleus-watch-meteor/archive/f3716eaa97ef7fbe6959f216d5d6490b29667f7c.tar.gz",
+      "dependencies": {
+        "commander": {
+          "version": "2.6.0"
+        },
+        "ncp": {
+          "version": "1.0.1"
+        },
+        "shelljs": {
+          "version": "0.3.0"
+        },
+        "watch": {
+          "version": "0.13.0",
+          "dependencies": {
+            "minimist": {
+              "version": "1.1.0"
+            }
+          }
+        }
+      }
+    }
+  }
+}

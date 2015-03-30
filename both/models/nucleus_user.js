@@ -14,6 +14,11 @@
  * We are not using meteor's password based auth, or any kind of auth for nucleus. We have our own user system. Users log in by providing a nick. That nick sets a session variable and a cookie which are removed `onbeforeunload` of `window`.
  */
 
+var Future = null;
+
+if (Meteor.isServer) {
+  Future = Npm.require('fibers/Future');
+}
 
 NucleusUsers = new Meteor.Collection('nucleus_users');
 NucleusUser = Model(NucleusUsers);
@@ -124,12 +129,12 @@ NucleusUser.new = function(nick) {
 
   var existingUser = NucleusUsers.findOne({nick: nick});
   if(existingUser) {
-	  if(!$.cookie('nick')) return false;
-	  else { //set remembered user as the user
-		  $.cookie("nucleus_user", existingUser._id);
-		  Session.set("nucleus_user", existingUser._id);
-		  return existingUser;
-	  }
+    if(!$.cookie('nick')) return false;
+    else { //set remembered user as the user
+      $.cookie("nucleus_user", existingUser._id);
+      Session.set("nucleus_user", existingUser._id);
+      return existingUser;
+    }
   }
 
   var newUser = new NucleusUser();
@@ -144,3 +149,45 @@ NucleusUser.new = function(nick) {
   return newUser;
 };
 
+NucleusUser.createNewUser = function(github_data) {
+  if(Meteor.isServer) {
+    if (_.isString(github_data))
+      github_data = JSON.parse(github_data);
+
+    var newUser = new NucleusUser();
+
+    newUser.username = github_data.login;
+    newUser.email = github_data.email;
+    newUser.created_at = moment().toDate();
+    newUser.github_data = github_data;
+
+    newUser.save();
+    return newUser;
+  }
+
+  throw new Meteor.Error('New Nucleus Users can be created from server only. Try to log them in with their github');
+};
+
+NucleusUser.loginWithGithubToken = function(token) {
+  if (Meteor.isServer) {
+    var api_endpoint = 'https://api.github.com/user?access_token=' + token.access_token,
+        options = { headers: { "user-agent": 'Nucleuside/1.0'}},
+        nucUser = null,
+        fut = new Future;
+
+    try {
+      var user = JSON.parse(HTTP.get(api_endpoint, options).content);
+      nucUser = NucleusUsers.findOne({'username': user.login});
+
+      if(!nucUser) {
+        nucUser = NucleusUser.createNewUser(user);
+      }
+
+      fut.return(nucUser);
+    } catch(e) {
+      console.log("Error occurred when getting Github user data", e);
+    }
+
+    return fut.wait();
+  }
+};
