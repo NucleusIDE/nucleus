@@ -3,3 +3,4 @@
 .build.channikhabra:nucleus/*
 .build*
 docs/*
+.npm
