@@ -1,10 +1,9 @@
 Meteor.startup(function () {
-  var logInUser = function(user) {
+  var nucleusUserLogin = function(user) {
     $.cookie('nucleus-logged-in-user', JSON.stringify(user));
   };
 
-  var userIsLoggedIn = function(cb) {
-    var user = JSON.parse($.cookie('nucleus-logged-in-user'));
+  var isValidUserInfo = function(user, cb) {
     if (! user)
       return cb(null, false);
 
@@ -21,26 +20,55 @@ Meteor.startup(function () {
     },
     onBeforeAction: function() {
       NucleusClient.initialize({}, window);
-      userIsLoggedIn(function(err, isLoggedIn) {
+
+      var userInfo = JSON.parse($.cookie('nucleus-logged-in-user'));
+
+      isValidUserInfo(userInfo, function(err, valid) {
         if (err) {
           console.log("Error occurred while checking nucleus user's login status", err);
           return;
         }
 
-        if (isLoggedIn) {
-          /**
-           * We want to remove the `Login With Github` overlay if user has correct tokens. But instead of manually doing so, we simply subscribe to the NucleusUser. This with the help of a helper in template removes the overlay
-           */
-          Meteor.subscribe('logged_in_nucleus_user');
+        if (valid) {
+          console.log("IS userinfo valid? ", valid);
+          Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
+          NucleusClient.currentUser.set(NucleusUsers.findOne({username: userInfo.username}));
+          Session.set('should_show_nucleus_login_button', false);
         }
       });
     },
     onAfterAction: function() {
-      if (this.params.query) {
-        console.log("QUERY: ", this.params.query);
+      var username = this.params['user'],
+          loginToken = this.params['login_token'];
+
+      if (username && loginToken) {
+        var userInfo = {username: username, login_token: loginToken};
+
+        //We can just set the cookie without verifying it here because we navigate to same route again
+        //to clear the query params. Then it gets checked in onBeforeAction
+        nucleusUserLogin(userInfo);
+        Router.go('nucleus');
       }
     }
   });
+
+  Router.route('test', {
+    path: '/test',
+    action: function() {
+      this.render('nucleus_topbar');
+    },
+    onAfterAction: function() {
+      console.log("ROUTER AFTER ACTION");
+      var username = this.params['username'],
+          loginToken = this.params['login_token'];
+
+      if (username && loginToken) {
+        console.log("UN LT", username, loginToken);
+
+        Router.go('test');
+      }
+    }
+  })
 
 
 });

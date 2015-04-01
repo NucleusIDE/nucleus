@@ -25,7 +25,8 @@ Template.nucleus_nick_prompt.rendered = function() {
 
 Template.nucleus_nick_prompt.helpers({
   no_nuc_user: function() {
-    return !NucleusUser.me();
+    Session.setDefault('should_show_nucleus_login_button', true);
+    return Session.get('should_show_nucleus_login_button');
   }
 });
 

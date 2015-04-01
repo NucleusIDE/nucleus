@@ -158,14 +158,13 @@ Meteor.methods({
   },
   nucleusCheckUserToken: function(userinfo) {
     var username = userinfo.username,
-        loginToken = userinfo.loginToken;
+        loginToken = userinfo.login_token;
 
-    var nucUser = NucleusUsers.findOne({username: username}, {fields: 'login_tokens'});
+    var nucUser = NucleusUsers.findOne({username: username});
 
-    var validTokens = nucUser.login_tokens.map(function(tokenMap) {
-      return tokenMap.token;
-    });
+    if (!nucUser)
+      return false;
 
-    return _.contains(validTokens, loginToken);
+    return nucUser.hasValidLoginToken(loginToken);
   }
 });

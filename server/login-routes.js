@@ -36,8 +36,10 @@ Meteor.startup(function() {
       });
 
       githubOAuth.on('token', function(token, res) {
-        var nucUser = NucleusUser.loginWithGithubToken(token),
-            loginToken = nucUser.getLoginToken();
+        var nucUser = NucleusUser.loginWithGithubToken(token);
+        var loginToken = nucUser.getLoginToken();
+
+        console.log("LOGIN TOKEN", loginToken);
 
         var url = baseUrl + '/nucleus?user='+nucUser.username+'&login_token='+loginToken;
 

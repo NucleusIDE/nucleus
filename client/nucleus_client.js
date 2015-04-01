@@ -73,6 +73,11 @@ var NucleusClientFactory = function () {
     this.PluginManager = new NucleusPluginManager(this);
     this.registerPlugin = this.PluginManager.registerPlugin.bind(this.PluginManager);
 
+    /**
+     * Let's keep the current user on NucleusClient, and use NucleusUser as just a way of handling users. Not as an interface
+     */
+    this.currentUser = new ReactiveVar(null);
+
     return false;
   };
 
@@ -411,9 +416,3 @@ Deps.autorun(function () {
 
 //Create NucleusClient Global
 NucleusClient = new NucleusClientFactory();
-
-//This deletes the current user when they quit nucleus window
-NucleusClient.getWindow().onbeforeunload = function () {
-  console.log("UNLOADING NUCLEUS WINDOW");
-  NucleusUser.me().delete();
-};

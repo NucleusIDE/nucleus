@@ -58,20 +58,32 @@ NucleusUser.extend({
 
   getLoginToken: function() {
     if (Meteor.isServer) {
-      if (this.login_tokens.length) {
+      if (typeof this.login_tokens !== 'undefined' && this.login_tokens.length !== 0) {
         return this.login_tokens[0].token;
       }
 
       var crypto = Npm.require('crypto'),
           username = this.username,
           id = this._id,
-          date = moment.toDate().valueOf().toString(),
+          date = moment().toDate().valueOf().toString(),
           salt = Math.random().toString();
 
       var token = crypto.createHash('sha1').update(username + id + date + salt).digest('hex');
+      this.update({login_tokens: [{token: token, created_at: moment().toDate()}]});
+
       return token;
     }
     return null;
+  },
+  hasValidLoginToken: function(token) {
+    if (typeof this.login_tokens === 'undefined')
+      return false;
+
+    var myTokens = this.login_tokens.map(function(t) {
+      return t.token;
+    });
+
+    return _.contains(myTokens, token);
   },
 
   toggleEventSync: function(app, shouldRecieve) {
@@ -138,11 +150,9 @@ NucleusUser.me = function() {
   if(Meteor.isServer) throw new Error("Client only method");
   var userInfo = JSON.parse($.cookie('nucleus-logged-in-user'));
 
-  if (userInfo) {
-    return NucleusUsers.findOne({username: userInfo.username});
-  }
+  userInfo = userInfo || {}; //so doing userInfo.username wont' throw
 
-  return false;
+  return NucleusUsers.findOne({username: userInfo.username});
 };
 
 NucleusUser.new = function(nick) {
@@ -208,12 +218,13 @@ NucleusUser.loginWithGithubToken = function(token) {
       nucUser = NucleusUsers.findOne({'username': user.login});
 
       if(!nucUser) {
-        nucUser = NucleusUser.createNewUser(user);
+        nucUser = NucleusUser._createNewUser(user);
       }
 
       fut.return(nucUser);
     } catch(e) {
       console.log("Error occurred when getting Github user data", e);
+      fut.throw(new Meteor.Error(e));
     }
 
     return fut.wait();
