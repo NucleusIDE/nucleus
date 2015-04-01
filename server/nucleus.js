@@ -4,7 +4,6 @@
 
 Meteor.startup(function() {
   Nucleus.initialize({
-
     preventAppCrashes: false
   });
 });
@@ -27,7 +26,9 @@ NucleusFactory = function() {
     git: '',
     project: '',
     preventAppCrashes: true,
-    terminalInitialized: false
+    terminalInitialized: false,
+    user: null,
+    password: null
   };
 
   this.Terminal = {};
@@ -66,14 +67,26 @@ NucleusFactory = function() {
 
     var pathParts = process.env.PWD.split('/');
     Nucleus.config.project = pathParts[pathParts.length - 1];
-
-    console.log('Project DIR: ' + Nucleus.config.projectDir);
     //Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
+
+    var user = Nucleus.config.user,
+        password = Nucleus.config.password;
+
+    if (user && password) {
+      var basicAuth = new HttpBasicAuth(user, password);
+      basicAuth.protect();
+
+      this.Terminal.configure({user: user, password: password});
+    } else {
+      console.warn("Make sure you have set user/password for first line of fire protection");
+      console.warn("Nucleus.configure({user: 'username', password: 'password'})");
+    }
   };
 
   //This method is called on nucleus initialization on the server (in the app).
   this.initialize = function(config) {
     config && this.configure(config);
+
     //this.nucleusCloneRepo();
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();

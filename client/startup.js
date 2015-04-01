@@ -52,24 +52,4 @@ Meteor.startup(function () {
       }
     }
   });
-
-  Router.route('test', {
-    path: '/test',
-    action: function() {
-      this.render('nucleus_topbar');
-    },
-    onAfterAction: function() {
-      console.log("ROUTER AFTER ACTION");
-      var username = this.params['username'],
-          loginToken = this.params['login_token'];
-
-      if (username && loginToken) {
-        console.log("UN LT", username, loginToken);
-
-        Router.go('test');
-      }
-    }
-  })
-
-
 });

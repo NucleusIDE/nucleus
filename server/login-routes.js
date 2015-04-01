@@ -62,4 +62,17 @@ Meteor.startup(function() {
     }
   });
 
+
+  Router.route('', {
+    name: 'auth',
+    where: 'server',
+    action: function() {
+      console.log("GOING TO ROUTE NODE");
+      var req = this.request,
+          res = this.response;
+
+      this.response.next();
+    }
+  });
+
 });
