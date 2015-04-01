@@ -13,10 +13,11 @@ Meteor.publish("all_nucleus_users", function() {
 });
 
 Meteor.publish("logged_in_nucleus_user", function(username, loginToken) {
-  var user = NucleusUsers.find({username: username});
+  var userCursor = NucleusUsers.find({username: username}),
+      user = userCursor.fetch()[0];
 
-  if (user.fetch()[0].hasValidLoginToken(loginToken)) {
-    return user;
+  if (typeof user !== 'undefined' && user.hasValidLoginToken(loginToken)) {
+    return userCursor;
   }
 
   return false;

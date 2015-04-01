@@ -9,7 +9,7 @@
  * * cursor_pos                        ARRAY [row, col]
  * * syncing_nucleus_events            BOOLEAN
  * * syncing_app_events                BOOLEAN
- * * login_tokens                      [{token: STRING, created_at: DATE}] (valid login tokes for user)
+ * * login_tokens                      [{token: STRING, created_at: DATE}] (valid login tokens for user)
  * * github_data                       Object. All data from github
  * * created_at                        Date
  *
@@ -198,6 +198,7 @@ NucleusUser._createNewUser = function(github_data) {
     newUser.email = github_data.email;
     newUser.created_at = moment().toDate();
     newUser.github_data = github_data;
+    newUser.nick = newUser.username;
 
     newUser.save();
     return newUser;
@@ -217,9 +218,18 @@ NucleusUser.loginWithGithubToken = function(token) {
       var user = JSON.parse(HTTP.get(api_endpoint, options).content);
       nucUser = NucleusUsers.findOne({'username': user.login});
 
-      if(!nucUser) {
+      if(typeof nucUser === 'undefined') {
+        console.log("Creating new Nucleus User");
         nucUser = NucleusUser._createNewUser(user);
       }
+
+      nucUser.update({
+        color: Utils.getRandomColor(),
+        //XXX: there is a method in nucleusclient for setting scratch doc
+        cwd: 'scratch',
+        status: 3,
+        last_keepalive: moment().toDate().getTime()
+      });
 
       fut.return(nucUser);
     } catch(e) {

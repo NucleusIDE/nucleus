@@ -30,9 +30,11 @@ Meteor.startup(function () {
         }
 
         if (valid) {
+          var nucUser = NucleusUsers.findOne({username: userInfo.username});
           Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
-          NucleusClient.currentUser.set(NucleusUsers.findOne({username: userInfo.username}));
+          NucleusClient.currentUser.set(nucUser);
           Session.set('should_show_nucleus_login_button', false);
+          Session.set("nucleus_user", nucUser._id);
         }
       });
     },

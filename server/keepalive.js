@@ -7,20 +7,19 @@ Meteor.startup(function() {
 
   Meteor.methods({
     keepalive: function (nick, status) {
-      Meteor.users.update({nick: nick}, {$set: {last_keepalive: moment().toDate().getTime() - 0, status: status}});
+      NucleusUsers.update({nick: nick}, {$set: {last_keepalive: moment().toDate().getTime() - 0, status: status}});
     }
   });
 
-  Meteor.startup(function() {
-    Meteor.setInterval(function () {
-      var offline_threshold = moment().toDate().getTime() - (120*1000);
 
-      Meteor.users.update(
-        {last_keepalive: {$lt: offline_threshold}},
-        {$set: {status: Statuses.OFFLINE}},
-        {multi: true}
-      );
+  Meteor.setInterval(function () {
+    var offline_threshold = moment().toDate().getTime() - (120*1000);
 
-    }, 60*1000);
-  });
+    NucleusUsers.update(
+      {last_keepalive: {$lt: offline_threshold}},
+      {$set: {status: Statuses.OFFLINE}},
+      {multi: true}
+    );
+
+  }, 60*1000);
 });
