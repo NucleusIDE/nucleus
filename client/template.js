@@ -12,57 +12,11 @@ Template.nucleus.helpers({
 Template.nucleus_tree_widget.rendered = function() {
   $("#nucleus_file_tree").css({maxHeight: ($(window).height()*50)/100});
 };
-Template.nucleus_nick_prompt.rendered = function() {
-  if($.cookie('nick')) NucleusUser.new($.cookie('nick'));
 
-  //This is just a remider in case we change css in stylesheet and keyup handler in events fuck up styles on error/success
-  $("#nick").css({
-    boxShadow: "0 0 29px 0px rgba(17,153,230, 0.9)",
-    border: "1px solid rgba(17,153,230,0.5)"
-  });
-  $("#nick").focus();
-};
-
-Template.nucleus_nick_prompt.helpers({
+Template.nucleus_login_prompt.helpers({
   no_nuc_user: function() {
     Session.setDefault('should_show_nucleus_login_button', true);
     return Session.get('should_show_nucleus_login_button');
-  }
-});
-
-Template.nucleus_nick_prompt.events({
-  "blur #nick": function() {
-    $("#nick").focus();
-  },
-  "keyup #nick": function(e) {
-    e.preventDefault();
-    var $in = $("#nick"),
-        nick = $in.val(),
-        validNick = nick.length > 3 && ! NucleusUsers.findOne({nick: $in.val()}) && nick.indexOf(" ") < 0;
-
-    if($in.val() === "") {
-      $("#nick").css({
-        boxShadow: "0 0 29px 0px rgba(17,153,230, 0.9)",
-        border: "1px solid rgba(17,153,230,0.5)"
-      });
-      return false;
-    }
-
-    if (!validNick) {
-      $("#nick").css({
-        boxShadow: "0 0 29px 0px rgba(218, 61, 66, 0.9)",
-        border: "1px solid rgba(218, 61, 66,0.5)"
-      });
-    } else {
-      $("#nick").css({
-        boxShadow: "0 0 29px 0px rgba(17, 230, 179, 0.9)",
-        border: "1px solid rgba(17, 230, 179, 0.5)"
-      });
-    }
-
-    if (e.keyCode === 13 && validNick) {
-      var nucUser = NucleusUser.new(nick);
-    }
   }
 });
 

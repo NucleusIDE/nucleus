@@ -1,6 +1,6 @@
 <template name="nucleus">
   {{#if showNucleus}}
-  {{> nucleus_nick_prompt}}
+  {{> nucleus_login_prompt}}
   {{> terminal}}
   {{> nucleus_video_chat_film}}
   {{> nucleus_sidebar}}
@@ -10,10 +10,10 @@
   {{/if}}
 </template>
 
-<template name="nucleus_nick_prompt">
+<template name="nucleus_login_prompt">
   {{#if no_nuc_user}}
-  <div id="nucleus_nick_prompt">
-    <div id="nick_form" action="#">
+  <div id="nucleus_login_prompt">
+    <div id="nucleus_login_form" action="#">
       <a class="login-with-github-btn" href="/nucleus-github-login">
         <i class="fa fa-github"></i> Sign in with Github
       </a>

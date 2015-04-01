@@ -30,7 +30,6 @@ Meteor.startup(function () {
         }
 
         if (valid) {
-          console.log("IS userinfo valid? ", valid);
           Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
           NucleusClient.currentUser.set(NucleusUsers.findOne({username: userInfo.username}));
           Session.set('should_show_nucleus_login_button', false);
