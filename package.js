@@ -63,6 +63,7 @@ Package.on_use(function (api, where) {
     'client/nucleus_client.js',
     'client/nucleus_sidebar.js',
     'client/keepalive.js',
+    'client/startup.js',
 
     'client/template.css',
     'client/template.html',
@@ -97,6 +98,7 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
+    'server/publishers.js',
     'server/login-routes.js',
     'server/git_operations.js',
     'server/crash_watcher.js',

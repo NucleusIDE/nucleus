@@ -1,15 +1,18 @@
 /**
  # NucleusUser
  ## Attributes
- * * _id :                          MONGO ID
- * * nick :                        STRING (Nickname)
- * * cwd :                         MONGO ID (Current Working Document)
- * * current_filepath :                     STRING
- * * color :                        STRING
- * * cursor_pos :                  ARRAY [row, col]
- * * syncing_nucleus_events :       BOOLEAN
- * * syncing_app_events :       BOOLEAN
-
+ * * _id                               MONGO ID
+ * * nick                              STRING (Nickname)
+ * * cwd                               MONGO ID (Current Working Document)
+ * * current_filepath                  STRING
+ * * color                             STRING
+ * * cursor_pos                        ARRAY [row, col]
+ * * syncing_nucleus_events            BOOLEAN
+ * * syncing_app_events                BOOLEAN
+ * * login_tokens                      [{token: STRING, created_at: DATE}] (valid login tokes for user)
+ * * github_data                       Object. All data from github
+ * * created_at                        Date
+ *
  * ## Why?
  * We are not using meteor's password based auth, or any kind of auth for nucleus. We have our own user system. Users log in by providing a nick. That nick sets a session variable and a cookie which are removed `onbeforeunload` of `window`.
  */
@@ -51,6 +54,24 @@ NucleusUser.extend({
   },
   setCurrentFilepath: function(filepath) {
     this.update({currentFilepath: filepath});
+  },
+
+  getLoginToken: function() {
+    if (Meteor.isServer) {
+      if (this.login_tokens.length) {
+        return this.login_tokens[0].token;
+      }
+
+      var crypto = Npm.require('crypto'),
+          username = this.username,
+          id = this._id,
+          date = moment.toDate().valueOf().toString(),
+          salt = Math.random().toString();
+
+      var token = crypto.createHash('sha1').update(username + id + date + salt).digest('hex');
+      return token;
+    }
+    return null;
   },
 
   toggleEventSync: function(app, shouldRecieve) {
@@ -115,9 +136,13 @@ NucleusUser.me = function() {
    */
 
   if(Meteor.isServer) throw new Error("Client only method");
-  var nucUserId = Session.get('nucleus_user') || $.cookie("nucleus_user");
+  var userInfo = JSON.parse($.cookie('nucleus-logged-in-user'));
 
-  return NucleusUsers.findOne(nucUserId);
+  if (userInfo) {
+    return NucleusUsers.findOne({username: userInfo.username});
+  }
+
+  return false;
 };
 
 NucleusUser.new = function(nick) {
@@ -149,7 +174,10 @@ NucleusUser.new = function(nick) {
   return newUser;
 };
 
-NucleusUser.createNewUser = function(github_data) {
+NucleusUser._createNewUser = function(github_data) {
+  /**
+   * Create new nucleus user. Should not be used by itself. Always `NucleusUser.loginWithGithubToken`, it will call this method if needed
+   */
   if(Meteor.isServer) {
     if (_.isString(github_data))
       github_data = JSON.parse(github_data);

@@ -9,7 +9,6 @@ Meteor.methods({
   nucleusGetFileList: function() {
     return Nucleus.getDirTree({rootDir: Nucleus.config.projectDir, parent: "#", traverseSymlinks: true});
   },
-
   nucleusGetFileContents: function(filepath) {
     /**
      * Has equivalent `Nucleus.getFileContents(filepath)`. Shall be replaced with it in next refactoring.
@@ -26,7 +25,6 @@ Meteor.methods({
     });
     return fut.wait();
   },
-
   nucleusSaveDocToDisk: function(docId) {
     /**
      * Saves the doc (the changes made in the ace editor) back to the filesystem. Like any other method containing any code in this file, this should be moved to `Nucleus`
@@ -65,7 +63,6 @@ Meteor.methods({
 
     return fut.wait();
   },
-
   nucleusSetupFileForEditting: function(filepath, forceRefresh) {
     /**
      * Sets up `filepath` for editing. It would fetch the contents of the file from the filesystem and put them in a sharejs doc and return the `docId` of newly created doc.
@@ -158,5 +155,17 @@ Meteor.methods({
   },
   nucleusIsTerminalConfigured: function() {
     return Nucleus.config.terminalInitialized;
+  },
+  nucleusCheckUserToken: function(userinfo) {
+    var username = userinfo.username,
+        loginToken = userinfo.loginToken;
+
+    var nucUser = NucleusUsers.findOne({username: username}, {fields: 'login_tokens'});
+
+    var validTokens = nucUser.login_tokens.map(function(tokenMap) {
+      return tokenMap.token;
+    });
+
+    return _.contains(validTokens, loginToken);
   }
 });

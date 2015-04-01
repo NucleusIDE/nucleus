@@ -4,8 +4,7 @@
 Meteor.startup(function() {
   var Future = Npm.require('fibers/Future');
 
-  var url = Npm.require('url'),
-      GithubAPI = Npm.require('github-api');
+  var url = Npm.require('url');
 
   process.env.NUCLEUS_GITHUB_CLIENT_ID = 'a799a8fd956a00498c92';
   process.env.NUCLEUS_GITHUB_CLIENT_SECRET = 'a15b09920b546a91724d5611f1df1b25c114bb72';
@@ -37,11 +36,11 @@ Meteor.startup(function() {
       });
 
       githubOAuth.on('token', function(token, res) {
-        var nucUser = NucleusUser.loginWithGithubToken(token);
+        var nucUser = NucleusUser.loginWithGithubToken(token),
+            loginToken = nucUser.getLoginToken();
 
-        console.log("NUCLEUS USER IS", nucUser);
+        var url = baseUrl + '/nucleus?user='+nucUser.username+'&login_token='+loginToken;
 
-        var url = baseUrl + '/nucleus';
         res.statusCode = 302;
         res.setHeader('location', url);
         res.end();

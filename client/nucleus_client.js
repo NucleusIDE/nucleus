@@ -3,16 +3,6 @@
  *
  */
 
-Meteor.startup(function () {
-  Router.route('nucleus', {
-    path: '/nucleus',
-    layoutTemplate: 'nucleus',
-    onBeforeAction: function() {
-      NucleusClient.initialize({}, window);
-    }
-  });
-});
-
 var NucleusClientFactory = function () {
   /**
    * It should be the centralized access point for most of the operations on Nucleus on the client side.

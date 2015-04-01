@@ -344,15 +344,5 @@ NucleusFactory = function() {
 
 };
 
-//Publishes all the collections required by nucleus with no limits or checks
-Meteor.publish("nucleusPublisher",function() {
-  return [
-    NucleusDocuments.find({}),
-    ShareJsDocs.find({}),
-    NucleusUsers.find({}),
-    NucleusEvents.find({})
-  ];
-});
-
 //Creat server side global `Nucleus` using the above constructor
 Nucleus = new NucleusFactory();
