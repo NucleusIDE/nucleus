@@ -225,5 +225,50 @@
 <template name="nucleus_deploy_form">
   <div id="nucleus-deploy-form" class="nucleus-deploy-form">
     <div class="line-number-row"></div>
+
+    <div class="nucleus-deploy-tab-bar">
+      <div class="meteor-deploy {{meteorDeployClass}}">Meteor</div>
+      <div class="custom-deploy {{customDeployClass}}">Custom</div>
+    </div>
+
+    <div class="nucleus-deploy-form-window">
+      <h1 class="nucleus-deploy-header">Deploy</h1>
+      <div class="nucleus-deploy-main-form">
+        {{#if deploying_to_meteor}}
+        {{> deploy_form_meteor}}
+        {{else}}
+        {{> deploy_form_custom}}
+        {{/if}}
+        <div class="nucleus-deploy-form-submit-button">
+          Deploy
+        </div>
+
+      </div>
+
+    </div>
   </div>
+</template>
+
+<template name="meteor_deploy">
+</template>
+
+<template name="deploy_form_meteor">
+  <div class="nuc-form-row">
+    <label for="subdomain">Subdomain</label>
+    <input name="subdomain" type="text" value=""/>
+  </div>
+
+  <div class="nuc-form-row">
+    <label for="subdomain">Meteor Username</label>
+    <input name="subdomain" type="text" value=""/>
+  </div>
+
+  <div class="nuc-form-row">
+    <label for="subdomain">Meteor Password</label>
+    <input name="subdomain" type="password" value=""/>
+  </div>
+</template>
+
+<template name="deploy_form_custom">
+
 </template>

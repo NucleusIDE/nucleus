@@ -8,7 +8,8 @@ ReactiveVar.prototype.toggle = function() {
 };
 
 var LocalReactiveVars = {
-  shouldShowDeployForm: new ReactiveVar(false)
+  shouldShowDeployForm: new ReactiveVar(false),
+  deployToMeteor: new ReactiveVar(true),
 };
 
 Template.nucleus.helpers({
@@ -584,7 +585,23 @@ Template.nucleus_master_prompt.events({
 ///////////////////////
 
 Template.nucleus_deploy_form.helpers({
-
+  deploying_to_meteor: function() {
+    return LocalReactiveVars.deployToMeteor.get();
+  },
+  meteorDeployClass: function() {
+    return LocalReactiveVars.deployToMeteor.get() ? 'nucleus-deploy-active' : '';
+  },
+  customDeployClass: function() {
+    return LocalReactiveVars.deployToMeteor.get() ? '' : 'nucleus-deploy-active';
+  }
+});
+Template.nucleus_deploy_form.events({
+  "click .meteor-deploy": function(e) {
+    LocalReactiveVars.deployToMeteor.set(true);
+  },
+  "click .custom-deploy": function(e) {
+    LocalReactiveVars.deployToMeteor.set(false);
+  }
 });
 
 
