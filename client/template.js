@@ -2,6 +2,15 @@
  * # Templates
  */
 
+ReactiveVar.prototype.toggle = function() {
+  var val = this.get();
+  this.set(! val);
+};
+
+var LocalReactiveVars = {
+  shouldShowDeployForm: new ReactiveVar(false)
+};
+
 Template.nucleus.helpers({
   showNucleus: function() {
     return true;
@@ -63,6 +72,10 @@ Template.editor.setMode = function() {
 };
 
 Template.editor.helpers({
+  is_deploying: function() {
+    console.log(LocalReactiveVars.shouldShowDeployForm.get());
+    return LocalReactiveVars.shouldShowDeployForm.get();
+  },
   docid: function() {
     return Session.get('nucleus_selected_doc_id') || 'scratch';
   }
@@ -130,17 +143,9 @@ Template.nucleus_toolbar.events({
       else FlashMessages.sendError("Something Went Wrong While Pulling Changes");
     });
   },
-  "click #mup_deploy": function(e) {
-    var $btn = $("#mup_deploy");
-    var btnClasses = $btn.find('i').attr('class');
-    spinBtn($btn);
+  "click #nuc_deploy": function(e) {
     e.preventDefault();
-    var should_mup_setup = true;
-    Meteor.call("nucleusMupDeploy", should_mup_setup, function(err, res) {
-      unSpinBtn($btn, btnClasses);
-      if (res === 1) FlashMessages.sendSuccess("Deployed Successfully");
-      else FlashMessages.sendError("Something Went Wrong While Deploying. Please make sure you have mup.json in project root and it has correct settings.");
-    });
+    LocalReactiveVars.shouldShowDeployForm.toggle();
   },
   "click #sync_app_events": function(e) {
     e.preventDefault();
@@ -573,3 +578,16 @@ Template.nucleus_master_prompt.events({
 /////////////////////////////////
 //  END NUCLEUS MASTER PROMPT //
 /////////////////////////////////
+
+///////////////////////
+// START DEPLOY FORM //
+///////////////////////
+
+Template.nucleus_deploy_form.helpers({
+
+});
+
+
+//////////////////////
+// END DEPLOY FORM  //
+//////////////////////

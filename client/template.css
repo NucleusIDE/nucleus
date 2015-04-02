@@ -687,3 +687,18 @@ body {
 .nucleus-master-prompt-active {
   background: rgba(70, 80, 90, .32);
 }
+
+
+/* start nucleus-deploy-form */
+.nucleus-deploy-form {
+  float: right;
+  width: 80%;
+  height: calc(100vh - 35px) !important;
+  background: #272822;
+}
+.line-number-row {
+  height: inherit;
+  width: 41px;
+  background: #2F3129;
+}
+/* end nucleus-deploy-form */
