@@ -17,7 +17,7 @@ Future = Npm.require('fibers/future');
 /**
  It defines `Nucleus` on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file  contents for editing etc. Most of the methods here are synchronous. I don't exactly remember what the issue was for which I chose synchronous over async. My initial approach was to use async flow in here, but I opted for sync shortly after starting.
  */
-NucleusFactory = function() {
+var NucleusFactory = function() {
   var homeDir = process.env.HOME,
       nucleusDir = path.join(homeDir, ".nucleus"),
       self = this;
@@ -88,6 +88,7 @@ NucleusFactory = function() {
     config && this.configure(config);
 
     //this.nucleusCloneRepo();
+    this.Depoy = new DeployManager();
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
   };
@@ -354,7 +355,6 @@ NucleusFactory = function() {
 
     return true;
   };
-
 };
 
 //Creat server side global `Nucleus` using the above constructor

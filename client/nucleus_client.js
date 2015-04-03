@@ -78,6 +78,8 @@ var NucleusClientFactory = function () {
      */
     this.currentUser = new ReactiveVar(null);
 
+    this.Deploy = new DeployManager();
+
     return false;
   };
 
