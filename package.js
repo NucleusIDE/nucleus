@@ -9,7 +9,7 @@ Package.describe({
 Npm.depends({
   'fibers': '1.0.2',
   'github-oauth': '0.2.1',
-  // 'basic-auth': '1.0.0',
+  'mup': '0.9.7',
   'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/f3716eaa97ef7fbe6959f216d5d6490b29667f7c.tar.gz'
 });
 
@@ -23,7 +23,14 @@ Package.on_use(function (api, where) {
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.1.0',
            'mrt:flash-messages@0.2.4',
+           'aldeed:autoform@4.0.0',
+           'kevohagan:ramda@0.13.0',
            'iron:router@0.9.0 || 1.0.0']);
+  api.imply([
+    'reactive-var',
+    'kevohagan:ramda@0.13.0',
+  ]);
+
 
   //Add core nucleus plugin files
   //It is safe to put them here because these are actually executed only after NucleusClient is initialized
@@ -43,6 +50,7 @@ Package.on_use(function (api, where) {
 
   api.add_files([
     'both/nucleus_global.js',
+    'both/deploy.js',
     'both/utilities.js',
     'both/collections.js',
     'chat/both/chat_model.js',
