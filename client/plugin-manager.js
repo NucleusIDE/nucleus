@@ -5,6 +5,7 @@ NucleusPluginManager = function(NucleusClient) {
     Keybindings,
     MasterPrompt,  //depends on Keybindings
     FuzzyFindFile, //depends on MasterPrompt
+    NucleusTerminal,
   ];
   this._registeredPlugins = [];
 

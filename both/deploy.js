@@ -127,4 +127,10 @@ if (Meteor.isClient) {
       cb(null, schema);
     });
   };
+
+  DeployManager.prototype.sendDeployCommand = function(deployType) {
+    NucleusClient.Terminal.show();
+
+    console.log("Deploying ", deployType);
+  };
 }

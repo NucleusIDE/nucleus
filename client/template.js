@@ -349,15 +349,7 @@ Template.nucleus_topbar.events({
     NucleusClient.editFile(selectedFile, true);
   },
   "click #nucleus_show_terminal": function() {
-    Meteor.call('nucleusIsTerminalConfigured', function(err, res) {
-      if (err) {
-        throw err;
-      }
-      Session.set('nucleus_terminal_ready', res);
-    });
-
-    var showTerminal = Session.get("nucleus_show_terminal") || false;
-    Session.set("nucleus_show_terminal", !showTerminal);
+    NucleusClient.Terminal.toggle();
   }
 });
 ////////////////
@@ -610,11 +602,15 @@ Template.nucleus_deploy_form.events({
       console.log("SCHEMA IS", mupSchema);
       LocalReactiveVars.customDeployFormSchema.set(mupSchema);
     });
+  },
+  "click .nucleus-deploy-form-submit-button": function() {
+    var activeForm = LocalReactiveVars.deployToMeteor.get() ? 'meteor' : 'mup';
+    NucleusClient.Deploy.sendDeployCommand(activeForm);
   }
 });
 
 Template.deploy_form_custom.helpers({
-  formContent: function() {
+  formSchema: function() {
     var schema = LocalReactiveVars.customDeployFormSchema.get();
     return schema;
   }
