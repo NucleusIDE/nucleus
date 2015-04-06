@@ -64,10 +64,10 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'nucleusGetMupJson': function() {
-      return Nucleus.Deploy.getMupJson();
+      return JSON.parse(Nucleus.Deploy.getMupJson());
     },
     'nucleusSaveMupJson': function(mup) {
-      var mupJson = JSON.stringify(mup);
+      var mupJson = JSON.stringify(mup, null, 2);
       return Nucleus.Deploy.saveMupJson(mupJson);
     }
   });
@@ -85,7 +85,7 @@ if (Meteor.isClient) {
         console.log("Error while getting Mup.json", err);
         return err.message;
       }
-      mup = JSON.parse(mup);
+      mup = typeof mup === 'string' ? JSON.parse(mup) : mup;
 
       function convertObjectToSimpleSchema(json) {
         var schema = {};

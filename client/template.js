@@ -616,7 +616,6 @@ Template.nucleus_deploy_form.events({
 Template.deploy_form_custom.helpers({
   formContent: function() {
     var schema = LocalReactiveVars.customDeployFormSchema.get();
-
     return schema;
   }
 });
@@ -625,9 +624,9 @@ AutoForm.hooks({
   'customDeployForm': {
     onSubmit: function(insertDoc, updateDoc, currentDoc) {
       var mup = insertDoc;
-
-      mup.servers = JSON.parse(mup.servers);
-      mup.env = JSON.parse(mup.env);
+      _.each(mup, function(val, prop) {
+        insertDoc[prop] = JSON.parse(val);
+      });
 
       Meteor.call("nucleusSaveMupJson", mup, function(err, res) {
         if (err)
