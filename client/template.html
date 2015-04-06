@@ -266,11 +266,12 @@
   </div>
 
   <div class="nucleus-deploy-form-submit-button">
-    Submit
+    Deploy
   </div>
 
 </template>
 
 <template name="deploy_form_custom">
-  {{> quickForm schema=formContent id="customDeployForm" type="normal"}}
+  {{> quickForm schema=formContent id="customDeployForm" type="normal" buttonClasses="nucleus-deploy-form-submit-button" buttonContent="Deploy" type="normal"}}
+
 </template>

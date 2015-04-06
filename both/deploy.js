@@ -27,7 +27,6 @@ if (Meteor.isServer) {
     };
 
     if (fs.existsSync(mupFilePath)) {
-      console.log("Mup file exists. Reading", mupFilePath);
       fut.return(readFile(mupFilePath));
     } else {
 
@@ -49,10 +48,27 @@ if (Meteor.isServer) {
     return fut.wait();
   };
 
+  DeployManager.prototype.saveMupJson = function(mupJson) {
+    var projectDir = Nucleus.config.projectDir,
+        mupFilePath = path.resolve(projectDir, 'mup.json'),
+        fut = new Future();
+
+    fs.writeFile(mupFilePath, mupJson, function(err) {
+      if (err) fut.throw(new Meteor.Error(err));
+
+      fut.return(true);
+    });
+
+    return fut.wait();
+  };
 
   Meteor.methods({
     'nucleusGetMupJson': function() {
-      return Nucleus.Depoy.getMupJson();
+      return Nucleus.Deploy.getMupJson();
+    },
+    'nucleusSaveMupJson': function(mup) {
+      var mupJson = JSON.stringify(mup);
+      return Nucleus.Deploy.saveMupJson(mupJson);
     }
   });
 }
@@ -78,6 +94,26 @@ if (Meteor.isClient) {
           schema[prop] = {};
           schema[prop].label = prop; //label for form
           schema[prop].type = R.type(v);
+          schema[prop].defaultValue = JSON.stringify(v);
+
+          if (schema[prop].type === 'Boolean') {
+            schema[prop].autoform = {
+              afFieldInput: {
+                falseLabel: 'No',
+                trueLabel: 'Yes',
+                // type: 'boolean-radios'
+              }
+            };
+          }
+
+          if (schema[prop].type === 'Array' || schema[prop].type === 'Object') {
+            schema[prop].type = 'String';
+            schema[prop].autoform = {
+              afFieldInput: {
+                rows: 4
+              }
+            };
+          }
         });
 
         return new SimpleSchema(schema);

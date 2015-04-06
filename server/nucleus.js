@@ -88,7 +88,7 @@ var NucleusFactory = function() {
     config && this.configure(config);
 
     //this.nucleusCloneRepo();
-    this.Depoy = new DeployManager();
+    this.Deploy = new DeployManager();
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
   };

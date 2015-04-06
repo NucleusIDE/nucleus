@@ -615,10 +615,31 @@ Template.nucleus_deploy_form.events({
 
 Template.deploy_form_custom.helpers({
   formContent: function() {
-    return LocalReactiveVars.customDeployFormSchema.get();
+    var schema = LocalReactiveVars.customDeployFormSchema.get();
+
+    return schema;
   }
 });
 
+AutoForm.hooks({
+  'customDeployForm': {
+    onSubmit: function(insertDoc, updateDoc, currentDoc) {
+      var mup = insertDoc;
+
+      mup.servers = JSON.parse(mup.servers);
+      mup.env = JSON.parse(mup.env);
+
+      Meteor.call("nucleusSaveMupJson", mup, function(err, res) {
+        if (err)
+          throw new Meteor.Error("Error while saving mup", err);
+
+        console.log("Launching terminal and sending mup command");
+      });
+
+      return false;
+    }
+  }
+});
 
 //////////////////////
 // END DEPLOY FORM  //
