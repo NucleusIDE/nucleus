@@ -239,9 +239,6 @@
         {{else}}
         {{> deploy_form_custom}}
         {{/if}}
-        <div class="nucleus-deploy-form-submit-button">
-          Deploy
-        </div>
 
       </div>
 
@@ -267,8 +264,13 @@
     <label for="subdomain">Meteor Password</label>
     <input name="subdomain" type="password" value=""/>
   </div>
+
+  <div class="nucleus-deploy-form-submit-button">
+    Submit
+  </div>
+
 </template>
 
 <template name="deploy_form_custom">
-
+  {{> quickForm schema=formContent id="customDeployForm" type="normal"}}
 </template>

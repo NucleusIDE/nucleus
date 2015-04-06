@@ -10,6 +10,7 @@ ReactiveVar.prototype.toggle = function() {
 var LocalReactiveVars = {
   shouldShowDeployForm: new ReactiveVar(false),
   deployToMeteor: new ReactiveVar(true),
+  customDeployFormSchema: new ReactiveVar(new SimpleSchema)
 };
 
 Template.nucleus.helpers({
@@ -601,6 +602,20 @@ Template.nucleus_deploy_form.events({
   },
   "click .custom-deploy": function(e) {
     LocalReactiveVars.deployToMeteor.set(false);
+    NucleusClient.Deploy.getMupSimpleSchema(function(err, mupSchema) {
+      if (err) {
+        console.log("Error while getting Mup.json schema", err);
+        return err.message;
+      }
+      console.log("SCHEMA IS", mupSchema);
+      LocalReactiveVars.customDeployFormSchema.set(mupSchema);
+    });
+  }
+});
+
+Template.deploy_form_custom.helpers({
+  formContent: function() {
+    return LocalReactiveVars.customDeployFormSchema.get();
   }
 });
 

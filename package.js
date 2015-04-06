@@ -29,6 +29,7 @@ Package.on_use(function (api, where) {
   api.imply([
     'reactive-var',
     'kevohagan:ramda@0.13.0',
+    'aldeed:autoform@4.0.0'
   ]);
 
 

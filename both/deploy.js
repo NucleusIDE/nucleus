@@ -15,7 +15,13 @@ if (Meteor.isServer) {
       var future = new Future();
       fs.readFile(filepath, 'utf-8', function(err, res) {
         if(err) fut.throw(err);
-        future.return(res);
+
+        var sanitizeJson = R.pipe(R.split('\n'),
+                                  R.map(R.trim),
+                                  R.filter(R.strIndexOf('//')),
+                                  R.join('\n'));
+
+        future.return(sanitizeJson(res));
       });
       return future.wait();
     };
@@ -55,5 +61,34 @@ if (Meteor.isClient) {
   DeployManager.prototype.getMupJson = function(cb) {
     var mupPath = '';
     Meteor.call('nucleusGetMupJson', mupPath, cb);
+  };
+
+  DeployManager.prototype.getMupSimpleSchema = function(cb) {
+    this.getMupJson(function(err, mup) {
+      if (err) {
+        console.log("Error while getting Mup.json", err);
+        return err.message;
+      }
+      mup = JSON.parse(mup);
+
+      function convertObjectToSimpleSchema(json) {
+        var schema = {};
+
+        _.each(json, function(v, prop) {
+          schema[prop] = {};
+          schema[prop].label = prop; //label for form
+          schema[prop].type = R.type(v);
+        });
+
+        return new SimpleSchema(schema);
+      }
+
+      var schema = convertObjectToSimpleSchema(mup);
+
+      window.schema = schema;
+      window.mup = mup;
+
+      cb(null, schema);
+    });
   };
 }

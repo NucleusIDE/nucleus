@@ -694,6 +694,7 @@ body {
 /* start nucleus-deploy-form */
 .nucleus-deploy-form {
   background: #272822;
+    overflow: scroll;
 }
 .line-number-row {
   height: inherit;
@@ -751,27 +752,15 @@ body {
   margin-left: 10%;
   background: rgb(58, 58, 58);
 }
-.nucleus-deploy-form-submit-button {
-  padding: 8px;
-  color: rgb(222,222,222);
-  border: 1px solid rgb(59, 61, 59);
-  width: 100px;
-  text-align: center;
-  cursor: pointer;
-  background: rgb(48, 49, 48);
-  margin-left: 5%;
-}
 
-.nucleus-deploy-form-submit-button:hover {
-  background: rgb(38, 39, 38);
-}
-.nucleus-deploy-form-submit-button:active {
-  background: rgb(28, 29, 28);
-}
-
-.nuc-form-row {
+.nuc-form-row, .form-group {
   width: 80%;
   margin: 5%;
+  line-height: 1.5;
+}
+
+.nuc-form-row:last-child, .form-group:last-child {
+  margin: 5% 0;
 }
 
 .nucleus-deploy-main-form label {
@@ -787,4 +776,23 @@ body {
   padding: 0 20px !important;
   color: #fff !important;
 }
+
+.nucleus-deploy-form-submit-button, .form-group > button {
+  padding: 10px;
+  color: rgb(222,222,222) !important;
+  border: 1px solid rgb(59, 61, 59) !important;
+  width: 100px;
+  text-align: center !important;
+  cursor: pointer;
+  background: rgb(48, 49, 48) !important;
+  margin-left: 5%;
+}
+
+.nucleus-deploy-form-submit-button:hover {
+  background: rgb(38, 39, 38) !important;
+}
+.nucleus-deploy-form-submit-button:active {
+  background: rgb(28, 29, 28) !important; 
+}
+
 /* end nucleus-deploy-form */
