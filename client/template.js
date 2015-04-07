@@ -75,7 +75,6 @@ Template.editor.setMode = function() {
 
 Template.editor.helpers({
   is_deploying: function() {
-    console.log(LocalReactiveVars.shouldShowDeployForm.get());
     return LocalReactiveVars.shouldShowDeployForm.get();
   },
   docid: function() {
@@ -362,7 +361,8 @@ Template.nucleus_topbar.events({
 ////////////////////
 Template.terminal.helpers({
   show_terminal: function() {
-    return Session.get("nucleus_show_terminal");
+    // return NucleusClient.Terminal.showingTerminal.get();
+    return Session.get('nucleus_show_terminal');
   },
   terminal_initialized: function() {
     return Session.get('nucleus_terminal_ready');
@@ -504,9 +504,6 @@ Tracker.autorun(function() {
 
 Template.nucleus_master_prompt.helpers({
   nucleus_show_master_prompt: function() {
-    Meteor.setTimeout(function() {
-      $('#nucleus-master-prompt-input').focus();
-    }, 100);
     return NucleusClient.MasterPrompt.showPrompt.get();
   },
   results: function() {
