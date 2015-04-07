@@ -128,9 +128,24 @@ if (Meteor.isClient) {
     });
   };
 
-  DeployManager.prototype.sendDeployCommand = function(deployType) {
+  DeployManager.prototype.sendDeployCommand = function(deployType, options) {
     NucleusClient.Terminal.show();
+    var frameInterval = Meteor.setInterval(function() {
+      var frame = document.getElementById("tty-frame");
 
-    console.log("Deploying ", deployType);
+      if (!frame) return;
+
+      Meteor.clearInterval(frameInterval);
+
+      if (deployType === 'meteor') {
+        var loginCmd = 'meteor login';// --username ' + options.username + ' --password=' + options.password;
+        var logoutCmd = 'meteor logout';
+        var deployCmd = 'meteor deploy ' + options.subdomain + '.meteor.com';
+
+        var command = loginCmd + ' && ' + deployCmd + ' && ' + logoutCmd;
+        frame.contentWindow.postMessage(command, '*');
+      }
+    }, 200);
+
   };
 }

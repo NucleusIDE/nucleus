@@ -234,12 +234,13 @@
     <div class="nucleus-deploy-form-window">
       <h1 class="nucleus-deploy-header">Deploy</h1>
       <div class="nucleus-deploy-main-form">
-        {{#if deploying_to_meteor}}
-        {{> deploy_form_meteor}}
-        {{else}}
-        {{> deploy_form_custom}}
-        {{/if}}
-
+        <form id="deploy-form" action="">
+          {{#if deploying_to_meteor}}
+          {{> deploy_form_meteor}}
+          {{else}}
+          {{> deploy_form_custom}}
+          {{/if}}
+        </form>
       </div>
 
     </div>
@@ -253,16 +254,6 @@
   <div class="nuc-form-row">
     <label>Subdomain</label>
     <input type="text" id="nucleus-deploy-subdomain" placeholder=".meteor.com"/>
-  </div>
-
-  <div class="nuc-form-row">
-    <label>Meteor Username</label>
-    <input type="text" id="nucleus-deploy-username" placeholder="Your meteor username"/>
-  </div>
-
-  <div class="nuc-form-row">
-    <label>Meteor Password</label>
-    <input type="password" id="nucleus-deploy-password" placeholder="Your meteor password"/>
   </div>
 
   <div class="nucleus-deploy-form-submit-button">

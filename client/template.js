@@ -600,14 +600,14 @@ Template.nucleus_deploy_form.events({
       LocalReactiveVars.customDeployFormSchema.set(mupSchema);
     });
   },
-  "click .nucleus-deploy-form-submit-button": function() {
+  "click .nucleus-deploy-form-submit-button, submit #deploy-form": function(e) {
+    e.preventDefault();
+
     var activeForm = LocalReactiveVars.deployToMeteor.get() ? 'meteor' : 'mup',
         options = {};
 
     if (activeForm === 'meteor') {
       options.subdomain = document.getElementById("nucleus-deploy-subdomain").value.trim();
-      options.username = document.getElementById("nucleus-deploy-username").value.trim();
-      options.password = document.getElementById("nucleus-deploy-password").value.trim();
 
       if (Utils.isEmpty(options)) {
         FlashMessages.sendError("Please Fill all fields");
