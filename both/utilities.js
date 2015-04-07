@@ -162,5 +162,14 @@ Utils = {
     }
 
     return null;
+  },
+  isEmpty: function(str) {
+    /**
+     * Return if str is empty. If str is an object, return if any of its keys is empty
+     */
+    if (R.type(str) === 'Object')
+      return R.values(str).length ? R.any(R.isEmpty)(R.values(str)) : false;
+
+    return R.isEmpty(str);
   }
 };

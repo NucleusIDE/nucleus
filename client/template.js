@@ -601,8 +601,21 @@ Template.nucleus_deploy_form.events({
     });
   },
   "click .nucleus-deploy-form-submit-button": function() {
-    var activeForm = LocalReactiveVars.deployToMeteor.get() ? 'meteor' : 'mup';
-    NucleusClient.Deploy.sendDeployCommand(activeForm);
+    var activeForm = LocalReactiveVars.deployToMeteor.get() ? 'meteor' : 'mup',
+        options = {};
+
+    if (activeForm === 'meteor') {
+      options.subdomain = document.getElementById("nucleus-deploy-subdomain").value.trim();
+      options.username = document.getElementById("nucleus-deploy-username").value.trim();
+      options.password = document.getElementById("nucleus-deploy-password").value.trim();
+
+      if (Utils.isEmpty(options)) {
+        FlashMessages.sendError("Please Fill all fields");
+        return false;
+      }
+    }
+
+    NucleusClient.Deploy.sendDeployCommand(activeForm, options);
   }
 });
 
