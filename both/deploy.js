@@ -148,7 +148,6 @@ if (Meteor.isClient) {
         command = 'mup deploy';
       }
 
-      console.log("Sending command", command);
       frame.contentWindow.postMessage(command, '*');
     }, 200);
 
