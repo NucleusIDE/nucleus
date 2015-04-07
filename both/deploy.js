@@ -137,14 +137,19 @@ if (Meteor.isClient) {
 
       Meteor.clearInterval(frameInterval);
 
+      var command = '';
       if (deployType === 'meteor') {
         var loginCmd = 'meteor login';// --username ' + options.username + ' --password=' + options.password;
         var logoutCmd = 'meteor logout';
         var deployCmd = 'meteor deploy ' + options.subdomain + '.meteor.com';
 
-        var command = loginCmd + ' && ' + deployCmd + ' && ' + logoutCmd;
-        frame.contentWindow.postMessage(command, '*');
+        command = loginCmd + ' && ' + deployCmd + ' && ' + logoutCmd;
+      } else {
+        command = 'mup deploy';
       }
+
+      console.log("Sending command", command);
+      frame.contentWindow.postMessage(command, '*');
     }, 200);
 
   };

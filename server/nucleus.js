@@ -57,8 +57,7 @@ var NucleusFactory = function() {
 
   // Configure Nucleus on server. Following options are accepted for configuration:
   // * git :     Remote git url
-  // * project:  Name of the project. A folder with this name is created in `Nucleus.config.projectDir` ('~/.nucleus') and `Nucleus.config.git` url is cloned in it.
-  // It also sets the `Nucleus.config.projectDir` which is not configurable by user.
+  // * project:  Name of the project
 
   this.configure = function(config) {
     _.extend(Nucleus.config, config);
@@ -260,25 +259,6 @@ var NucleusFactory = function() {
       //pulling new changes lose un-committed changes. So let's not pull changes for now
       return;
     //      this.pullChanges(projectDir);
-  };
-
-  //Let's keep mup deploy here until we have a clear/bigger deployment strategy
-  this.mupDeploy = function(mup_setup) {
-    var projectDir = this.config.projectDir;
-    var fut = new Future();
-
-    var commmand = "cd " + projectDir + (mup_setup ? " && mup setup " : "")  + " && mup deploy";
-
-    child.exec(command, function(err, stdout, stderr) {
-      if (err) {console.log(err); fut.return(-1); }
-      else {
-        fut.return(1);
-
-        console.log("STDOUT:", stdout);
-        console.log("STDERR", stderr);
-      }
-    });
-    return fut.wait();
   };
 
   //Create a new file on the server
