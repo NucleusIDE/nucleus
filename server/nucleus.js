@@ -67,19 +67,6 @@ var NucleusFactory = function() {
     var pathParts = process.env.PWD.split('/');
     Nucleus.config.project = pathParts[pathParts.length - 1];
     //Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
-
-    var user = Nucleus.config.user,
-        password = Nucleus.config.password;
-
-    if (user && password) {
-      var basicAuth = new HttpBasicAuth(user, password);
-      basicAuth.protect();
-
-      this.Terminal.configure({user: user, password: password});
-    } else {
-      console.warn("Make sure you have set user/password for first line of fire protection");
-      console.warn("Nucleus.configure({user: 'username', password: 'password'})");
-    }
   };
 
   //This method is called on nucleus initialization on the server (in the app).
