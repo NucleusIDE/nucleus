@@ -88,6 +88,13 @@ var NucleusFactory = function() {
 
     //this.nucleusCloneRepo();
     this.Deploy = new DeployManager();
+
+    /**
+     * Add Plugin manager to Nucleus and put 'registerPlugin' on this for convinience
+     */
+    this.PluginManager = new NucleusPluginManager(this);
+    this.registerPlugin = this.PluginManager.registerPlugin.bind(this.PluginManager);
+
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
   };

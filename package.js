@@ -52,6 +52,7 @@ Package.on_use(function (api, where) {
 
   api.add_files([
     'both/nucleus_global.js',
+    'both/plugin-manager.js',
     'both/deploy.js',
     'both/utilities.js',
     'both/collections.js',
@@ -67,8 +68,6 @@ Package.on_use(function (api, where) {
 
     'client/lib/font-awesome/css/font-awesome.css',
     'client/lib/hint.css',
-
-    'client/plugin-manager.js',
 
     'client/nucleus_editor.js',
     'client/nucleus_client.js',

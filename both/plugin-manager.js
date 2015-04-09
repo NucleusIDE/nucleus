@@ -1,14 +1,20 @@
 NucleusPluginManager = function(NucleusClient) {
   this.NucleusClient = NucleusClient;
 
-  this._corePlugins = [
-    Keybindings,
-    MasterPrompt,  //depends on Keybindings
-    FuzzyFindFile, //depends on MasterPrompt
-    NucleusTerminal,
-  ];
-  this._registeredPlugins = [];
+  if (Meteor.isClient) {
+    this._corePlugins = [
+      Keybindings,
+      MasterPrompt,  //depends on Keybindings
+      FuzzyFindFile, //depends on MasterPrompt
+      NucleusTerminal,
+    ];
+  }
 
+  if (Meteor.isServer) {
+    this._corePlugins = [];
+  }
+
+  this._registeredPlugins = [];
   this._registerCorePlugins();
 };
 
