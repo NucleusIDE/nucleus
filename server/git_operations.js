@@ -11,23 +11,38 @@ Git.prototype.isGitRepo = function(path) {
   return fs.existsSync(path+'/.git');
 };
 
-Git.prototype.commit = function(dir, message) {
+Git.prototype.commit = function(dir, message, author) {
   var fut = new Future();
 
-  child.exec('cd ' + dir + ' && git add . --all && git commit -m "' + message +'"', function(err, stdout, stderr) {
-    if (err) {
-      if (err.killed === false && err.code === 1 && err.signal === null) {
-        fut.return(0);
+  var env = process.env,
+      someVar,
+      envDup = {};
+  // Duplicate the parent's environment object
+  for (someVar in env) {
+    envDup[someVar] = env[someVar];
+  }
 
-      } else {
-        console.log(err);
-        fut.return(-1);
-      }
-    } else {
-      console.log(stdout, stderr);
-      fut.return(1);
-    }
-  });
+  envDup['GIT_COMMITTER_EMAIL'] = author.email;
+  envDup['GIT_COMMITTER_NAME'] = author.name;
+  envDup['GIT_AUTHOR_EMAIL'] = author.email;
+  envDup['GIT_AUTHOR_NAME'] = author.name;
+
+  child.exec('cd ' + dir + ' && git add . --all && git commit -m "' + message +'"',
+             { env: envDup }, function(err, stdout, stderr) {
+               if (err) {
+                 if (err.killed === false && err.code === 1 && err.signal === null) {
+                   fut.return(0);
+
+                 } else {
+                   console.log(err);
+                   fut.return(-1);
+                 }
+               } else {
+                 console.log(stdout, stderr);
+                 fut.return(1);
+               }
+             });
+
   return fut.wait();
 };
 

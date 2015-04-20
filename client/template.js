@@ -115,15 +115,27 @@ Template.nucleus_toolbar.events({
       return;
     }
 
-    Meteor.call("nucleusCommitAllChanges", commitMessage, Session.get("nucleus_selected_file"), function(err, res) {
-      unSpinBtn($btn, btnClasses);
-      if (res === 1) {
-        FlashMessages.sendSuccess("Changes Committed Successfully");
-        $("#sidebar-commit-message").val("");
-      }
-      else if (res === 0) FlashMessages.sendWarning("Nothing to Commit");
-      else FlashMessages.sendError("Something Went Wrong with Git Commit");
-    });
+    var nucleusUser = NucleusUser.me(),
+        commitAuthor = {
+          name: nucleusUser.github_data.name,
+          email: nucleusUser.email
+        };
+
+    console.log("Commit author", commitAuthor);
+
+    Meteor.call("nucleusCommitAllChanges",
+                commitMessage,
+                Session.get("nucleus_selected_file"),
+                commitAuthor,
+                function(err, res) {
+                  unSpinBtn($btn, btnClasses);
+                  if (res === 1) {
+                    FlashMessages.sendSuccess("Changes Committed Successfully");
+                    $("#sidebar-commit-message").val("");
+                  }
+                  else if (res === 0) FlashMessages.sendWarning("Nothing to Commit");
+                  else FlashMessages.sendError("Something Went Wrong with Git Commit");
+                });
   },
   "click #push_changes": function(e) {
     var $btn = $("#push_changes");
@@ -547,7 +559,7 @@ Template.nucleus_deploy_form.events({
       if (Utils.isEmpty(options)) {
         FlashMessages.sendError("Please Fill all fields");
         return false;
-      }
+        b}
     }
 
     NucleusClient.Deploy.sendDeployCommand(activeForm, options);

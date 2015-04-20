@@ -43,7 +43,7 @@ Meteor.startup(function () {
           loginFailed = this.params['login_failed'],
           message = this.params['message'] || "Login Failed";
 
-      if (! loginFailed && username && loginToken) {
+      if (loginFailed !== 'true' && username && loginToken) {
         var userInfo = {username: username, login_token: loginToken};
 
         //We can just set the cookie without verifying it here because we navigate to same route again

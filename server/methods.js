@@ -123,11 +123,11 @@ Meteor.methods({
     }
     return docId;
   },
-  nucleusCommitAllChanges: function(message, selectedFile) {
+  nucleusCommitAllChanges: function(message, selectedFile, author) {
     /**
      * We use selectedFile to see if the file belongs to a package. If it does, we try to make the commit for the package instead of the app itself
      */
-    return Nucleus.commitChanges(message, selectedFile);
+    return Nucleus.commitChanges(message, selectedFile, author);
   },
   nucleusPushChanges: function(selectedFile) {
     /**

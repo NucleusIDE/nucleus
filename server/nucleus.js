@@ -223,9 +223,9 @@ var NucleusFactory = function() {
   // * `0` - No new changes to commit.
   // * `1` - Committed new changes with message `message`
   // * `-1` - Error occurred
-  this.commitChanges = function(message, selectedFile) {
+  this.commitChanges = function(message, selectedFile, author) {
     var dir = getTopmostGitDir(selectedFile);
-    return NucleusGit.commit(dir, message);
+    return NucleusGit.commit(dir, message, author);
   };
 
   //Clone the `git` remote repo in `Nucleus.config.projectDir`. It won't attempt to clone the repo if `Nucleus.config.projectDir` already exists. If the `Nucleus.config.projectDir` already exists, it attempts to pull new changes instead.
