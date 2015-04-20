@@ -45,7 +45,7 @@ var NucleusClientFactory = function () {
     //Configure flash messages. We are using `mrt:flash-messages` package for flash messages
     FlashMessages.configure({
       autoHide: true,
-      hideDelay: 3000,
+      hideDelay: 5000,
       autoScroll: true
     });
 

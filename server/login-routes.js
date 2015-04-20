@@ -18,7 +18,7 @@ Meteor.startup(function() {
     baseURL: baseUrl,
     loginURI: '/nucleus-github-login',
     callbackURI: '/nucleus-github-callback',
-    scope: 'user' // optional, default scope is set to user
+    scope: ['user','repo'] // optional, default scope is set to user
   });
 
   Router.route('nucleus-github-callback', {
@@ -36,16 +36,23 @@ Meteor.startup(function() {
       });
 
       githubOAuth.on('token', function(token, res) {
-        var nucUser = NucleusUser.loginWithGithubToken(token);
-        var loginToken = nucUser.getLoginToken();
+        try {
+          var nucUser = NucleusUser.loginWithGithubToken(token);
 
-        console.log("LOGIN TOKEN", loginToken);
+          var loginToken = nucUser.getLoginToken();
+          var url = baseUrl + '/nucleus?user='+nucUser.username+'&login_token='+loginToken;
 
-        var url = baseUrl + '/nucleus?user='+nucUser.username+'&login_token='+loginToken;
+          res.statusCode = 302;
+          res.setHeader('location', url);
+          res.end();
+        } catch(e) {
+          var message = e.error ? e.error : e.message;
+          var url = baseUrl + '/nucleus?login_failed=true&message=' + message;
 
-        res.statusCode = 302;
-        res.setHeader('location', url);
-        res.end();
+          res.statusCode = 302;
+          res.setHeader('location', url);
+          res.end();
+        }
       }.future());
     }
   });

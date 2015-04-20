@@ -139,6 +139,23 @@ NucleusUser.extend({
     var nick = this.nick;
     var chat = new ChatMessage();
     chat.broadcast(nick, message);
+  },
+
+  isCollaboratorOfRepo: function(repo, access_token) {
+    if (Meteor.isServer) {
+      var api_endpoint = 'https://api.github.com/repos/'+ repo + '/collaborators?scopes=repo&access_token=' + access_token ,
+          options = { headers: { "user-agent": 'Nucleuside/1.0'}};
+
+      try {
+        var res = HTTP.get(api_endpoint, options);
+      } catch(e) {
+        console.log("Error occured while checking collaborator", e);
+      }
+
+      var collaborators = R.map(function(collaborator) { return collaborator.login; }, res.data);
+
+      return R.contains(this.username, collaborators);
+    }
   }
 });
 
@@ -221,6 +238,17 @@ NucleusUser.loginWithGithubToken = function(token) {
       if(typeof nucUser === 'undefined') {
         console.log("Creating new Nucleus User");
         nucUser = NucleusUser._createNewUser(user);
+      } else {
+        nucUser.update({github_data: user});
+      }
+
+      // if nucleus repo is hosted on github, check if logging in nucleus user has access to it on github
+      if (Nucleus.config.git && /github/.test(Nucleus.config.git)) {
+        var repo = Nucleus.config.git.split('/').reverse().slice(0, 2).reverse().join('/'); //convert https://github.com/NucleusIDE/nucleus to NucleusIDE/nucleus
+
+        if (! nucUser.isCollaboratorOfRepo(repo, token.access_token)) {
+          throw new Meteor.Error("User doesn't have access to project repo");
+        }
       }
 
       nucUser.update({
@@ -233,8 +261,7 @@ NucleusUser.loginWithGithubToken = function(token) {
 
       fut.return(nucUser);
     } catch(e) {
-      console.log("Error occurred when getting Github user data", e);
-      fut.throw(new Meteor.Error(e));
+      fut.throw(e);
     }
 
     return fut.wait();
