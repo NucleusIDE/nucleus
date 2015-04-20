@@ -16,7 +16,6 @@ var NucleusClientFactory = function () {
   this.config = {
     nucleusUrl: window.location.origin + '/nucleus',
     windowName: 'Nucleus',
-    clientDir: 'client',
     serverDir: 'server',
     suckCSSFromPackages: []
   };
@@ -115,8 +114,8 @@ var NucleusClientFactory = function () {
    * Check if `filepath` is a client file. Client files are supposed to be evaled live on client side. Although this functionality has not been implemented yet.
    */
   this.isClientFile = function (filepath) {
-    var clientRegex = new RegExp("\/" + this.config.clientDir + "\/");
-    return clientRegex.test(filepath);
+    var notClientRegex = /\/(server|public|private|compatibility|tests)\//g;
+    return ! notClientRegex.test(filepath);
   };
   /**
    * Check if `filepath` is a server file.
@@ -275,6 +274,8 @@ var NucleusClientFactory = function () {
       }
       Session.set("nucleus_selected_doc_id", res);
       Session.set("nucleus_selected_file", filepath);
+
+      console.log("Shall Eval on Client?",filepath, NucleusClient.isClientFile(filepath));
 
       var user = NucleusUser.me();
       if (!user) return; // this is to avoid a message in console which shows up when user is not yet logged in
