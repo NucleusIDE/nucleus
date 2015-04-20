@@ -256,7 +256,8 @@ NucleusUser.loginWithGithubToken = function(token) {
         //XXX: there is a method in nucleusclient for setting scratch doc
         cwd: 'scratch',
         status: 3,
-        last_keepalive: moment().toDate().getTime()
+        last_keepalive: moment().toDate().getTime(),
+        github_access_token: token.access_token
       });
 
       fut.return(nucUser);

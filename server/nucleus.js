@@ -208,9 +208,9 @@ var NucleusFactory = function() {
   // * `0` - No new commits to push.
   // * `1` - Pushed new changes
   // * `-1` - Error occured
-  this.pushChanges = function(selectedFile) {
+  this.pushChanges = function(selectedFile, githubUser) {
     var dir = getTopmostGitDir(selectedFile);
-    return NucleusGit.push(dir);
+    return NucleusGit.push(dir, githubUser);
   };
 
   //Commit new  changes in `master` branch in `Nucleus.config.projectDir`.

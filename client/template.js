@@ -141,12 +141,24 @@ Template.nucleus_toolbar.events({
     var $btn = $("#push_changes");
     var btnClasses = $btn.find('i').attr('class');
     spinBtn($btn);
-    Meteor.call("nucleusPushChanges", Session.get("nucleus_selected_file"), function(err, res) {
-      unSpinBtn($btn, btnClasses);
-      if (res === 1) FlashMessages.sendSuccess("Changes Pushed Successfully");
-      else if (res === 0) FlashMessages.sendWarning("Nothing To Push");
-      else FlashMessages.sendError("Something Went Wrong With Git Push");
-    });
+
+    var nucleusUser = NucleusUser.me();
+
+    var githubUser = {
+      username: nucleusUser.username,
+      loginToken: nucleusUser.login_tokens[0].token
+    };
+
+    Meteor.call(
+      "nucleusPushChanges",
+      Session.get("nucleus_selected_file"),
+      githubUser,
+      function(err, res) {
+        unSpinBtn($btn, btnClasses);
+        if (res === 1) FlashMessages.sendSuccess("Changes Pushed Successfully");
+        else if (res === 0) FlashMessages.sendWarning("Nothing To Push");
+        else FlashMessages.sendError("Something Went Wrong With Git Push");
+      });
   },
   "click #pull_changes": function(e) {
     var $btn = $("#pull_changes");

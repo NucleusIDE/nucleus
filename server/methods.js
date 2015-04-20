@@ -129,11 +129,11 @@ Meteor.methods({
      */
     return Nucleus.commitChanges(message, selectedFile, author);
   },
-  nucleusPushChanges: function(selectedFile) {
+  nucleusPushChanges: function(selectedFile, githubUser) {
     /**
      * We use selectedFile to see if the file belongs to a package. If it does, we try to make the commit for the package instead of the app itself
      */
-    return Nucleus.pushChanges(selectedFile);
+    return Nucleus.pushChanges(selectedFile, githubUser);
   },
   nucleusPullChanges: function(selectedFile) {
     return Nucleus.pullChanges(selectedFile);

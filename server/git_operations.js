@@ -46,10 +46,25 @@ Git.prototype.commit = function(dir, message, author) {
   return fut.wait();
 };
 
-Git.prototype.push = function(dir) {
+Git.prototype.push = function(dir, githubUser) {
   var fut = new Future();
+  var loginToken = githubUser.loginToken;
+  githubUser = NucleusUsers.findOne({username: githubUser.username});
 
-  child.exec("cd " + dir + " && git push origin master", function(err, stdout, stderr) {
+  if (! githubUser.hasValidLoginToken(loginToken)) {
+    console.log("Invalid Login token", loginToken);
+    fut.return(-1);
+  }
+
+  var remote = githubUser.username,
+      token = githubUser.github_access_token,
+      repo = Nucleus.config.git.split('/').reverse().slice(0, 2).reverse().join('/'), //convert https://github.com/NucleusIDE/nucleus to NucleusIDE/nucleus
+      remoteUrl = 'https://'+remote+':'+token+'@github.com/'+repo;
+
+  var command = format("cd %s ; git remote rm %s ; git remote add %s %s", dir, remote, remote, remoteUrl); //update/create a remote <username> with user's github credentials
+  command += format(" ; git push %s master", remote);
+
+  child.exec(command, function(err, stdout, stderr) {
     if (err) {
       console.log(err);
       fut.return(-1);
