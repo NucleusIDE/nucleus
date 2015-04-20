@@ -50,7 +50,7 @@ Meteor.startup(function () {
         //to clear the query params. Then it gets checked in onBeforeAction
         nucleusUserLogin(userInfo);
         Router.go('nucleus');
-      } else {
+      } else if(loginFailed){
         FlashMessages.sendError(message);
       }
 
