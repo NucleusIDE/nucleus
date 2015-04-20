@@ -615,3 +615,15 @@ AutoForm.hooks({
 //////////////////////
 // END DEPLOY FORM  //
 //////////////////////
+
+/////////////////////////
+// Server busy spinner //
+/////////////////////////
+Template.nucleus_server_busy.helpers({
+  server_is_busy: function() {
+    return Meteor.connection.status().status === 'connecting';
+  }
+});
+//////////////////////////////
+// END Server busy spinner //
+////////////////////////////

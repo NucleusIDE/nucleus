@@ -30,6 +30,7 @@
       </a>
     </div>
     <div class="button-group button-group-right">
+      {{> nucleus_server_busy}}
       <a id="nucleus_save_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'save'}}" href=""><i class="fa fa-life-saver"></i> Save</a>
       <a id="nucleus_discard_file" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar {{file_dirty 'discard'}}" href=""><i class="fa fa-refresh"></i> Discard</a>
     </div>
@@ -266,4 +267,10 @@
 
 <template name="deploy_form_custom">
   {{> quickForm schema=formSchema id="customDeployForm" type="normal" buttonClasses="nucleus-deploy-form-submit-button" buttonContent="Deploy" type="normal" method="post"}}
+</template>
+
+<template name="nucleus_server_busy">
+  {{#if server_is_busy}}
+  <a id="nucleus_server_busy" class="nuc-btn-custom nuc-btn-dark nuc-btn-topbar" href=""><i class="fa fa-spinner fa-spin"></i> Server Restarting</a>
+  {{/if}}
 </template>

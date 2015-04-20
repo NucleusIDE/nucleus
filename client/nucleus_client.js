@@ -275,8 +275,6 @@ var NucleusClientFactory = function () {
       Session.set("nucleus_selected_doc_id", res);
       Session.set("nucleus_selected_file", filepath);
 
-      console.log("Shall Eval on Client?",filepath, NucleusClient.isClientFile(filepath));
-
       var user = NucleusUser.me();
       if (!user) return; // this is to avoid a message in console which shows up when user is not yet logged in
       user.setCwd(res);
