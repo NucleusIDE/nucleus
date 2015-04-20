@@ -217,7 +217,7 @@
     <input id="nucleus-master-prompt-input" name="" type="text" value="" />
     <ul>
       {{#each results}}
-      <li data-value="{{value}}" class="{{selected_item_class}}">{{display}}</li>
+      <li data-index="{{index}}" data-value="{{value}}" class="{{selected_item_class}}">{{display}}</li>
       {{/each}}
     </ul>
   </div>

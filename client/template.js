@@ -460,9 +460,12 @@ Template.nucleus_video_chat_controls.rendered = function() {
 /////////////////////////////////
 // START NUCLEUS MASTER PROMPT //
 /////////////////////////////////
-
 Template.nucleus_master_prompt.helpers({
   nucleus_show_master_prompt: function() {
+    Meteor.setTimeout(function() {
+      $('#nucleus-master-prompt-input').focus();
+    }, 100);
+
     return NucleusClient.MasterPrompt.showPrompt.get();
   },
   results: function() {
@@ -522,6 +525,10 @@ Template.nucleus_master_prompt.events({
     e.preventDefault();
     NucleusClient.MasterPrompt.itemSelected(e.currentTarget.getAttribute('data-value'));
     NucleusClient.MasterPrompt.hidePrompt();
+  },
+  'mouseover .nucleus-master-prompt li': function(e) {
+    var index = parseInt(e.currentTarget.getAttribute('data-index'));
+    NucleusClient.MasterPrompt.selectedPromptItem.set(index);
   }
 });
 
