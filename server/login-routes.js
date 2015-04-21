@@ -10,14 +10,16 @@ Meteor.startup(function() {
   process.env.NUCLEUS_GITHUB_CLIENT_SECRET = 'a15b09920b546a91724d5611f1df1b25c114bb72';
 
   // var baseUrl = 'https://nucleus.ngrok.com';
-  var baseUrl = 'http://localhost:3000';
+  var authProxyUrl = 'http://localhost.com:4000';
+  var baseUrl = '';
 
   var githubOAuth = Npm.require('github-oauth')({
     githubClient: process.env['NUCLEUS_GITHUB_CLIENT_ID'],
     githubSecret: process.env['NUCLEUS_GITHUB_CLIENT_SECRET'],
-    baseURL: baseUrl,
+    baseURL: authProxyUrl,
     loginURI: '/nucleus-github-login',
-    callbackURI: '/nucleus-github-callback',
+    callbackURI: '/github-auth',
+
     scope: ['user','repo'] // optional, default scope is set to user
   });
 
