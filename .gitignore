@@ -4,3 +4,4 @@
 .build*
 docs/*
 .npm
+server/secret_keys.js

@@ -28,6 +28,7 @@ Package.on_use(function (api, where) {
            'aldeed:autoform@4.0.0',
            'kevohagan:ramda@0.13.0',
            'iron:router@0.9.0 || 1.0.0']);
+
   api.imply([
     'reactive-var',
     'kevohagan:ramda@0.13.0',
@@ -51,6 +52,10 @@ Package.on_use(function (api, where) {
   api.add_files([
     'global_overrides.js'
   ], 'client');
+
+  api.add_files([
+    'server/secret_keys.js'
+  ], 'server');
 
   api.add_files([
     'both/nucleus_global.js',
