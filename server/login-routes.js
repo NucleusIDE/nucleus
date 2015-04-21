@@ -9,7 +9,7 @@ Meteor.startup(function() {
   SecretKeys = SecretKeys || {github: {}};
 
   // var baseUrl = 'https://nucleus.ngrok.com';
-  var authProxyUrl = 'http://localhost.com:4000';
+  var authProxyUrl = MasterConfig.githubLoginProxyURL;
   var baseUrl = '';
 
   var githubOAuth = Npm.require('github-oauth')({

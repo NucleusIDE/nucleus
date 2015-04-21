@@ -58,6 +58,7 @@ Package.on_use(function (api, where) {
   ], 'server');
 
   api.add_files([
+    'both/master_config.js',
     'both/nucleus_global.js',
     'both/plugin-manager.js',
     'both/deploy.js',

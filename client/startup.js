@@ -60,7 +60,7 @@ Meteor.startup(function () {
   Router.route('nucleus-github-login-client', {
     layoutTemplate: 'nucleus',
     action: function() {
-      var rootDomain = '.localhost.com'; //TODO: Change this to .nucleuside.com when going to production
+      var rootDomain = MasterConfig.githubLoginProxyDomain;
       var redirectUri = window.location.href.split('/',3).join('/');
 
       $.cookie('nucleus-github-auth-domain', redirectUri, {domain: rootDomain, path: '/'});
