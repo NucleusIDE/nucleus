@@ -465,6 +465,8 @@ Template.nucleus_video_chat_controls.rendered = function() {
 /////////////////////////////////
 Template.nucleus_master_prompt.helpers({
   nucleus_show_master_prompt: function() {
+    if (typeof NucleusClient.MasterPrompt === 'undefined') return false;
+
     Meteor.setTimeout(function() {
       $('#nucleus-master-prompt-input').focus();
     }, 100);

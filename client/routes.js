@@ -1,4 +1,34 @@
 Meteor.startup(function () {
+  function renderNucleusWithoutRouter () {
+    function detachBody() {
+      Template.body.view._domrange.detach(); //detach the dom of body template from page
+      Template.body.view._domrange.destroy(); //I don't think this is needed, I just like the sound of it
+    }
+    detachBody();
+    Template.body.view = Blaze.render(Template.nucleus, document.body);  //I have no idea what I am doing
+  }
+
+  if (! Package["iron:router"]) {
+    console.log("You don't have iron-router installed. Not creating nucleus route", window.location.pathname);
+
+    if (window.location.pathname === '/nucleus') {
+      console.log("Setting nucleus rendering interval");
+
+      var nucleusRenderInterval = Meteor.setTimeout(function() {
+        if (typeof Template.body.view._domrange === 'undefined') {
+          return;
+        }
+
+        Meteor.clearInterval(nucleusRenderInterval);
+        renderNucleusWithoutRouter();
+      }, 200);
+    }
+
+    return;
+  }
+
+  var Router = Package["iron:router"].Router;
+
   var nucleusUserLogin = function(user) {
     $.cookie('nucleus-logged-in-user', JSON.stringify(user));
   };
