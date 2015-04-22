@@ -1,38 +1,37 @@
 Meteor.startup(function () {
-  function renderNucleusWithoutRouter () {
+
+
+  var renderNucleusWithoutRouter = function () {
     function detachBody() {
       Template.body.view._domrange.detach(); //detach the dom of body template from page
       Template.body.view._domrange.destroy(); //I don't think this is needed, I just like the sound of it
     }
     detachBody();
+
+    Meteor.subscribe('all_nucleus_users');
+    NucleusClient.initialize({}, window); //initialize the nucleus window
     Template.body.view = Blaze.render(Template.nucleus, document.body);  //I have no idea what I am doing
-  }
+  };
 
-  if (! Package["iron:router"]) {
-    console.log("You don't have iron-router installed. Not creating nucleus route", window.location.pathname);
+  var setupIronRoutes = function() {
+    var Router = Package["iron:router"].Router;
 
-    if (window.location.pathname === '/nucleus') {
-      console.log("Setting nucleus rendering interval");
-
-      var nucleusRenderInterval = Meteor.setTimeout(function() {
-        if (typeof Template.body.view._domrange === 'undefined') {
-          return;
-        }
-
-        Meteor.clearInterval(nucleusRenderInterval);
-        renderNucleusWithoutRouter();
-      }, 200);
-    }
-
-    return;
-  }
-
-  var Router = Package["iron:router"].Router;
+    Router.route('nucleus', {
+      path: '/nucleus',
+      layoutTemplate: 'nucleus',
+      waitOn: function() {
+        return Meteor.subscribe('all_nucleus_users');
+      },
+      onBeforeAction: function() {
+        NucleusClient.initialize({}, window); //initialize the nucleus window
+        maybeLoginFromCookie(maybeLoginFromQueryParams);
+      }
+    });
+  };
 
   var nucleusUserLogin = function(user) {
     $.cookie('nucleus-logged-in-user', JSON.stringify(user));
   };
-
   var isValidUserInfo = function(user, cb) {
     if (! user)
       return cb(null, false);
@@ -41,49 +40,74 @@ Meteor.startup(function () {
       return cb(err, res);
     });
   };
+  var maybeLoginFromCookie = function(loginFailCb) {
+    var userInfo = JSON.parse($.cookie('nucleus-logged-in-user'));  //get current logged in nucleus user info
 
-  Router.route('nucleus', {
-    path: '/nucleus',
-    layoutTemplate: 'nucleus',
-    waitOn: function() {
-      return Meteor.subscribe('all_nucleus_users');
-    },
-    onBeforeAction: function() {
-      NucleusClient.initialize({}, window); //initialize the nucleus window
-
-      var userInfo = JSON.parse($.cookie('nucleus-logged-in-user'));  //get current logged in nucleus user info
-
-      isValidUserInfo(userInfo, function(err, valid) {  //check if nucleus user info stored in cookies is correct
-        if (err) {
-          console.log("Error occurred while checking nucleus user's login status", err);
-          return;
-        }
-
-        if (valid) { //log the user in from cookie and hide prompt
-          var nucUser = NucleusUsers.findOne({username: userInfo.username});
-          Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
-          NucleusClient.currentUser.set(nucUser);
-          Session.set('should_show_nucleus_login_button', false);
-        }
-      });
-    },
-    onAfterAction: function() {
-      var username = this.params['user'],
-          loginToken = this.params['login_token'],
-          loginFailed = this.params['login_failed'],
-          message = this.params['message'] || "Login Failed";
-
-      if (loginFailed !== 'true' && username && loginToken) {
-        var userInfo = {username: username, login_token: loginToken};
-
-        //We can just set the cookie without verifying it here because we navigate to same route again
-        //to clear the query params. Then it gets checked in onBeforeAction
-        nucleusUserLogin(userInfo);
-        Router.go('nucleus');
-      } else if(loginFailed){
-        FlashMessages.sendError(message);
+    isValidUserInfo(userInfo, function(err, valid) {  //check if nucleus user info stored in cookies is correct
+      if (err) {
+        console.log("Error occurred while checking nucleus user's login status", err);
+        return;
       }
 
+      if (valid) { //log the user in from cookie and hide prompt
+        var nucUser = NucleusUsers.findOne({username: userInfo.username});
+        Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
+        NucleusClient.currentUser.set(nucUser);
+        Session.set('should_show_nucleus_login_button', false);
+      } else {
+        loginFailCb = loginFailCb || function() {};
+        loginFailCb();
+      }
+    });
+  };
+  var maybeLoginFromQueryParams = function() {
+    var getParam = function(name, url) {
+      if (!url) {
+        url = window.location.href;
+      }
+      var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(url);
+      if (!results) {
+        return undefined;
+      }
+      return results[1] || undefined;
+    };
+    var cleanUpURL = function() {
+      var clean_uri = window.location.toString().split('?')[0];
+      window.history.replaceState({}, document.title, clean_uri);
+    };
+
+    var username = getParam('user'),
+        loginToken = getParam('login_token'),
+        loginFailed = getParam('login_failed') || false,
+        message = getParam('message') || "Login Failed";
+
+    if (loginFailed !== 'true' && username && loginToken) {
+      var userInfo = {username: username, login_token: loginToken};
+
+      //We can just set the cookie without verifying it here because we navigate to same route again
+      //to clear the query params. Then it gets checked in onBeforeAction
+      nucleusUserLogin(userInfo);
+      maybeLoginFromCookie();
+    } else if(loginFailed) {
+      FlashMessages.sendError(message);
     }
-  });
+
+    cleanUpURL();
+  };
+
+  if (! Package["iron:router"]) {
+    if (window.location.pathname === '/nucleus') {
+      var nucleusRenderInterval = Meteor.setTimeout(function() {
+        if (typeof Template.body.view._domrange === 'undefined') return;
+
+        Meteor.clearInterval(nucleusRenderInterval);
+        renderNucleusWithoutRouter();
+
+        maybeLoginFromCookie(maybeLoginFromQueryParams);
+      }, 200);
+    }
+    return;
+  } else {
+    setupIronRoutes();
+  }
 });
