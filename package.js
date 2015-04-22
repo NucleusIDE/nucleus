@@ -26,8 +26,11 @@ Package.on_use(function (api, where) {
            'nucleuside:terminal@0.2.0',
            'mrt:flash-messages@0.2.4',
            'aldeed:autoform@4.0.0',
-           'kevohagan:ramda@0.13.0',
-           'iron:router@0.9.0 || 1.0.0']);
+           'kevohagan:ramda@0.13.0']);
+
+  //we create /nucleus route only when iron:router is present. Otherwise we manually check the url
+  api.use('iron:router@0.9.0 || 1.0.0', {weak: true});
+  api.use('iron:router@0.9.0 || 1.0.0', 'server');
 
   api.imply([
     'reactive-var',
@@ -81,7 +84,7 @@ Package.on_use(function (api, where) {
     'client/nucleus_client.js',
     'client/nucleus_sidebar.js',
     'client/keepalive.js',
-    'client/startup.js',
+    'client/routes.js',
 
     'client/template.css',
     'client/template.html',
