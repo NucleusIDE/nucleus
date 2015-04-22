@@ -1,4 +1,8 @@
 MasterConfig = {
-  githubLoginProxyURL: 'http://localhost.com:4000',
-  githubLoginProxyDomain: '.localhost.com'
+  githubLoginProxy: {
+    host: 'http://ultimate-ide-auth-proxy.meteor.com',
+    route: '/github-auth'
+  }
 };
+
+MasterConfig.githubLoginProxy.url = MasterConfig.githubLoginProxy.host + MasterConfig.githubLoginProxy.route;

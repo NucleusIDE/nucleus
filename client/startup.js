@@ -56,17 +56,4 @@ Meteor.startup(function () {
 
     }
   });
-
-  Router.route('nucleus-github-login-client', {
-    layoutTemplate: 'nucleus',
-    action: function() {
-      var rootDomain = MasterConfig.githubLoginProxyDomain;
-      var redirectUri = window.location.href.split('/',3).join('/');
-
-      $.cookie('nucleus-github-auth-domain', redirectUri, {domain: rootDomain, path: '/'});
-
-      var serverLoginUrl = '/nucleus-github-login';
-      window.location.href = serverLoginUrl;
-    }
-  });
 });

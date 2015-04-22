@@ -8,16 +8,14 @@ Meteor.startup(function() {
 
   SecretKeys = SecretKeys || {github: {}};
 
-  // var baseUrl = 'https://nucleus.ngrok.com';
-  var authProxyUrl = MasterConfig.githubLoginProxyURL;
   var baseUrl = '';
 
   var githubOAuth = Npm.require('github-oauth')({
     githubClient: SecretKeys.github.client_id,
     githubSecret: SecretKeys.github.client_secret,
-    baseURL: authProxyUrl,
+    baseURL: MasterConfig.githubLoginProxy.host,
     loginURI: '/nucleus-github-login',
-    callbackURI: '/github-auth',
+    callbackURI: MasterConfig.githubLoginProxy.route,
 
     scope: ['user','repo'] // optional, default scope is set to user
   });

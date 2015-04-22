@@ -28,6 +28,9 @@ Template.nucleus_login_prompt.helpers({
   no_nuc_user: function() {
     Session.setDefault('should_show_nucleus_login_button', true);
     return Session.get('should_show_nucleus_login_button');
+  },
+  githubAuthProxyURL: function() {
+    return MasterConfig.githubLoginProxy.url + '?subdomain=' + window.location.href.split('/',3).join('/');
   }
 });
 
