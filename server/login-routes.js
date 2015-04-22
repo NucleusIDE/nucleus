@@ -2,6 +2,13 @@
  * Server side routes for github oauth
  */
 Meteor.startup(function() {
+  if (! Package["iron:router"]) {
+    console.log("You don't have iron-router installed. Not creating nucleus route");
+    return;
+  }
+
+  var Router = Package["iron:router"].Router;
+
   var Future = Npm.require('fibers/Future');
 
   var url = Npm.require('url');
@@ -67,18 +74,4 @@ Meteor.startup(function() {
       res.end();
     }
   });
-
-
-  Router.route('', {
-    name: 'auth',
-    where: 'server',
-    action: function() {
-      console.log("GOING TO ROUTE NODE");
-      var req = this.request,
-          res = this.response;
-
-      this.response.next();
-    }
-  });
-
 });
