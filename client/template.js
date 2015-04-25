@@ -406,13 +406,13 @@ Template.terminal.helpers({
 // START NUCLEUS RIBBON //
 //////////////////////////
 Template.nucleus_ribbon.rendered = function() {
-  var invert = 1;
+  var invert = "100%";
   Meteor.setInterval(function() {
-    invert = invert == 1 ? .45 : 1;
+    invert = invert == "100%" ? "50%" : "100%";
     $(".nucleus-make-me-ribbon-wrapper img").css({
-      "opacity": invert
-    }
-                                                );
+      "filter": ("invert(" + invert +")"),
+      "-webkit-filter": ("invert(" + invert +")")
+    });
   }, 1500);
 };
 

@@ -589,10 +589,12 @@ body {
   width: 50px;
   height: 50px;
   cursor: pointer;
+  filter: invert(100%);
+  -webkit-filter: invert(100%);
 }
 .nucleus-make-me-ribbon-wrapper img {
   height: 50px;
-  transition: opacity 1s ease;
+  transition: all 1s ease;
 }
 /* Nucleus video chat film */
 
