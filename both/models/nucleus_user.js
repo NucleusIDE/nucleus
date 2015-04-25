@@ -138,7 +138,8 @@ NucleusUser.extend({
 
     var nick = this.nick;
     var chat = new ChatMessage();
-    chat.broadcast(nick, message);
+
+    chat.chat_broadcast(nick, message);
   },
 
   isCollaboratorOfRepo: function(repo, access_token) {

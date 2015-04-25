@@ -12,7 +12,7 @@ ChatMessages = new Meteor.Collection('chats');
 ChatMessage = Model(ChatMessages);
 
 ChatMessage.extend({
-  broadcast: function(sender_name, message) {
+  chat_broadcast: function(sender_name, message) {
     /**
      * Because a small bug in `channikhabra:stupid-models` it was not possible to override `this.save()`. Besides, `ChatMessage.broadcast()` is more intuitive than `ChatMessage.save()`.
      */
@@ -20,6 +20,11 @@ ChatMessage.extend({
     this.sender_name = sender_name;
     this.message = message;
     this.sent_at = moment().toDate().getTime();
+
+    console.log("SENDING", this);
+
     this.save();
   }
 });
+
+NucleusGlobal.ChatMessage = ChatMessage;
