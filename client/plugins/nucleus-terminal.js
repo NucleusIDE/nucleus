@@ -8,7 +8,7 @@ NucleusTerminal.prototype.show = function() {
     if (err) {
       throw err;
     }
-    Session.set('nucleus_terminal_ready', true);
+    Session.set('nucleus_terminal_ready', resa);
     // self.showingTerminal.set(res);
   });
 
