@@ -267,7 +267,7 @@ var NucleusEditorFactory = function() {
 
     var $label = $(".user_nick_cursor_label");
     $label.text(nick);
-    $label.css({display: 'inline', top: userCursorPos.pageY+lineHeight, left: userCursorPos.pageX, background: color, padding: "2px", color: Utils.getComplementoryColor(color), lineHeight: lineHeight+'px'});
+    $label.css({display: 'inline', top: userCursorPos.pageY+lineHeight, left: userCursorPos.pageX, background: color, padding: "2px", color: Utils.getComplementoryColor(color), lineHeight: lineHeight+'px', "text-shadow": "0 0 2px #222"});
   };
 
   /**
