@@ -24,6 +24,7 @@ Package.on_use(function (api, where) {
            'nucleuside:simplewebrtc@0.0.1',
            'mizzao:sharejs@0.6.1',
            'nucleuside:terminal@0.2.0',
+           'nucleuside:eventsync@0.1.0',
            'mrt:flash-messages@0.2.4',
            'aldeed:autoform@4.0.0',
            'kevohagan:ramda@0.13.0']);
@@ -69,7 +70,6 @@ Package.on_use(function (api, where) {
     'both/collections.js',
     'chat/both/chat_model.js',
     'both/models/nucleus_user.js',
-    'both/models/nucleus_event_model.js',
   ], ['client', 'server']);
 
   api.add_files([
@@ -89,19 +89,6 @@ Package.on_use(function (api, where) {
     'client/template.css',
     'client/template.html',
     'client/template.js',
-
-    'client/eventsync/nucleus_event_manager.js',
-    'client/eventsync/utils.js',
-    'client/eventsync/clicks.js',
-    'client/eventsync/scroll.js',
-
-    'client/eventsync/forms.js',
-    'client/eventsync/form_inputs.js',
-    'client/eventsync/form_toggles.js',
-    'client/eventsync/form_submit.js',
-
-    'client/eventsync/location.js',
-    'client/eventsync/login.js',
 
     'chat/client/subscriptions.js'
   ], ['client']);

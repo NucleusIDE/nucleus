@@ -3,7 +3,6 @@ Meteor.publish("nucleusPublisher",function() {
   return [
     NucleusDocuments.find({}),
     ShareJsDocs.find({}),
-    NucleusEvents.find({})
   ];
 });
 

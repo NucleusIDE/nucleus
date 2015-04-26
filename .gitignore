@@ -5,3 +5,4 @@
 docs/*
 .npm
 server/secret_keys.js
+npm-debug.log
