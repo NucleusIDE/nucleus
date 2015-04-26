@@ -1,6 +1,8 @@
 var fs = Npm.require("fs"),
     path = Npm.require("path"),
-    spawn = Npm.require("child_process").spawn;
+    spawn = Npm.require("child_process").spawn,
+    exec = Npm.require("child_process").exec,
+    Future = Npm.require("fibers/future");
 
 CrashWatcher = {
   setup_crashing_changes_reverter: function() {
@@ -19,7 +21,7 @@ CrashWatcher = {
         var files_to_refresh = data.trim() && data.split("\n");
         _.each(files_to_refresh, function(file) {
           Meteor.call("nucleusSetupFileForEditting", file, true, function(err, res) {
-            //            FlashMessages.sendError("We had to revert a file.");
+            FlashMessages.sendError("We had to revert a file.");
           });
         });
         fs.unlink(refresh_file);
@@ -31,7 +33,23 @@ CrashWatcher = {
         app_url = Meteor.absoluteUrl();
 
     //let's launch nuc-watch-meteor from inside the nucleus instead of explicitly calling it
+
     var watcher = spawn("nucleus-watch-meteor", ["", "-d", app_dir, "-u", app_url], {detatched: true});
+
+    watcher.on('error', function(err) {
+      if (err.code === 'ENOENT') {
+        var npmInstall = exec("npm install -g git+https://git@github.com/NucleusIDE/nucleus-watch-meteor.git", function(err, stdout, stderr) {
+          if (err) {
+            throw new Meteor.Error(err);
+          }
+
+          console.error("Installing nucleus-crash-watcher");
+          console.log("Npm install -g nucleus-watch-meteor");
+          console.log('STDOUT: ', stdout);
+          CrashWatcher.initialize();
+        }.future());
+      }
+    });
 
     watcher.stdout.setEncoding("utf-8");
     watcher.stderr.setEncoding("utf-8");

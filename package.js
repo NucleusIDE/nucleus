@@ -10,7 +10,7 @@ Npm.depends({
   'fibers': '1.0.2',
   'github-oauth': '0.2.1',
   'mup': '0.9.7',
-  'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/f3716eaa97ef7fbe6959f216d5d6490b29667f7c.tar.gz'
+  'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/fdabf2f83a586cda74a928bc37ec8f0f7fba26dd.tar.gz'
 });
 
 Package.on_use(function (api, where) {
