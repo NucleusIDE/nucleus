@@ -87,11 +87,11 @@ Template.editor.helpers({
 Template.nucleus_toolbar.helpers({
   recievingEvents: function(app) {
     if (NucleusUser.me())
-      return  NucleusUser.me().isSyncingEvents(app) ? 'nuc-btn-dark-active': '';
+      return  NucleusClient.EventSync.isSyncingEvents(app) ? 'nuc-btn-dark-active': '';
   },
   fa_recievingEvents: function(app) {
     if (NucleusUser.me())
-      return  NucleusUser.me().isSyncingEvents(app) ? 'fa-chain': 'fa-chain-broken';
+      return  NucleusClient.EventSync.isSyncingEvents(app) ? 'fa-chain': 'fa-chain-broken';
   },
   shouldShowVideoControls: function() {
     return (typeof NucleusClient.WebRTCCall !== 'undefined');
@@ -180,11 +180,11 @@ Template.nucleus_toolbar.events({
   },
   "click #sync_app_events": function(e) {
     e.preventDefault();
-    NucleusUser.me().toggleEventSync("app");
+    NucleusClient.EventSync.toggleEventSync('app');
   },
   "click #sync_nucleus_events": function(e) {
     e.preventDefault();
-    NucleusUser.me().toggleEventSync("nucleus");
+    NucleusClient.EventSync.toggleEventSync('nucleus');
   }
 });
 

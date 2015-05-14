@@ -105,6 +105,7 @@ NucleusUser.extend({
       this.update({syncing_nucleus_events: is_syncing_events});
 
     if (is_syncing_events) {
+      console.log("GETTING APP WINDOW", app);
       NucleusClient.getWindow(app).eval("NucleusEventManager.initialize()");
     }
     else {
@@ -230,7 +231,7 @@ NucleusUser.loginWithGithubToken = function(token) {
     var api_endpoint = 'https://api.github.com/user?access_token=' + token.access_token,
         options = { headers: { "user-agent": 'Nucleuside/1.0'}},
         nucUser = null,
-        fut = new Future;
+        fut = new Future();
 
     try {
       var user = JSON.parse(HTTP.get(api_endpoint, options).content);
@@ -258,7 +259,9 @@ NucleusUser.loginWithGithubToken = function(token) {
         cwd: 'scratch',
         status: 3,
         last_keepalive: moment().toDate().getTime(),
-        github_access_token: token.access_token
+        github_access_token: token.access_token,
+        syncing_nucleus_events: false,
+        syncing_app_events: false
       });
 
       fut.return(nucUser);

@@ -54,10 +54,6 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
-    'global_overrides.js'
-  ], 'client');
-
-  api.add_files([
     'server/secret_keys.js'
   ], 'server');
 
@@ -81,6 +77,7 @@ Package.on_use(function (api, where) {
     'client/lib/hint.css',
 
     'client/nucleus_editor.js',
+    'client/event-sync.js',
     'client/nucleus_client.js',
     'client/nucleus_sidebar.js',
     'client/keepalive.js',
@@ -120,5 +117,5 @@ Package.on_use(function (api, where) {
 
   api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
   api.export && api.export(['Nucleus', 'NucleusGit'], ['server']);
-  api.export && api.export(['NucleusClient', 'NucleusEditor', 'NucleusEventManager', 'LiveUpdate'], ['client']);
+  api.export && api.export(['NucleusClient', 'NucleusEditor', 'LiveUpdate'], ['client']);
 });

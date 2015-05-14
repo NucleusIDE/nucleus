@@ -20,23 +20,7 @@ var NucleusClientFactory = function () {
     suckCSSFromPackages: []
   };
 
-  this.configure = function (config) {
-    _.extend(this.config, config);
-  };
-
-  this.popup = function() {
-    //url where nucleus template is expected
-    var url = this.config.nucleusUrl,
-        //name of Nucleus window. Not significant
-        windowName = this.config.windowName;
-    //nucleus window which has nucleus editor.
-    this.nucleusWindow = window.open(url, windowName, 'height=550,width=900');
-    if (window.focus) {
-      this.nucleusWindow.focus();
-    }
-
-    return this.nucleusWindow;
-  };
+  this.EventSync = new NucleusEventSync(this);
 
   this.initialize = function (config, nucleusWindow) {
     this.configure(config);
@@ -82,6 +66,24 @@ var NucleusClientFactory = function () {
     return false;
   };
 
+  this.configure = function (config) {
+    _.extend(this.config, config);
+  };
+
+  this.popup = function() {
+    //url where nucleus template is expected
+    var url = this.config.nucleusUrl,
+        //name of Nucleus window. Not significant
+        windowName = this.config.windowName;
+    //nucleus window which has nucleus editor.
+    this.nucleusWindow = window.open(url, windowName, 'height=550,width=900');
+    if (window.focus) {
+      this.nucleusWindow.focus();
+    }
+
+    return this.nucleusWindow;
+  };
+
   /**
    * Get name of the the *scratch* doc. This is the document which is opened in ace when user has just logged in and haven't yet opened any document.
    */
@@ -96,11 +98,11 @@ var NucleusClientFactory = function () {
    * * `app_name` *{String}* : Can be **app** or **nucleus**
    */
   this.getWindow = function (app_name) {
-    var nucleus_window = this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : window;
+    var nucleusWindow = this.nucleusWindow ? this.nucleusWindow : window.name === "Nucleus" ? window : window;
 
-    if (app_name === "app") return nucleus_window.opener ? nucleus_window.opener : nucleus_window;
+    if (app_name === "app") return nucleusWindow.opener ? nucleusWindow.opener : nucleusWindow;
 
-    return nucleus_window;
+    return nucleusWindow;
   };
 
   /**
