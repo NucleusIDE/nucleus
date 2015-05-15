@@ -45,9 +45,6 @@ var NucleusClientFactory = function () {
       }
     }.bind(this), 500);
 
-    //Configure LiveUpdate to be used as a library so it won't re-render the templates itself
-    LiveUpdate.useAsLib(true);
-
     this.Editor = NucleusEditor;
 
     /**

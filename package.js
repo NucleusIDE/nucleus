@@ -19,7 +19,7 @@ Package.on_use(function (api, where) {
            'reactive-var',
            'mrt:moment@2.8.1',
            'nucleuside:smart-models@0.0.6',
-           'nucleuside:live-update@0.2.1',
+           'nucleuside:live-update-plus@0.0.1',
            'nucleuside:basic-auth@0.2.1',
            'nucleuside:simplewebrtc@0.0.1',
            'mizzao:sharejs@0.6.1',
