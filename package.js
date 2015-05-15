@@ -7,22 +7,23 @@ Package.describe({
 
 
 Npm.depends({
-  'fibers': '1.0.2',
+  // 'fibers': '1.0.2',
   'github-oauth': '0.2.1',
   'mup': '0.9.7',
   'nucleus-watch-meteor': 'https://github.com/NucleusIDE/nucleus-watch-meteor/archive/fdabf2f83a586cda74a928bc37ec8f0f7fba26dd.tar.gz'
 });
 
 Package.on_use(function (api, where) {
-  api.versionsFrom("METEOR@0.9.1");
+
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session', 'http',
            'reactive-var',
            'mrt:moment@2.8.1',
-           'nucleuside:smart-models@0.0.6',
+           'nucleuside:smart-models@0.0.8',
            'nucleuside:live-update-plus@0.0.1',
            'nucleuside:basic-auth@0.2.1',
            'nucleuside:simplewebrtc@0.0.1',
-           'mizzao:sharejs@0.6.1',
+           'mizzao:sharejs@0.7.3',
+           'mizzao:sharejs-ace@1.1.8_1',
            'nucleuside:terminal@0.2.0',
            'nucleuside:eventsync@0.1.0',
            'mrt:flash-messages@0.2.4',
@@ -30,14 +31,14 @@ Package.on_use(function (api, where) {
            'kevohagan:ramda@0.13.0']);
 
   //we create /nucleus route only when iron:router is present. Otherwise we manually check the url
-  api.use('iron:router@0.9.0 || 1.0.0', {weak: true});
-  api.use('iron:router@0.9.0 || 1.0.0', 'server');
+  // api.use('iron:router@0.9.0 || 1.0.0', {weak: true});
+  // api.use('iron:router@0.9.0 || 1.0.0', 'server');
 
-  api.imply([
-    'reactive-var',
-    'kevohagan:ramda@0.13.0',
-    'aldeed:autoform@4.0.0'
-  ]);
+  // api.imply([
+  //   'reactive-var',
+  //   'kevohagan:ramda@0.13.0',
+  //   'aldeed:autoform@4.0.0'
+  // ]);
 
 
   //Add core nucleus plugin files

@@ -13,4 +13,4 @@ NucleusGlobal.ShareJsOps = ShareJsOps = new Meteor.Collection('ops');
 //`sharejs` overwrites the documents in `docs` collection so we can't simply insert the tracking in them.
 NucleusGlobal.NucleusDocuments = NucleusDocuments = new Meteor.Collection('nucleus_documents');
 
-if(Meteor.isServer) NucleusGlobal.ShareJS = ShareJS;
+// if(Meteor.isServer) NucleusGlobal.ShareJS = ShareJS;
