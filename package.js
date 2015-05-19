@@ -21,7 +21,7 @@ Package.on_use(function (api, where) {
            'nucleuside:smart-models@0.0.8',
            'nucleuside:live-update-plus@0.0.1',
            'nucleuside:basic-auth@0.2.1',
-           'nucleuside:simplewebrtc@0.0.1',
+           // 'nucleuside:simplewebrtc@0.0.1',
            'mizzao:sharejs@0.7.3',
            'mizzao:sharejs-ace@1.1.8_1',
            'nucleuside:terminal@0.2.0',
@@ -30,15 +30,15 @@ Package.on_use(function (api, where) {
            'aldeed:autoform@4.0.0',
            'kevohagan:ramda@0.13.0']);
 
-  //we create /nucleus route only when iron:router is present. Otherwise we manually check the url
-  // api.use('iron:router@0.9.0 || 1.0.0', {weak: true});
-  // api.use('iron:router@0.9.0 || 1.0.0', 'server');
+  // we create /nucleus route only when iron:router is present. Otherwise we manually check the url
+  api.use('iron:router@0.9.0 || 1.0.0', {weak: true});
+  api.use('iron:router@0.9.0 || 1.0.0', 'server');
 
-  // api.imply([
-  //   'reactive-var',
-  //   'kevohagan:ramda@0.13.0',
-  //   'aldeed:autoform@4.0.0'
-  // ]);
+  api.imply([
+    'reactive-var',
+    'kevohagan:ramda@0.13.0',
+    'aldeed:autoform@4.0.0'
+  ]);
 
 
   //Add core nucleus plugin files

@@ -28,7 +28,7 @@ Meteor.startup(function() {
   });
 
   Router.route('nucleus-github-callback', {
-    name: 'nucleucGithubLogin',
+    name: 'nucleusGithubCallback',
     where: 'server',
     action: function() {
       var req = this.request;
@@ -64,7 +64,7 @@ Meteor.startup(function() {
   });
 
   Router.route('nucleus-github-login', {
-    name: 'nucleucGithubLogin',
+    name: 'nucleusGithubLogin',
     where: 'server',
     action: function() {
       var req = this.request;
