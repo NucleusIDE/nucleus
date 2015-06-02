@@ -17,6 +17,7 @@ Package.on_use(function (api, where) {
 
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session', 'http',
            'reactive-var',
+           'reactive-dict',
            'mrt:moment@2.8.1',
            'nucleuside:smart-models@0.0.8',
            'nucleuside:live-update-plus@0.0.1',
@@ -95,6 +96,10 @@ Package.on_use(function (api, where) {
     'server/permissions.js',
     'chat/server/publishers.js'
   ], ['server']);
+
+  api.add_files([
+    'client/ui/project-explorer.js'
+  ], 'client');
 
 
   api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
