@@ -147,8 +147,16 @@ var NucleusFactory = function() {
       var projectDir = Nucleus.config.projectDir;
 
       walk(projectDir, function(node) {
-        if(!! node)
+        if(!! node && !! node.parentId) {//don't push falsy rows or the root node
+          if(node.parentId === projectDir)
+            node.parentId = null;  //set the parentId of root's children to null so they won't try to show up as anybody's children
+
+          if (typeof node.parentId ===  'undefined') {
+            console.log("UNDEFINED PARENT OF", node);
+          }
+
           tree.push(node);
+        }
       });
 
       return tree;
