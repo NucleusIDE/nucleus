@@ -7,7 +7,7 @@
 
 Meteor.methods({
   nucleusGetFileList: function() {
-    return Nucleus.getDirTree({rootDir: Nucleus.config.projectDir, parent: "#", traverseSymlinks: true});
+    return Nucleus.getDirTree({rootDir: Nucleus.config.projectDir, traverseSymlinks: true});
   },
   nucleusGetFileContents: function(filepath) {
     /**

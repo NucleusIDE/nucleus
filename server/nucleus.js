@@ -94,58 +94,68 @@ var NucleusFactory = function() {
   // * includeHidden - shall we include hidden files in the produced tree? (hidden files/directories are those whose name start with `.`)
   this.getDirTree = function(options) {
     options = options || {};
-    var  dirTree= function (options) {
-      var filename = options.rootDir.trim() || Nucleus.config.projectDir.trim(),
-          parent = options.parent || "#",
-          traverseSymlinks = options.traverseSymlinks || false,
-          includeHidden = options.includeHidden || false,
+    var includeHidden = options.includeHidden || false;
 
-          stats = fs.lstatSync(filename),
-          projectDir = Nucleus.config.projectDir,
-          info = {
-            path: filename,
-            parent: parent,
-            name: path.basename(filename)
-          };
+    var walk = function(filepath, parentId, func) {
+      if (typeof func !== 'function') {
+        func = parentId;
+        parentId = null;
+      }
 
-      if(! includeHidden && info.name.indexOf(".") === 0)
-        return;
+      if (filepath.indexOf('.') === 0) {
+        return (func(false));
+      }
+
+      if (parentId) {
+        filepath = path.resolve(parentId, filepath);
+      }
+
+      var stats = fs.lstatSync(filepath);
+      var info = {
+        type: null,
+        id: filepath,
+        parentId: parentId || null,
+        name: path.basename(filepath),
+        hasChildren: false
+      };
 
       if (stats.isDirectory()) {
-        info.type = "folder";
-        info.children = fs.readdirSync(filename).map(function(child) {
-          return dirTree({rootDir: filename + '/' + child, parent: filename, traverseSymlinks: traverseSymlinks, includeHidden: includeHidden});
-        });
-      } else if ( stats.isSymbolicLink()) {
-        info.type = "symlink";
-        //below is for traversing symlinks (packages etc)
-        if(traverseSymlinks) {
-          var link = fs.readlinkSync(filename);
-          if (link.indexOf(".") === 0) return;
+        func(_.extend(info, {type: 'folder', hasChildren: true}));
 
-          if(fs.lstatSync(link).isDirectory()) {
-            info.children = fs.readdirSync(link).map(function(child) {
-              return dirTree({rootDir: filename + '/' + child, parent: filename, traverseSymlinks: traverseSymlinks, includeHidden: includeHidden});
-            });
-          }
+        fs.readdirSync(filepath).forEach(function(child) {
+          walk(child, filepath, func);
+        });
+
+      } else if ( stats.isSymbolicLink()) {
+        var link = fs.readlinkSync(filepath);
+        if (link.indexOf(".") === 0) return;
+
+        if(fs.lstatSync(link).isDirectory()) {
+          func(_.extend(info, {type: 'folder', hasChildren: true}));
+
+          fs.readdirSync(link).forEach(function(child) {
+            walk(child, filepath, func);
+          });
         }
       } else {
-        info.type = "file";
+        func(_.extend(info, {type: 'file', hasChildren: false, parentId: parentId}));
       }
-      return info;
     };
 
-    var removeEmptyChildren = function(tree) {
-      tree.children = _.compact(tree.children);
-      _.each(tree.children, removeEmptyChildren);
+    var  mkDirTree= function () {
+      var tree = [];
+      var projectDir = Nucleus.config.projectDir;
+
+      walk(projectDir, function(node) {
+        if(!! node)
+          tree.push(node);
+      });
+
+      return tree;
     };
 
 
-    var tree = dirTree(options);
-    if (! options.includeHidden) {
-      //Double check for hidden files.
-      removeEmptyChildren(tree);
-    }
+    var tree = mkDirTree(options);
     return tree;
   };
 
