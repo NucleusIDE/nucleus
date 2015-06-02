@@ -22,6 +22,7 @@ Package.on_use(function (api, where) {
            'nucleuside:live-update-plus@0.0.1',
            'nucleuside:basic-auth@0.2.1',
            // 'nucleuside:simplewebrtc@0.0.1',
+           'nucleuside:nucleus-ui',
            'mizzao:sharejs@0.7.3',
            'mizzao:sharejs-ace@1.1.8_1',
            'nucleuside:terminal@0.2.0',
@@ -71,10 +72,6 @@ Package.on_use(function (api, where) {
 
   api.add_files([
     'client/lib/cookie.js',
-    'client/lib/jstree/jstree.js',
-    'client/lib/jstree/themes/default/style.css',
-
-    'client/lib/font-awesome/css/font-awesome.css',
     'client/lib/hint.css',
 
     'client/nucleus_editor.js',
@@ -84,24 +81,8 @@ Package.on_use(function (api, where) {
     'client/keepalive.js',
     'client/routes.js',
 
-    'client/template.css',
-    'client/template.html',
-    'client/template.js',
-
     'chat/client/subscriptions.js'
   ], ['client']);
-
-  api.add_files([
-    'client/lib/jstree/themes/default/32px.png',
-    'client/lib/jstree/themes/default/40px.png',
-    'client/lib/jstree/themes/default/throbber.gif',
-
-    'client/lib/font-awesome/fonts/FontAwesome.otf',
-    'client/lib/font-awesome/fonts/fontawesome-webfont.woff',
-    'client/lib/font-awesome/fonts/fontawesome-webfont.ttf',
-    'client/lib/font-awesome/fonts/fontawesome-webfont.svg',
-    'client/lib/font-awesome/fonts/fontawesome-webfont.eot',
-  ], 'client', {isAsset: true});
 
   api.add_files([
     'server/publishers.js',

@@ -1,6 +1,4 @@
 Meteor.startup(function () {
-
-
   var renderNucleusWithoutRouter = function () {
     function detachBody() {
       Template.body.view._domrange.detach(); //detach the dom of body template from page
@@ -10,7 +8,7 @@ Meteor.startup(function () {
 
     Meteor.subscribe('all_nucleus_users');
     NucleusClient.initialize({}, window); //initialize the nucleus window
-    Template.body.view = Blaze.render(Template.nucleus, document.body);  //I have no idea what I am doing
+    Template.body.view = Blaze.render(Template.nucleusWorkbench, document.body);  //I have no idea what I am doing
   };
 
   var setupIronRoutes = function() {
@@ -18,7 +16,8 @@ Meteor.startup(function () {
 
     Router.route('nucleus', {
       path: '/nucleus',
-      layoutTemplate: 'nucleus',
+      layoutTemplate: 'nucleusLayout',
+      template: 'nucleusWorkbench',
       waitOn: function() {
         return Meteor.subscribe('all_nucleus_users');
       },
