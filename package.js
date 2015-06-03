@@ -42,6 +42,9 @@ Package.on_use(function (api, where) {
     'aldeed:autoform@4.0.0'
   ]);
 
+  api.add_files([
+    'client/lib/global-state.js'
+  ], 'client');
 
   //Add core nucleus plugin files
   //It is safe to put them here because these are actually executed only after NucleusClient is initialized
