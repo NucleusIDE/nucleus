@@ -1,0 +1,47 @@
+#nucleus-editor {
+  height: inherit;
+}
+
+.nucleus_login_prompt {
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  float: left;
+  height: 100%;
+  padding: 185px;
+  text-align: center;
+  background: rgba(2, 2, 2, 0.8);
+}
+.nucleus_login_form {
+  height: 200px;
+  padding-top: 55px;
+  border-radius: 10px;
+  background: transparent;
+}
+
+.extra-cursor {
+  position: absolute;
+  -webkit-animation: nuc-blink .5s steps(5, start) infinite;
+  animation: nuc-blink .5s steps(5, start) infinite;
+  border-left: 2px solid #f00;
+  background-color: #f00;
+}
+@keyframes nuc-blink {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes nuc-blink {
+  to {
+    visibility: hidden;
+  }
+}
+.user_nick_cursor_label {
+  position: absolute;
+  z-index: 9;
+  display: none;
+  background-color: #fff;
+}

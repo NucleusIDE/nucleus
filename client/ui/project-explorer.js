@@ -5,15 +5,7 @@ Tracker.autorun(function() {
   state.set('tree', NucleusClient.getFileTree());
 });
 
-
-window.state = state;
 Template.nucleusProjectExplorer.helpers({
-  treeHeight: function() {
-    var tree = state.get('tree');
-    if(!tree)
-      return '0px';
-    return '50vh';
-  },
   rows: function() {
     var tree = state.get('tree');
 
@@ -29,4 +21,13 @@ Template.nucleusProjectExplorer.helpers({
       return tree.nodes[key];
     });
   },
+});
+
+Template.nucleusProjectExplorer.events({
+  "click .nucleus-tree__row": function(e) {
+    var row = this;
+    if (row.get('type') === 'file') {
+      Session.set('nucleus_selected_file', row.get('id'));
+    }
+  }
 });

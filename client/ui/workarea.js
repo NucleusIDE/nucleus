@@ -17,5 +17,11 @@ Template.nucleusWorkarea.helpers({
 
 
     return state.get('styles');
+  },
+  workareaTemplate: function() {
+    if (Session.get('nucleus_selected_file')) {
+      return 'nucleusEditor';
+    }
+    return null;
   }
 });

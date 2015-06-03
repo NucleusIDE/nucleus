@@ -94,7 +94,8 @@ var NucleusEditorFactory = function() {
    */
   this.initialize = function(aceInstance) {
     this.setEditor(aceInstance);
-    this.setTheme('monokai');
+    this.setTheme('tomorrow_night');
+    // this.setTheme('ambiance');
 
     var filepath = Session.get("nucleus_selected_file");
     if(filepath) {
