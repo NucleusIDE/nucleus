@@ -22,6 +22,9 @@ Template.nucleusWorkarea.helpers({
     if (Session.get('nucleus_selected_file')) {
       return 'nucleusEditor';
     }
-    return null;
+    //hidden editor is added to the page so that ace will load it's theme, mode etc
+    //otherwise there is a blank flash for a split second when a file is selected,
+    // which gives feeling of a not-so-solid system
+    return "hiddenNucleusEditor";
   }
 });

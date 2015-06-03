@@ -4,3 +4,10 @@
   </div>
   {{> sharejsAce docid=docid onRender=config onConnect=setMode id="nucleus-editor"}}
 </template>
+
+
+<template name="hiddenNucleusEditor">
+  <div class="hidden">
+    {{> nucleusEditor}}
+  </div>
+</template>
