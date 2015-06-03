@@ -95,6 +95,7 @@ var NucleusFactory = function() {
   this.getDirTree = function(options) {
     options = options || {};
     var includeHidden = options.includeHidden || false;
+    var traverseSymlinks = options.traverseSymlinks || false;
 
     var walk = function(filepath, parentId, func) {
       if (typeof func !== 'function') {
@@ -126,7 +127,10 @@ var NucleusFactory = function() {
           walk(child, filepath, func);
         });
 
-      } else if ( stats.isSymbolicLink()) {
+      } else if (stats.isSymbolicLink()) {
+        if(!traverseSymlinks)
+          return func(_.extend(info, {type: 'symlink', hasChildren: false, parentId: parentId}));
+
         var link = fs.readlinkSync(filepath);
         if (link.indexOf(".") === 0) return;
 
@@ -150,10 +154,6 @@ var NucleusFactory = function() {
         if(!! node && !! node.parentId) {//don't push falsy rows or the root node
           if(node.parentId === projectDir)
             node.parentId = null;  //set the parentId of root's children to null so they won't try to show up as anybody's children
-
-          if (typeof node.parentId ===  'undefined') {
-            console.log("UNDEFINED PARENT OF", node);
-          }
 
           tree.push(node);
         }
