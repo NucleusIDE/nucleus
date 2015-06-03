@@ -7,20 +7,20 @@ Tracker.autorun(function() {
 
 Template.nucleusProjectExplorer.helpers({
   rows: function() {
-    var tree = state.get('tree');
+    var tree = state.get('tree'),
+        expandingTree = null;
 
-    if (tree) {
-      Tracker.nonreactive(function() {
-        tree = new NucleusExpandingTree(tree);
-      });
-    } else {
+    if(!tree)
       return [];
-    }
 
-    return Object.keys(tree.nodes).map(function(key) {
-      return tree.nodes[key];
+    Tracker.nonreactive(function() {
+      expandingTree = new NucleusExpandingTree(tree);
     });
-  },
+
+    return _.map(expandingTree.nodes, function(node) {
+      return node;
+    });
+  }
 });
 
 Template.nucleusProjectExplorer.events({
