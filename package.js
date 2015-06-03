@@ -98,7 +98,8 @@ Package.on_use(function (api, where) {
   ], ['server']);
 
   api.add_files([
-    'client/ui/project-explorer.js'
+    'client/ui/project-explorer.js',
+    'client/ui/workarea.js'
   ], 'client');
 
 

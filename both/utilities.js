@@ -72,5 +72,12 @@ Utils = {
       return R.values(str).length ? R.any(R.isEmpty)(R.values(str)) : false;
 
     return R.isEmpty(str);
-  }
+  },
+  poll: (function(){
+    var timer = 0;
+    return function(callback, ms){
+      clearInterval(timer);
+      timer = setInterval(callback, ms);
+    };
+  })()
 };
