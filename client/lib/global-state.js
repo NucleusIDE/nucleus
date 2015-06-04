@@ -1,1 +1,1 @@
-NucleusClient.State = GlobalState = new ReactiveDict();
+GlobalState = new ReactiveDict();
