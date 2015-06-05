@@ -93,5 +93,13 @@ Utils = {
      * Toggle boolean `key` of reactive-dict `dict`
      */
     dict.set(key, ! dict.get(key));
+  },
+  dictToObj: function(dict) {
+    var obj = {};
+    _.each(dict.keys, function(val, key) {
+      obj[key] = dict.get(key);
+    });
+
+    return obj;
   }
 };

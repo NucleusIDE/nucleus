@@ -42,5 +42,13 @@ Template.nucleusProjectExplorer.events({
     if (row.get('type') === 'file') {
       Session.set('nucleus_selected_file', row.get('id'));
     }
+  },
+  "dblclick .nucleus-tree__row": function(e) {
+    var row = this;
+    if (row.get('type') === 'file') {
+      var workingFiles = GlobalState.get('workingFiles');
+      workingFiles.push(Utils.dictToObj(row));
+      GlobalState.set('workingFiles', workingFiles);
+    }
   }
 });

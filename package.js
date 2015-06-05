@@ -103,6 +103,7 @@ Package.on_use(function (api, where) {
   api.add_files([
     'client/ui/project-explorer.js',
     'client/ui/workarea.js',
+    'client/ui/working-files-explorer.js',
 
     'client/ui/editor/editor.html',
     'client/ui/editor/editor.js',
