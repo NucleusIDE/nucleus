@@ -154,7 +154,7 @@ var NucleusFactory = function() {
         if(!! node && !! node.parentId) {//don't push falsy rows or the root node
           if(node.parentId === projectDir)
             node.parentId = null;  //set the parentId of root's children to null so they won't try to show up as anybody's children
-
+          node.appPath = node.id.replace(projectDir, '').replace(node.name, ''); //we don't want to show absolute name
           tree.push(node);
         }
       });
