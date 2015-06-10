@@ -91,10 +91,10 @@ Package.on_use(function (api, where) {
   api.add_files([
     'server/publishers.js',
     'server/login-routes.js',
-    'server/git.js',
     'server/crash_watcher.js',
     'server/nucleus.js',
     'server/files.js',
+    'server/git.js',
     'server/methods.js',
     'server/keepalive.js',
     'server/permissions.js',
