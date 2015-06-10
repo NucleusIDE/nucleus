@@ -13,11 +13,15 @@ path = Npm.require('path'),
 child = Npm.require('child_process'),
 Future = Npm.require('fibers/future');
 
-
-/**
- It defines `Nucleus` on server and provide all needed methods for interacting with the filesystem on server like getting cloning the git url, saving file, getting file  contents for editing etc. Most of the methods here are synchronous. I don't exactly remember what the issue was for which I chose synchronous over async. My initial approach was to use async flow in here, but I opted for sync shortly after starting.
- */
 var NucleusFactory = function() {
+  /**
+   * It defines `Nucleus` on server and provide all needed methods for interacting with the
+   * filesystem on server like getting cloning the git url, saving file, getting file
+   * contents for editing etc. Most of the methods here are synchronous. I don't exactly
+   * remember what the issue was for which I chose synchronous over async. My initial
+   * approach was to use async flow in here, but I opted for sync shortly after starting.
+   */
+
   var homeDir = process.env.HOME,
       nucleusDir = path.join(homeDir, ".nucleus"),
       self = this;
@@ -50,16 +54,13 @@ var NucleusFactory = function() {
     self.config.terminalInitialized = true;
   };
 
-  this.getFileExtension = function (filepath) {
-    return path.extname(filepath).replace(".", "");
-  };
-
-
-  // Configure Nucleus on server. Following options are accepted for configuration:
-  // * git :     Remote git url
-  // * project:  Name of the project
-
   this.configure = function(config) {
+    /**
+     * Configure Nucleus on server. Following options are accepted for configuration:
+     * git :     Remote git url
+     * project:  Name of the project
+     */
+
     _.extend(Nucleus.config, config);
 
     Nucleus.config.projectDir = process.env.PWD;
@@ -69,8 +70,11 @@ var NucleusFactory = function() {
     //Nucleus.config.projectDir = path.join(homeDir, ".nucleus/",Nucleus.config.project);
   };
 
-  //This method is called on nucleus initialization on the server (in the app).
   this.initialize = function(config) {
+    /**
+     * This method is called on nucleus initialization on the server (in the app).
+     */
+
     config && this.configure(config);
 
     //this.nucleusCloneRepo();
@@ -85,104 +89,6 @@ var NucleusFactory = function() {
     if(this.config.preventAppCrashes)
       CrashWatcher.initialize();
   };
-
-  //This function returns the file-tree of the project. It produces JSON representation of the directory-structure of the `Nucleus.config.projectDir`
-  //Accepts an object `options` as argument. `options` can have following properties:
-  // * rootDir - directory which should be converted to JSON
-  // * parent - parent node for the first node in JSON produced. In jstree, `#` represents root node
-  // * traverseSymlinks - shall we traverse symlinks?
-  // * includeHidden - shall we include hidden files in the produced tree? (hidden files/directories are those whose name start with `.`)
-  this.getDirTree = function(options) {
-    options = options || {};
-    var includeHidden = options.includeHidden || false;
-    var traverseSymlinks = options.traverseSymlinks || false;
-
-    var walk = function(filepath, parentId, func) {
-      if (typeof func !== 'function') {
-        func = parentId;
-        parentId = null;
-      }
-
-      if (filepath.indexOf('.') === 0) {
-        return (func(false));
-      }
-
-      if (parentId) {
-        filepath = path.resolve(parentId, filepath);
-      }
-
-      var stats = fs.lstatSync(filepath);
-      var info = {
-        type: null,
-        id: filepath,
-        parentId: parentId || null,
-        name: path.basename(filepath),
-        hasChildren: false
-      };
-
-      if (stats.isDirectory()) {
-        func(_.extend(info, {type: 'folder', hasChildren: true}));
-
-        fs.readdirSync(filepath).forEach(function(child) {
-          walk(child, filepath, func);
-        });
-
-      } else if (stats.isSymbolicLink()) {
-        if(!traverseSymlinks)
-          return func(_.extend(info, {type: 'symlink', hasChildren: false, parentId: parentId}));
-
-        var link = fs.readlinkSync(filepath);
-        if (link.indexOf(".") === 0) return;
-
-        if(fs.lstatSync(link).isDirectory()) {
-          func(_.extend(info, {type: 'folder', hasChildren: true}));
-
-          fs.readdirSync(link).forEach(function(child) {
-            walk(child, filepath, func);
-          });
-        }
-      } else {
-        func(_.extend(info, {type: 'file', hasChildren: false, parentId: parentId}));
-      }
-    };
-
-    var  mkDirTree= function () {
-      var tree = [];
-      var projectDir = Nucleus.config.projectDir;
-
-      walk(projectDir, function(node) {
-        if(!! node && !! node.parentId) {//don't push falsy rows or the root node
-          if(node.parentId === projectDir)
-            node.parentId = null;  //set the parentId of root's children to null so they won't try to show up as anybody's children
-          node.appPath = node.id.replace(projectDir, '').replace(node.name, ''); //we don't want to show absolute name
-          tree.push(node);
-        }
-      });
-
-      return tree;
-    };
-
-
-    var tree = mkDirTree(options);
-    return tree;
-  };
-
-  //Get the contents of a single file.
-  // * **filepath** - absolute path of the file whose contents are required
-  //
-  //*filepath* can be `*scratch*`. `*scratch*` in nucleus represents the limbo in the ace editor when user has just logged in and have no file opened. Emacs has a `*scratch*` buffer, so you know.
-  this.getFileContents = function(filepath) {
-    if (filepath === '*scratch*') return false;
-
-    if (typeof filepath !== 'string' || fs.lstatSync(filepath).isDirectory()) {
-      console.log("FILE PATH TYPE", typeof filepath);
-      return false;
-    }
-
-    var contents = fs.readFileSync(filepath, 'utf-8');
-    return contents;
-  };
-
 
   var getTopmostGitDir = function(filepath) {
     var dir = this.config.projectDir;
@@ -207,47 +113,71 @@ var NucleusFactory = function() {
     return dir;
   }.bind(this);
 
-  //`git pull` changes from the remote git. These git methods are used behind the git UI in nucleus. I am in favor of using a terminal based UI instead of buttons.
-  // Button based git flow is holy-grail of unknown errors that might occur in the app
-  //
-  //All the git methods assume `master` to be the branch and `origin` to be the remote. These need to be made configurable configurable in future when we'll aim for anonymous users of the app to make changes. My idea is that anonymous users could change the app and when they push the changes, those changes will be saved in a new git repo in user's github, or in a different branch in app owner's github.
-  //
-  //Returns
-  // * `0` - No new changes created by function
-  // * `1` - Pulled new changes
-  // * `-1` - Error occured
   this.pullChanges = function(selectedFile) {
+    /**
+     * `git pull` changes from the remote git. These git methods are used behind the git
+     * UI in nucleus. I am in favor of using a terminal based UI instead of buttons.
+     * Button based git flow is holy-grail of unknown errors that might occur in the app
+     *
+     * All the git methods assume `master` to be the branch and `origin` to be the remote.
+     * These need to be made configurable configurable in future when we'll aim for
+     * anonymous users of the app to make changes. My idea is that anonymous users could
+     * change the app and when they push the changes, those changes will be saved in a new
+     * git repo in user's github, or in a different branch in app owner's github.
+     *
+     * @Returns
+     * `0` - No new changes created by function
+     * `1` - Pulled new changes
+     * `-1` - Error occured
+
+     */
+
     var dir = getTopmostGitDir(selectedFile);
     return NucleusGit.pull(dir);
   };
 
-  // Push new  changes to `master` branch of `origin` remote in `Nucleus.config.projectDir`.
-  //Returns
-  // * `0` - No new commits to push.
-  // * `1` - Pushed new changes
-  // * `-1` - Error occured
   this.pushChanges = function(selectedFile, githubUser) {
+    /**
+     * Push new  changes to `master` branch of `origin` remote in
+     * `Nucleus.config.projectDir`.
+     *
+     * Returns
+     * `0` - No new commits to push.
+     * `1` - Pushed new changes
+     * `-1` - Error occured
+     */
     var dir = getTopmostGitDir(selectedFile);
     return NucleusGit.push(dir, githubUser);
   };
 
-  //Commit new  changes in `master` branch in `Nucleus.config.projectDir`.
-  //We use selectedFile to see if the file belongs to a package. If it does, we try to make the commit for the package instead of the app itself
-  //
-  //Accepts:
-  // * **message** - commit message
-  // * **selectedFile**  -  File presently selected in Nucleus
-  //Returns
-  // * `0` - No new changes to commit.
-  // * `1` - Committed new changes with message `message`
-  // * `-1` - Error occurred
   this.commitChanges = function(message, selectedFile, author) {
+    /**
+     * Commit new  changes in `master` branch in `Nucleus.config.projectDir`.
+     * We use selectedFile to see if the file belongs to a package.
+     * If it does, we try to make the commit for the package instead of the app itself
+     *
+     * Arguments
+     * @message - commit message
+     * @selectedFile  -  File presently selected in Nucleus
+     *
+     * Returns
+     * `0` - No new changes to commit.
+     * `1` - Committed new changes with message `message`
+     * `-1` - Error occurred
+     */
+
     var dir = getTopmostGitDir(selectedFile);
     return NucleusGit.commit(dir, message, author);
   };
 
-  //Clone the `git` remote repo in `Nucleus.config.projectDir`. It won't attempt to clone the repo if `Nucleus.config.projectDir` already exists. If the `Nucleus.config.projectDir` already exists, it attempts to pull new changes instead.
   this.nucleusCloneRepo = function(git, project) {
+    /**
+     * Clone the `git` remote repo in `Nucleus.config.projectDir`.
+     * It won't attempt to clone the repo if `Nucleus.config.projectDir` already exists.
+     * If the `Nucleus.config.projectDir` already exists, it attempts to pull new
+     * changes instead.
+     */
+
     git = git || Nucleus.config.git;
     project = project || Nucleus.config.project;
     var projectDir = this.config.projectDir;
@@ -271,81 +201,6 @@ var NucleusFactory = function() {
       //pulling new changes lose un-committed changes. So let's not pull changes for now
       return;
     //      this.pullChanges(projectDir);
-  };
-
-  //Create a new file on the server
-  //
-  //Arguments:
-  //* `filepath` {*string*} : Absolute or relative path of the file to be created. Relative to `Nucleus.config.projectDir`
-  //* `directory` {*boolean*}: Is the file to be created a directory?
-  this.createNewFile = function(filepath, directory) {
-    //check whether the `filepath` is absolute or relative
-    filepath = filepath.indexOf("/") === 0 ? filepath : this.config.projectDir + "/" + filepath;
-    var fileName = path.basename(filepath);
-
-    //If a file with `filename` is already present, rename it to a unique name.
-    var renameUnique = function(filepath) {
-      var count = 1;
-      var newPath = filepath + "_" + count;
-
-      while(fs.existsSync(newPath)) {
-        newPath = filepath + "_" + count++;
-      }
-
-      return newPath;
-    };
-
-    if (fs.existsSync(filepath))
-      filepath = renameUnique(filepath);
-
-    if(!directory) {
-      fs.openSync(filepath, 'w');
-      return filepath;
-    }
-
-    fs.mkdirSync(filepath);
-    return filepath;
-  };
-
-  //Delete the file at `filepath`
-  //
-  //Arguments:
-  //`filepath` *{string}*
-  //
-  //If the file represented by `filepath` is a directory, it deletes the directory recursively.
-  this.deleteFile = function(filepath) {
-    if (!fs.existsSync(filepath)) {
-      return true;
-    }
-    var stat = fs.statSync(filepath);
-
-    var fut = new Future();
-
-    if (stat.isDirectory())
-      child.exec("rm -rf "+filepath, function(err, res) {
-        fut.return(res);
-      });
-    else {
-      fut.return(fs.unlinkSync(filepath));
-      var nucDoc = NucleusDocuments.findOne({filepath: filepath});
-      var shareJsDocId = nucDoc ? nucDoc.doc_id : null;
-      NucleusDocuments.remove({_id: nucDoc._id});
-      ShareJsDocs.remove({_id: shareJsDocId});
-    }
-
-    return fut.wait();
-  };
-
-  //Rename `oldpath` to `newpath`
-  this.renameFile = function(oldpath, newpath) {
-    if (!fs.existsSync(oldpath)) {
-      return false;;
-    }
-
-    var renameFileOp = fs.renameSync(oldpath, newpath);
-    NucleusDocuments.update({filepath: oldpath}, {$set: {filepath: newpath}});
-
-    return true;
   };
 };
 
