@@ -1,0 +1,10 @@
+{
+  "globals": {
+    "Ultimate": true,
+    "UltimateIDE": true,
+    "FlashMessages": true,
+    "Template": true,
+    "GlobalState": true,
+    "R": true
+  }
+}

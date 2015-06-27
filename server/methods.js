@@ -7,29 +7,29 @@
 
 Meteor.methods({
   nucleusGetFileList: function() {
-    return Nucleus.files.getFileTree({rootDir: Nucleus.config.projectDir, traverseSymlinks: true});
+    return UltimateIDE.files.getFileTree({rootDir: UltimateIDE.config.projectDir, traverseSymlinks: true});
   },
   nucleusGetFileContents: function(filepath) {
-    return Nucleus.files.getFileContents(filepath);
+    return UltimateIDE.files.getFileContents(filepath);
   },
   nucleusSaveDocToDisk: function(docId) {
-    return Nucleus.files.saveDocToFile(docId);
+    return UltimateIDE.files.saveDocToFile(docId);
   },
   nucleusSetupFileForEditting: function(filepath, forceRefresh) {
-    return Nucleus.files.setupFileForEditting(filepath, forceRefresh);
+    return UltimateIDE.files.setupFileForEditting(filepath, forceRefresh);
   },
 
   nucleusCreateNewFile: function(filepath) {
-    return Nucleus.files.createNewFile(filepath);
+    return UltimateIDE.files.createNewFile(filepath);
   },
   nucleusCreateNewFolder: function(filepath) {
-    return Nucleus.files.createNewFile(filepath, true);
+    return UltimateIDE.files.createNewFile(filepath, true);
   },
   nucleusDeleteFile: function(filepath) {
-    return Nucleus.files.deleteFile(filepath);
+    return UltimateIDE.files.deleteFile(filepath);
   },
   nucleusRenameFile: function(oldpath, newpath) {
-    return Nucleus.fiels.renameFile(oldpath, newpath);
+    return UltimateIDE.fiels.renameFile(oldpath, newpath);
   },
 
   nucleusCommitAllChanges: function(message, selectedFile, author) {
@@ -37,26 +37,26 @@ Meteor.methods({
      * We use selectedFile to see if the file belongs to a package. If it does, we try to
      * make the commit for the package instead of the app itself
      */
-    return Nucleus.git.commitAll(message, selectedFile, author);
+    return UltimateIDE.git.commitAll(message, selectedFile, author);
   },
   nucleusPushChanges: function(selectedFile, githubUser) {
     /**
      * We use selectedFile to see if the file belongs to a package. If it does, we try to
      * make the commit for the package instead of the app itself
      */
-    return Nucleus.git.push(selectedFile, githubUser);
+    return UltimateIDE.git.push(selectedFile, githubUser);
   },
   nucleusPullChanges: function(selectedFile) {
-    return Nucleus.git.pull(selectedFile);
+    return UltimateIDE.git.pull(selectedFile);
   },
 
   nucleusMupDeploy: function(mup_setup) {
-    return Nucleus.mupDeploy(mup_setup);
+    return UltimateIDE.mupDeploy(mup_setup);
   },
 
 
   nucleusIsTerminalConfigured: function() {
-    return Nucleus.config.terminalInitialized;
+    return UltimateIDE.config.terminalInitialized;
   },
   nucleusCheckUserToken: function(userinfo) {
     var username = userinfo.username,

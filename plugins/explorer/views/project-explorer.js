@@ -2,10 +2,10 @@ var tree = null;
 var state = new ReactiveDict();
 
 Tracker.autorun(function() {
-  state.set('tree', NucleusClient.getFileTree());
+  state.set('tree', UltimateIDE.getFileTree());
 });
 
-Template.nucleusProjectExplorer.helpers({
+Template.ultimateProjectExplorer.helpers({
   rows: function() {
     var tree = state.get('tree'),
         expandingTree = null;
@@ -33,11 +33,9 @@ Template.nucleusTree_collapse_row.helpers({
   }
 });
 
-Template.nucleusProjectExplorer.events({
-  "click .nucleus-tree__row": function(e) {
+Template.ultimateProjectExplorer.events({
+  "click .nucleus-tree__row": function() {
     var row = this;
-    var focusedClass = 'nucleus-tree__row--focused';
-    var folderFocusedClass = 'nucleus-tree__row--focused-folder';
 
     if (row.get('type') === 'file') {
       Session.set('nucleus_selected_file', row.get('id'));
@@ -46,9 +44,8 @@ Template.nucleusProjectExplorer.events({
   "dblclick .nucleus-tree__row": function(e) {
     var row = this;
     if (row.get('type') === 'file') {
-      var workingFiles = GlobalState.get('workingFiles');
-      workingFiles.push(Utils.dictToObj(row));
-      GlobalState.set('workingFiles', workingFiles);
+      row = Utils.dictToObj(row);
+      UltimateIDE.Explorer.addWorkingFile(row);
     }
   }
 });

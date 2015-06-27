@@ -112,7 +112,7 @@ var NucleusEditorFactory = function() {
         bindKey: {win: 'Ctrl-s',  mac: 'Command-s'},
         exec: function(editor) {
           // Save the file currently being edited in user's ace editor
-          NucleusClient.saveSelectedFileToDisk();
+          UltimateIDE.saveSelectedFileToDisk();
         },
         readOnly: true // false if this command should not apply in readOnly mode
       }
@@ -323,8 +323,8 @@ var NucleusEditorFactory = function() {
   /**
    * This is a helper function which we use for inserting style rules in head. We can't insert style directly into inserted extra cursors in ace, we can insert classes though. So we insert classes in the cursors, and add style rules for those classes using this function.
    */
-  this.addStyleRule= function(css) {
-    var document = NucleusClient.getWindow().document;
+  this.addStyleRule = function(css) {
+    var document = UltimateIDE.getWindow().document;
     if(!document) return;
 
     var styleElement = document.createElement('style');

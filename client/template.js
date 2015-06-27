@@ -583,7 +583,7 @@ Template.nucleus_deploy_form.events({
       if (Utils.isEmpty(options)) {
         FlashMessages.sendError("Please Fill all fields");
         return false;
-        b}
+      }
     }
 
     NucleusClient.Deploy.sendDeployCommand(activeForm, options);

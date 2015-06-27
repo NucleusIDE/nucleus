@@ -7,7 +7,7 @@ var Git = (function() {
   var Git = function() {};
 
   Git.prototype.getTopmostGitDir = function(filepath) {
-    var dir = Nucleus.config.projectDir;
+    var dir = Ultimate.config.projectDir;
 
     var getPackageDir = function(filepath) {
       var tempDir = path.dirname(filepath);
@@ -82,7 +82,7 @@ var Git = (function() {
 
     var remote = githubUser.username,
         token = githubUser.github_access_token,
-        repo = Nucleus.config.git.split('/').reverse().slice(0, 2).reverse().join('/'), //convert https://github.com/NucleusIDE/nucleus to NucleusIDE/nucleus
+        repo = Ultimate.config.git.split('/').reverse().slice(0, 2).reverse().join('/'), //convert https://github.com/NucleusIDE/nucleus to NucleusIDE/nucleus
         remoteUrl = 'https://'+remote+':'+token+'@github.com/'+repo;
 
     var command = format("cd %s ; git remote rm %s ; git remote add %s %s", dir, remote, remote, remoteUrl); //update/create a remote <username> with user's github credentials
@@ -125,4 +125,4 @@ var Git = (function() {
 })();
 
 
-Nucleus.git = Git;
+UltimateIDE.git = Git;

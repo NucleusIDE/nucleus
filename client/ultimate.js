@@ -1,17 +1,15 @@
 /**
- * # NucleusClient
+ * # Ultimate client
  *
  */
 
-var NucleusClientFactory = function () {
-  /**
-   * It should be the centralized access point for most of the operations on Nucleus on the client side.
-   */
 
+/**
+ * It should be the centralized access point for most of the operations on Nucleus on the client side.
+ */
+var _UltimateIDE = function () {
   var fileTree,
-      currentFile,
-      currentFileContents,
-      nucleusClientDep = new Deps.Dependency;
+      nucleusClientDep = new Deps.Dependency();
 
   this.config = {
     nucleusUrl: window.location.origin + '/nucleus',
@@ -21,6 +19,8 @@ var NucleusClientFactory = function () {
   };
 
   this.EventSync = new NucleusEventSync(this);
+  //use this plugin manager and remove the old plugin manager from below
+  this.Plugins = PluginManager;
 
   this.initialize = function (config, nucleusWindow) {
     this.configure(config);
@@ -37,13 +37,13 @@ var NucleusClientFactory = function () {
     //let's override nucleusWindow's LiveUpdate.refresh so it won't re-render the editor page
     var nucOverrideInterval = Meteor.setInterval(function () {
       if (nucleusWindow.Meteor && nucleusWindow.LiveUpdate) {
-//        this.origLiveUpdateRefreshFile = this.getWindow('app').LiveUpdate.refreshFile;
+        //        this.origLiveUpdateRefreshFile = this.getWindow('app').LiveUpdate.refreshFile;
         nucleusWindow.LiveUpdate.refreshFile = function () {
           return false;
         };
         Meteor.clearInterval(nucOverrideInterval);
       }
-    }.bind(this), 500);
+    }, 500);
 
     this.Editor = NucleusEditor;
 
@@ -214,51 +214,6 @@ var NucleusClientFactory = function () {
   };
 
   /**
-   * jstree isn't working when used with JSON from within a meteor package. So, let's create HTML (ul>li) instead.
-   * I tried creating my own simple tree, but it's turning out to be more work
-   */
-  this.getJstreeHTML = function () {
-
-    var tree = this.getFileTree();
-    nucleusClientDep.depend();
-
-    if (!tree) return false;
-    var template = "\
-      <ul> \
-      <% _.each(tree.children, function(child) { %>  \
-      <li class='nucleus_tree_node' id='<%= child.path %>' data-type='<%= child.type %>'><%= child.name %> \
-      <%= childFn({tree: child, childFn: childFn}) %> \
-    </li> \
-      <% }) %> \
-    </ul>";
-    var templateFn = _.template(template);
-
-    var html = templateFn({tree: tree, childFn: templateFn});
-    return html;
-  };
-
-  /**
-   * This function is obsolete. We use `NucleusClient.getJstreeHTML()` for setting filetree in Nucleus sidebar.
-   */
-  this.getJstreeJSON = function () {
-    //jstree uses a different JSON formatting then produced by Nucleus.getFileList. Here we do the conversion
-    var rawtree = this.getFileTree();
-    if (!rawtree) return false;
-    var setJstreeJSON = function (obj) {
-      _.each(obj.children, function (child) {
-        if (child.name.indexOf(".") === 0) return; //ignore hidden files/folders
-        jstree.push({"id": child.path, "parent": child.parent, "text": child.name});
-        if (obj.type === 'folder') setJstreeJSON(child);
-      });
-    };
-    var jstree = [
-      {"id": rawtree.path, "parent": "#", "text": rawtree.name}
-    ];
-    setJstreeJSON(rawtree);
-    return jstree;
-  };
-
-  /**
    * Edit `filepath` in ace editor.
    *
    * *Arguments:*
@@ -391,28 +346,26 @@ Deps.autorun(function () {
 
   //below approach is required to eval the new changes for al connected clients and not for present client only
   NucleusDocuments.find({shouldEval: true}).forEach(function (doc) {
-    NucleusClient.unmarkDocForEval(doc);
-    NucleusClient.getWindow('app').eval('NucleusClient.evalNucleusDoc("' + doc._id + '")');
+    UltimateIDE.unmarkDocForEval(doc);
+    UltimateIDE.getWindow('app').eval('UltimateIDE.evalNucleusDoc("' + doc._id + '")');
 
     if (doc.shouldEvalInNucleus) {
       //we can keep this here because all files no matter where they are located are evaled for app
 
-      var oldCursorPosition = NucleusClient.Editor.editor.getCursorPosition(),
-          oldScrollPosition = [NucleusClient.Editor.editor.session.getScrollTop(), NucleusClient.Editor.editor.session.getScrollLeft()];
+      var oldCursorPosition = UltimateIDE.Editor.editor.getCursorPosition(),
+          oldScrollPosition = [UltimateIDE.Editor.editor.session.getScrollTop(), UltimateIDE.Editor.editor.session.getScrollLeft()];
 
-      NucleusClient.evalNucleusDoc(doc._id, true);
+      UltimateIDE.evalNucleusDoc(doc._id, true);
       //Since we re-render the whole window in nucleus on file change, the window flickers a little
       //and the cursor position is lost. Let's get the cursor position and set it back after the window flicker
       Meteor.setTimeout(function() {
-        NucleusClient.Editor.editor.moveCursorToPosition(oldCursorPosition);
-        NucleusClient.Editor.editor.session.setScrollTop(oldScrollPosition[0]);
-        NucleusClient.Editor.editor.session.setScrollLeft(oldScrollPosition[1]);
-        NucleusClient.Editor.editor.focus();
+        UltimateIDE.Editor.editor.moveCursorToPosition(oldCursorPosition);
+        UltimateIDE.Editor.editor.session.setScrollTop(oldScrollPosition[0]);
+        UltimateIDE.Editor.editor.session.setScrollLeft(oldScrollPosition[1]);
+        UltimateIDE.Editor.editor.focus();
       }, 400);
     }
   });
 });
 
-
-//Create NucleusClient Global
-NucleusClient = new NucleusClientFactory();
+UltimateIDE = new _UltimateIDE();

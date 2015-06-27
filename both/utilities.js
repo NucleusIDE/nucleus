@@ -3,7 +3,7 @@
  * Generic utility methods which can be used on both client and server.
  */
 
-Utils = {
+this.Utils = {
   getItems: function(obj) {
     /**
      * Returns array of all the items/values in the `obj`
@@ -101,5 +101,31 @@ Utils = {
     });
 
     return obj;
+  },
+  when: function(condition, cb, interval, maxTime, immediate) {
+    interval = interval || 100;
+    maxTime = maxTime || 3000;
+    immediate = typeof immediate === 'undefined' ? true : immediate;
+
+    if(typeof condition !== 'function') {
+      var check = !!condition;
+      condition = function() { return check; };
+    }
+
+    if(immediate)
+      if(condition())
+        return cb();
+
+    var timeSpent = 0;
+    var whenInterval = Meteor.setInterval(function() {
+      timeSpent += interval;
+      if(!condition()) {
+        if(timeSpent >= maxTime) Meteor.clearInterval(whenInterval);
+        return;
+      }
+
+      Meteor.clearInterval(whenInterval);
+      cb();
+    }, interval);
   }
 };

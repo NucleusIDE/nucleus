@@ -1,4 +1,4 @@
-var Files = (function() {
+Files = (function() {
   var fs = Npm.require('fs'),
       path = Npm.require('path'),
       child = Npm.require('child_process'),
@@ -122,7 +122,7 @@ var Files = (function() {
      * Create a new file on the server
      *
      * Arguments:
-     * @`filepath` {*string*} : Absolute or relative path of the file to be created. Relative to `Nucleus.config.projectDir`
+     * @`filepath` {*string*} : Absolute or relative path of the file to be created. Relative to `Ultimate.config.projectDir`
      * @`directory` {*boolean*}: Is the file to be created a directory?
      */
 
@@ -305,5 +305,3 @@ var Files = (function() {
 
   return new FileManager();
 })();
-
-Nucleus.files = Files;

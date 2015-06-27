@@ -7,7 +7,7 @@ Meteor.startup(function () {
     detachBody();
 
     Meteor.subscribe('all_nucleus_users');
-    NucleusClient.initialize({}, window); //initialize the nucleus window
+    UltimateIDE.initialize({}, window); //initialize the nucleus window
     Template.body.view = Blaze.render(Template.nucleusWorkbench, document.body);  //I have no idea what I am doing
   };
 
@@ -22,8 +22,9 @@ Meteor.startup(function () {
         return Meteor.subscribe('all_nucleus_users');
       },
       onBeforeAction: function() {
-        NucleusClient.initialize({}, window); //initialize the nucleus window
+        UltimateIDE.initialize({}, window); //initialize the nucleus window
         maybeLoginFromCookie(maybeLoginFromQueryParams);
+        this.next();
       }
     });
   };
@@ -51,7 +52,7 @@ Meteor.startup(function () {
       if (valid) { //log the user in from cookie and hide prompt
         var nucUser = NucleusUsers.findOne({username: userInfo.username});
         Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
-        NucleusClient.currentUser.set(nucUser);
+        UltimateIDE.currentUser.set(nucUser);
         Session.set('should_show_nucleus_login_button', false);
       } else {
         loginFailCb = loginFailCb || function() {};
@@ -71,8 +72,8 @@ Meteor.startup(function () {
       return results[1] || undefined;
     };
     var cleanUpURL = function() {
-      var clean_uri = window.location.toString().split('?')[0];
-      window.history.replaceState({}, document.title, clean_uri);
+      var cleanUri = window.location.toString().split('?')[0];
+      window.history.replaceState({}, document.title, cleanUri);
     };
 
     var username = getParam('user'),

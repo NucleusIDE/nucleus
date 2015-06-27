@@ -34,5 +34,5 @@ Deps.autorun(function() {
   var selectedFile = Session.get("nucleus_selected_file");
   if (!selectedFile) return;
 
-  NucleusClient.editFile(selectedFile);
+  UltimateIDE.editFile(selectedFile);
 });

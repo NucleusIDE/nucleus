@@ -1,0 +1,58 @@
+<template name="ultimateExplorerActivitybar">
+  {{#nucleusActivitybarItem title="Explore (⇧⌘E)" tabindex=0 id="activitybar-explore" sidebarTemplate="ultimateSidebarExplore"}}
+  <i class="fa fa-file activitybar__action-icon"></i>
+  {{/nucleusActivitybarItem}}
+</template>
+
+<template name="ultimateSidebarExplore">
+  {{> nucleusSidebar_title title="Explore"}}
+
+  <div class="sidebar-content">
+    <div class="viewlet">
+      <div class="explore-viewlet">
+
+        <div class="split-view">
+
+          {{#with workingFilesSplitView}}
+          {{#nucleusSplitView}}
+
+
+          <div class="explorer-view-content explorer-working-files" style="height: {{workingFilesHeight}}">
+            {{> ultimateWorkingFilesExplorer}}
+          </div>
+          {{/nucleusSplitView}}
+          {{/with}}
+
+          {{#with projectExplorerSplitView}}
+          {{#nucleusSplitView}}
+
+          <div class="explorer-view-content explorer-project-files" style="{{projectExplorerStyles}}">
+            {{> ultimateProjectExplorer}}
+          </div>
+
+          {{/nucleusSplitView}}
+          {{/with}}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="ultimateProjectExplorer">
+  {{#nucleusTree style=treeStyles}}
+
+  {{#each rows}}
+  {{> nucleusTree_collapse_row}}
+  {{/each}}
+
+  {{/nucleusTree}}
+</template>
+
+<template name="ultimateWorkingFilesExplorer">
+  {{#nucleusTree}}
+  {{#each workingFiles}}
+  {{> nucleusTree_status_row}}
+  {{/each}}
+  {{/nucleusTree}}
+</template>
