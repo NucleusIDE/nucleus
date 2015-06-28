@@ -84,6 +84,7 @@ Package.on_use(function (api, where) {
 
     'client/nucleus_editor.js',
     'client/event-sync.js',
+    'client/files.js',
     'client/ultimate.js',
     'client/nucleus_sidebar.js',
     'client/keepalive.js',

@@ -6,7 +6,9 @@ this.Files = (function() {
       child = Npm.require('child_process'),
       Future = Npm.require('fibers/future');
 
-  var FileManager = function() {};
+  var FileManager = function() {
+    this.setFileTreePublisher();
+  };
 
   FileManager.prototype.getFileTree = function(options) {
     /**
@@ -303,6 +305,22 @@ this.Files = (function() {
       });
     }
     return docId;
+  };
+
+  FileManager.prototype.setFileTreePublisher = function() {
+    var fileManager = this;
+    /**
+     * Try to publish file tree with publishers and client only collections
+     */
+    Meteor.publish('ultimateFileTree', function() {
+      var self = this;
+
+      fileManager.getFileTree().forEach(function(file) {
+        self.added('ultimateFileTree', file.id, file);
+      });
+
+      this.ready();
+    });
   };
 
   return new FileManager();

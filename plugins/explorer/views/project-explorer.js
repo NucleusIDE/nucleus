@@ -1,20 +1,16 @@
 var tree = null;
 var state = new ReactiveDict();
 
-Tracker.autorun(function() {
-  state.set('tree', UltimateIDE.getFileTree());
-});
-
 Template.ultimateProjectExplorer.helpers({
   rows: function() {
-    var tree = state.get('tree'),
+    var tree = UltimateIDE.Files.tree.find(),
         expandingTree = null;
 
-    if(!tree)
+    if(tree.count() === 0)
       return [];
 
     Tracker.nonreactive(function() {
-      expandingTree = new NucleusExpandingTree(tree);
+      expandingTree = new NucleusExpandingTree(tree.fetch());
     });
 
     return _.map(expandingTree.nodes, function(node) {
