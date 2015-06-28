@@ -13,7 +13,7 @@ var fs = Npm.require('fs'),
 var homeDir = process.env.HOME,
     nucleusDir = path.join(homeDir, '.nucleus');
 
-var _UltimateIDE = function() {
+var UltimateIDEFactory = function() {
   var self = this;
 
   this.config = {
@@ -49,7 +49,7 @@ var _UltimateIDE = function() {
   this.files = Files;
 };
 
-_UltimateIDE.prototype.initialize = function(config) {
+UltimateIDEFactory.prototype.initialize = function(config) {
   /**
    * This method is called on nucleus initialization on the server (in the app).
    */
@@ -69,7 +69,7 @@ _UltimateIDE.prototype.initialize = function(config) {
     CrashWatcher.initialize();
 };
 
-_UltimateIDE.prototype.configure = function(config) {
+UltimateIDEFactory.prototype.configure = function(config) {
   /**
    * Configure Nucleus on server. Following options are accepted for configuration:
    * git :     Remote git url
@@ -85,7 +85,7 @@ _UltimateIDE.prototype.configure = function(config) {
   //this.config.projectDir = path.join(homeDir, ".nucleus/",this.config.project);
 };
 
-_UltimateIDE.prototype.nucleusCloneRepo = function(git, project) {
+UltimateIDEFactory.prototype.nucleusCloneRepo = function(git, project) {
   /**
    * Clone the `git` remote repo in `Ultimate.config.projectDir`.
    * It won't attempt to clone the repo if `Ultimate.config.projectDir` already exists.
@@ -118,7 +118,11 @@ _UltimateIDE.prototype.nucleusCloneRepo = function(git, project) {
   //      this.pullChanges(projectDir);
 };
 
-
-
 //Creat server side global `Nucleus` using the above constructor
-UltimateIDE = new _UltimateIDE();
+UltimateIDE = new UltimateIDEFactory();
+
+// Ultimate('_UltimateIDE').extends(UltimateClass, (new UltimateIDEFactory()));
+
+// UltimateIDE = new _UltimateIDE();
+
+// _UltimateIDE.extendHttp(UltimateIDE.files);

@@ -1,4 +1,6 @@
-Files = (function() {
+/*global Files */
+
+this.Files = (function() {
   var fs = Npm.require('fs'),
       path = Npm.require('path'),
       child = Npm.require('child_process'),
@@ -16,9 +18,9 @@ Files = (function() {
      */
 
     options = options || {};
-    var rootDir = options.rootDir;
+    var rootDir = options.rootDir || UltimateIDE.config.projectDir;
     var includeHidden = options.includeHidden || false;
-    var traverseSymlinks = options.traverseSymlinks || false;
+    var traverseSymlinks = options.traverseSymlinks || true;
 
     if(!rootDir) {
       throw new Meteor.Error('Please provide `rootDir` start the tree from.');

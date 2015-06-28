@@ -7,7 +7,7 @@
 /**
  * It should be the centralized access point for most of the operations on Nucleus on the client side.
  */
-var _UltimateIDE = function () {
+var UltimateIDEFactory = function () {
   var fileTree,
       nucleusClientDep = new Deps.Dependency();
 
@@ -368,4 +368,10 @@ Deps.autorun(function () {
   });
 });
 
-UltimateIDE = new _UltimateIDE();
+UltimateIDE = new UltimateIDEFactory();
+
+// Ultimate('UltimateIDE').extends(UltimateClass, {});
+// Ultimate('_UltimateIDE').extends(UltimateClass);
+// _UltimateIDE.extendClient((new _UltimateIDE()));
+
+// UltimateIDE = new _UltimateIDE();

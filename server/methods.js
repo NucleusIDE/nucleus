@@ -50,8 +50,8 @@ Meteor.methods({
     return UltimateIDE.git.pull(selectedFile);
   },
 
-  nucleusMupDeploy: function(mup_setup) {
-    return UltimateIDE.mupDeploy(mup_setup);
+  nucleusMupDeploy: function(mupSetup) {
+    return UltimateIDE.mupDeploy(mupSetup);
   },
 
 
