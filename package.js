@@ -90,7 +90,6 @@ Package.on_use(function (api, where) {
     'server/files.js',
     'server/git.js',
     'server/ultimate.js',
-    'server/methods.js',
   ], ['server']);
 
   api.add_files([

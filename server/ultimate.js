@@ -26,7 +26,14 @@ var UltimateIDEFactory = function() {
   };
 
   this.Plugins = PluginManager;
-  this.Files = new Files(this);
+
+  var filesObj = new Files(this);
+  var ServerFiles = Ultimate('UltimateServerFiles').extends(UltimateClass, filesObj);
+
+  ServerFiles.extendHttp(filesObj);
+
+  this.Files = new ServerFiles();
+
   this.git = new Git();
 };
 

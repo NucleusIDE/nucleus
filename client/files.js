@@ -1,5 +1,7 @@
 /*global Files, UltimateFile */
 
+Ultimate('Files').extends({});
+
 this.Files = function() {
   Meteor.subscribe('ultimateFiles');
   this.tree = UltimateFile.collection;
@@ -48,7 +50,7 @@ Files.prototype.getFileType = function (filepath) {
  * * `forceRefresh` *{boolean}*: Discard the changes which are not yet saved to the filesystem and force load `filepath` from filesystem
  */
 Files.prototype.editFile = function (filepath, forceRefresh) {
-  Meteor.call('nucleusSetupFileForEditting', filepath, forceRefresh, function (err, res) {
+  this.setupFileForEditting(filepath, forceRefresh, function (err, res) {
     if (err) {
       console.log(err);
       return;
@@ -72,7 +74,8 @@ Files.prototype.saveSelectedFileToDisk = function () {
   var selectedDocId = Session.get('nucleus_selected_doc_id'),
       ultimateFile = UltimateFiles.findOne({sharejs_doc_id: selectedDocId}),
       client = this;
-  Meteor.call('nucleusSaveDocToDisk', selectedDocId, function (err, res) {
+
+  this.saveDocToFile(selectedDocId, function (err, res) {
     if (err) {
       console.log('Error in NucleusClient.saveSelectedFileToDisk', err);
       return;
@@ -83,75 +86,6 @@ Files.prototype.saveSelectedFileToDisk = function () {
       FlashMessages.sendSuccess('File Saved Successfully');
     }
     if (res.status === 2) FlashMessages.sendError('Something went Wrong when Saving File');
-  });
-};
-
-/**
- * Creates new `filepath` and execute `cb` callback after completion.
- *
- * *Arguments:*
- * * `filepath`: Path of the file to be created
- * * `cb`: Callback function to be executed after completion.
- */
-Files.prototype.createNewFile = function (filepath, cb) {
-  Meteor.call("nucleusCreateNewFile", filepath, function (err, res) {
-    if (err) {
-      cb(err);
-      return;
-    }
-    cb(null, res);
-  });
-};
-
-/**
- * Creates new `filepath` and execute `cb` callback after completion.
- *
- * *Arguments:*
- * * `filepath`: Path of the file to be created
- * * `cb`: Callback function to be executed after completion.
- */
-Files.prototype.createNewFolder = function (filepath, cb) {
-  Meteor.call("nucleusCreateNewFolder", filepath, function (err, res) {
-    if (err) {
-      cb(err);
-      return;
-    }
-    cb(null, res);
-  });
-};
-
-/**
- * Delete `filepath` (file or directory) and execute `cb` callback after completion.
- *
- * *Arguments:*
- * * `filepath`: Path of the file to be created
- * * `cb`: Callback function to be executed after completion.
- */
-Files.prototype.deleteFile = function (filepath, cb) {
-  Meteor.call("nucleusDeleteFile", filepath, function (err, res) {
-    if (err) {
-      cb(err);
-      return;
-    }
-    cb(null, res);
-  });
-};
-
-/**
- * Rename `oldpath` to `newpath` and execute `cb` callback after completion.
- *
- * *Arguments:*
- * * `oldpath`: Old path of the file/directory to be renamed
- * * `newpath`: New path of the file/directory to be renamed
- * * `cb`: Callback function to be executed after completion.
- */
-Files.prototype.renameFile = function (oldpath, newpath, cb) {
-  Meteor.call("nucleusRenameFile", oldpath, newpath, function (err, res) {
-    if (err) {
-      cb(err);
-      return;
-    }
-    cb(null, res);
   });
 };
 

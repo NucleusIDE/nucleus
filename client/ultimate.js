@@ -11,7 +11,11 @@ var UltimateIDEFactory = function () {
     suckCSSFromPackages: []
   };
 
-  this.Files = new Files();
+  var filesObj = new Files();
+  var ServerFiles = Ultimate('UltimateServerFiles').extends(UltimateClass, filesObj);
+
+  this.Files = new ServerFiles();
+
   this.Plugins = PluginManager;
 
   return this;
