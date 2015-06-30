@@ -48,14 +48,18 @@ Files.prototype.getFileType = function (filepath) {
  * * `forceRefresh` *{boolean}*: Discard the changes which are not yet saved to the filesystem and force load `filepath` from filesystem
  */
 Files.prototype.editFile = function (filepath, forceRefresh) {
-  var file = UltimateFiles.findOne({filepath: filepath});
-  UltimateFiles.update({_id: file._id}, {$set: {edit: true, force_refresh: false}}, function(err, num) {
+  Meteor.call('nucleusSetupFileForEditting', filepath, forceRefresh, function (err, res) {
     if (err) {
-      console.log('Error: ', err);
+      console.log(err);
+      return;
     }
+    Session.set('nucleus_selected_doc_id', res);
+    Session.set('nucleus_selected_file', filepath);
 
-    Session.set('nucleus_selected_doc_id', file.sharejs_doc_id);
-    Session.set('nucleus_selected_file', file.filepath);
+    var user = NucleusUser.me();
+    if (!user) return; // this is to avoid a message in console which shows up when user is not yet logged in
+    user.setCwd(res);
+    user.setCurrentFilepath(filepath);
   });
 };
 

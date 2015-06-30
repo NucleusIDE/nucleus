@@ -73,10 +73,10 @@ Package.on_use(function (api, where) {
     'both/plugin-manager.js',
     'both/deploy.js',
     'both/utilities.js',
-    'both/collections.js',
     'chat/both/chat_model.js',
     'both/models/nucleus_user.js',
     'both/models/ultimate-file.js',
+    'both/models/sharejs.js'
   ], ['client', 'server']);
 
   api.add_files([
@@ -103,7 +103,6 @@ Package.on_use(function (api, where) {
     'server/git.js',
     'server/methods.js',
     'server/keepalive.js',
-    'server/permissions.js',
     'chat/server/publishers.js'
   ], ['server']);
 

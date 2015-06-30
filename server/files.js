@@ -243,7 +243,7 @@ Files.prototype.renameFile = function(oldpath, newpath) {
   return true;
 };
 
-Files.prototype.setupFileForEditting = function(ultimateFile) {
+Files.prototype.setupFileForEditting = function(filepath, forceRefresh) {
   /**
    * Sets up `filepath` for editing. It would fetch the contents of the file from the
    * filesystem and put them in a sharejs doc and return the `docId` of newly created doc.
@@ -256,14 +256,14 @@ Files.prototype.setupFileForEditting = function(ultimateFile) {
    * * `forceRefresh` *{boolean}*: Force it to fetch contents from the filesystem. Used when discarding unsaved changes to the doc.
    */
 
-  var fileContents = this.getFileContents(ultimateFile.filepath),
-      forceRefresh = ultimateFile.force_refresh,
-      sharejsDocId = ultimateFile.sharejs_doc_id;
+  var ultimateFile = UltimateFiles.findOne({filepath: filepath}),
+      fileContents = this.getFileContents(filepath),
+      docId = ultimateFile && ultimateFile.sharejs_doc_id;
 
   if(forceRefresh) {
     ShareJS.model.flush();
 
-    var doc = ShareJsDocs.findOne(sharejsDocId);
+    var doc = ShareJsDocs.findOne(docId);
     var ver = doc.data.v;
 
     /*
@@ -275,7 +275,7 @@ Files.prototype.setupFileForEditting = function(ultimateFile) {
      */
 
     ShareJS.model.applyOp(
-      sharejsDocId,
+      docId,
       {
         op: [{d: doc.data.snapshot, p: 0}, {i: fileContents, p: 0}],
         v: ver,
@@ -285,14 +285,13 @@ Files.prototype.setupFileForEditting = function(ultimateFile) {
         if(err) throw new Error(err);
       });
 
-    return sharejsDocId;
+    return docId;
   }
 
-  if (sharejsDocId) {
-    ShareJsDocs.update({_id: sharejsDocId}, {$set: {"data.snapshot": fileContents}});
-    return sharejsDocId;
+  if (docId) {
+    ShareJsDocs.update({_id: docId}, {$set: {"data.snapshot": fileContents}});
   } else {
-    sharejsDocId = ShareJsDocs.insert({
+    docId = ShareJsDocs.insert({
       data: {
         "snapshot": fileContents,
         "v": 0,
@@ -300,7 +299,11 @@ Files.prototype.setupFileForEditting = function(ultimateFile) {
       }
     });
   }
-  return sharejsDocId;
+
+  ultimateFile.sharejs_doc_id = docId;
+  ultimateFile.save();
+
+  return docId;
 };
 
 Files.prototype.updateFileTreeCollection = function() {
