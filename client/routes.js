@@ -18,12 +18,12 @@ Meteor.startup(function () {
       path: '/nucleus',
       layoutTemplate: 'nucleusLayout',
       template: 'nucleusWorkbench',
-      waitOn: function() {
-        return Meteor.subscribe('all_nucleus_users');
-      },
+      // waitOn: function() {
+      //   return Meteor.subscribe('all_nucleus_users');
+      // },
       onBeforeAction: function() {
         UltimateIDE.initialize({}, window); //initialize the nucleus window
-        maybeLoginFromCookie(maybeLoginFromQueryParams);
+        //maybeLoginFromCookie(maybeLoginFromQueryParams);
         this.next();
       }
     });

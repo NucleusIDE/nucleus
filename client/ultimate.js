@@ -12,9 +12,8 @@ var UltimateIDEFactory = function () {
   };
 
   this.Files = new Files();
-  this.EventSync = new NucleusEventSync(this);
-  //use this plugin manager and remove the old plugin manager from this.initialize
   this.Plugins = PluginManager;
+
   return this;
 };
 
@@ -42,19 +41,6 @@ UltimateIDEFactory.prototype.initialize = function (config, nucleusWindow) {
   }, 500);
 
   this.Editor = NucleusEditor;
-
-  /**
-   * Add Plugin manager to Nucleus and put 'registerPlugin' on this for convinience
-   */
-  this.PluginManager = new NucleusPluginManager(this);
-  this.registerPlugin = this.PluginManager.registerPlugin.bind(this.PluginManager);
-
-  /**
-   * Let's keep the current user on NucleusClient, and use NucleusUser as just a way of handling users. Not as an interface
-   */
-  this.currentUser = new ReactiveVar(null);
-
-  this.Deploy = new DeployManager();
 
   return false;
 };

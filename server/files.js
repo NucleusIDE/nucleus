@@ -169,8 +169,10 @@ Files.prototype.saveDocToFile = function(docId) {
   //when trying to save scratch pad
   if(!docId) return false;
 
-  var doc = ShareJsDocs.findOne(docId),
-      filepath = UltimateFiles.findOne({sharejs_doc_id: docId}).filepath,
+  var doc = ShareJsDoc.collection.findOne({_id: docId});
+
+
+  var filepath = UltimateFiles.findOne({sharejs_doc_id: docId}).filepath,
       newContents = doc.data.snapshot,
       fut = new Future();
 

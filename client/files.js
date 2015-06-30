@@ -28,7 +28,7 @@ Files.prototype.isClientFile = function (filepath) {
 };
 
 Files.prototype.isServerFile = function (filepath) {
-  var serverRegex = new RegExp('\/' + this.config.serverDir + '\/');
+  var serverRegex = new RegExp('\/server\/');
   return serverRegex.test(filepath);
 };
 
@@ -56,10 +56,10 @@ Files.prototype.editFile = function (filepath, forceRefresh) {
     Session.set('nucleus_selected_doc_id', res);
     Session.set('nucleus_selected_file', filepath);
 
-    var user = NucleusUser.me();
-    if (!user) return; // this is to avoid a message in console which shows up when user is not yet logged in
-    user.setCwd(res);
-    user.setCurrentFilepath(filepath);
+    // var user = NucleusUser.me();
+    // if (!user) return; // this is to avoid a message in console which shows up when user is not yet logged in
+    // user.setCwd(res);
+    // user.setCurrentFilepath(filepath);
   });
 };
 
@@ -190,7 +190,7 @@ Files.prototype.evalNucleusDoc = function (docId, shouldEvalInNucleus) {
     return;
   }
   var filepath = ultimateFile.filepath,
-      doc = ShareJsDocs.findOne(ultimateFile.sharejs_doc_id),
+      doc = ShareJsDoc.collection.findOne(ultimateFile.sharejs_doc_id),
       newFileContent = doc.data.snapshot,
       oldDocContent = ultimateFile.last_snapshot;
 

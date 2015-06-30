@@ -1,4 +1,4 @@
-/*global PluginManager, Files */
+/*global PluginManager, Files, Git */
 
 Meteor.startup(function() {
   UltimateIDE.initialize({
@@ -25,49 +25,13 @@ var UltimateIDEFactory = function() {
     password: null
   };
 
-  this.Terminal = {};
-  this.Terminal.configure = function(options) {
-    var terminalUsername = options.user,
-        terminalPassword = options.password;
-
-    if (!terminalUsername || ! terminalPassword) {
-      self.config.terminalInitialized = false;
-      return;
-    }
-
-    //Setup terminal. Terminal starts a different server protected by username and password given below.
-    NucleusTerminal.initialize({
-      username: terminalUsername,
-      password: terminalPassword
-    });
-
-    self.config.terminalInitialized = true;
-  };
-
-  //TODO: keep this Plugin manager and remove the one in this.initialize
   this.Plugins = PluginManager;
   this.Files = new Files(this);
+  this.git = new Git();
 };
 
 UltimateIDEFactory.prototype.initialize = function(config) {
-  /**
-   * This method is called on nucleus initialization on the server (in the app).
-   */
-
   config && this.configure(config);
-
-  //this.nucleusCloneRepo();
-  this.Deploy = new DeployManager();
-
-  /**
-   * Add Plugin manager to Nucleus and put 'registerPlugin' on this for convinience
-   */
-  this.PluginManager = new NucleusPluginManager(this);
-  this.registerPlugin = this.PluginManager.registerPlugin.bind(this.PluginManager);
-
-  if(this.config.preventAppCrashes)
-    CrashWatcher.initialize();
-
   this.Files.updateFileTreeCollection();
 };
 

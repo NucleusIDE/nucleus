@@ -20,11 +20,11 @@ Package.on_use(function (api, where) {
            'reactive-var',
            'reactive-dict',
            'kevohagan:ramda@0.13.0',
-           'nucleuside:smart-models@0.0.8',
+           // 'nucleuside:smart-models@0.0.8',
            // 'nucleuside:basic-auth@0.2.1',
            // 'nucleuside:simplewebrtc@0.0.1',
-           'nucleuside:terminal@0.2.0',
-           'nucleuside:eventsync@0.1.0',
+           // 'nucleuside:terminal@0.2.0',
+           // 'nucleuside:eventsync@0.1.0',
            // 'aldeed:autoform@4.0.0',
            'nucleuside:live-update-plus@0.0.1',
            'nucleuside:nucleus-ui',
@@ -63,18 +63,14 @@ Package.on_use(function (api, where) {
   ], 'client', {isAsset: true});
 
   api.add_files([
-    'server/secret_keys.js'
+    'server/secret_keys.js' //this file isn't under vc for obvious reasons
   ], 'server');
 
   api.add_files([
-    'plugins/plugin-manager/plugin_manager.js',
-    'both/master_config.js',
-    'both/nucleus_global.js',
-    'both/plugin-manager.js',
-    'both/deploy.js',
     'both/utilities.js',
-    'chat/both/chat_model.js',
-    'both/models/nucleus_user.js',
+
+    'plugins/plugin-manager/plugin_manager.js',
+
     'both/models/ultimate-file.js',
     'both/models/sharejs.js'
   ], ['client', 'server']);
@@ -83,27 +79,18 @@ Package.on_use(function (api, where) {
     'client/lib/cookie.js',
     'client/lib/hint.css',
 
+    'client/routes.js',
     'client/nucleus_editor.js',
-    'client/event-sync.js',
     'client/files.js',
     'client/ultimate.js',
-    'client/nucleus_sidebar.js',
-    'client/keepalive.js',
-    'client/routes.js',
-
-    'chat/client/subscriptions.js'
   ], ['client']);
 
   api.add_files([
     'server/publishers.js',
-    'server/login-routes.js',
-    'server/crash_watcher.js',
     'server/files.js',
-    'server/ultimate.js',
     'server/git.js',
+    'server/ultimate.js',
     'server/methods.js',
-    'server/keepalive.js',
-    'chat/server/publishers.js'
   ], ['server']);
 
   api.add_files([
@@ -136,7 +123,6 @@ Package.on_use(function (api, where) {
     'plugins/explorer/views/working-files-explorer.js',
   ], 'client');
 
-  api.export && api.export(['NucleusUser', 'NucleusGlobal'], ['server', 'client']);
-  api.export && api.export(['UltimateIDE', 'NucleusGit'], ['server']);
-  api.export && api.export(['UltimateIDE', 'NucleusEditor', 'LiveUpdate'], ['client']);
+  api.export && api.export(['UltimateIDE'], ['server']);
+  api.export && api.export(['UltimateIDE', 'LiveUpdate'], ['client']);
 });

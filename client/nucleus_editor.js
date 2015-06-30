@@ -377,7 +377,7 @@ NucleusEditor = new NucleusEditorFactory();
 /**
  * Update user's cursor position in mongo db when he changes his cursor. This will automatically update user's cursor on all other users' editors
  */
-NucleusEditor.addCursorMovementAction(function(e) {
-  var cursor = NucleusEditor.getSelection().getCursor();
-  NucleusUser.me() && NucleusUser.me().setCursor(cursor.row, cursor.column);
-});
+// NucleusEditor.addCursorMovementAction(function(e) {
+//   var cursor = NucleusEditor.getSelection().getCursor();
+//   NucleusUser.me() && NucleusUser.me().setCursor(cursor.row, cursor.column);
+// });
