@@ -66,7 +66,7 @@ Files.prototype.editFile = function (filepath, forceRefresh) {
  */
 Files.prototype.saveSelectedFileToDisk = function () {
   var selectedDocId = Session.get('nucleus_selected_doc_id'),
-      nucDoc = NucleusDocuments.findOne({doc_id: selectedDocId}),
+      ultimateFile = UltimateFiles.findOne({sharejs_doc_id: selectedDocId}),
       client = this;
   Meteor.call('nucleusSaveDocToDisk', selectedDocId, function (err, res) {
     if (err) {
@@ -75,7 +75,7 @@ Files.prototype.saveSelectedFileToDisk = function () {
     }
     if (res.status === 0) FlashMessages.sendWarning('No Changes to Save');
     if (res.status === 1) {
-      client.markDocForEval(nucDoc, res.oldDocContent);
+      client.markDocForEval(ultimateFile, res.oldDocContent);
       FlashMessages.sendSuccess('File Saved Successfully');
     }
     if (res.status === 2) FlashMessages.sendError('Something went Wrong when Saving File');
@@ -154,8 +154,6 @@ Files.prototype.renameFile = function (oldpath, newpath, cb) {
 /**
  * Mark `nucDoc` for eval on client side.
  *
- * *Arguments:*
- * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property. This document will be attempted to be evaled on client side.
  */
 Files.prototype.markDocForEval = function (nucDoc, oldDocContent) {
   var filepath = nucDoc.filepath,
@@ -164,37 +162,33 @@ Files.prototype.markDocForEval = function (nucDoc, oldDocContent) {
   var shouldEvalInNucleus = /\/packages\//.test(filepath.toLowerCase());
 
   if (isClientFile || !this.isServerFile(filepath)) {
-    NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: true, last_snapshot: oldDocContent, shouldEvalInNucleus: shouldEvalInNucleus}});
+    UltimateFiles.update({_id: nucDoc._id}, {$set: {shouldEval: true, last_snapshot: oldDocContent, shouldEvalInNucleus: shouldEvalInNucleus}});
   }
 };
 
 /**
  * Unmark `nucDoc` from eval on client side. See `NucleusClient.markDocForEval` above
  *
- * *Arguments:*
- * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
  */
 Files.prototype.unmarkDocForEval = function (nucDoc) {
-  NucleusDocuments.update({_id: nucDoc._id}, {$set: {shouldEval: false, shouldEvalInNucleus: false}});
+  UltimateFiles.update({_id: nucDoc._id}, {$set: {shouldEval: false, shouldEvalInNucleus: false}});
 };
 
 /**
  * Eval the `nucDoc` on client side. As of now, this function can only act on `CSS` files. Js/HTML files are not supported for now.
  * We will use `channikhabra:live-update` package for evaling js/html on client, when it's implemented.
  *
- * *Arguments:*
- * * `nucDoc` *{Mongo Document}* : Document from `NucleusDocuments` which would have `filepath` property.
  */
 Files.prototype.evalNucleusDoc = function (docId, shouldEvalInNucleus) {
-  var nucDoc = NucleusDocuments.findOne(docId);
-  if (!nucDoc) {
+  var ultimateFile = UltimateFiles.findOne(docId);
+  if (!ultimateFile) {
     console.log('Cant find doc with id', docId);
     return;
   }
-  var filepath = nucDoc.filepath,
-      doc = ShareJsDocs.findOne(nucDoc.doc_id),
+  var filepath = ultimateFile.filepath,
+      doc = ShareJsDocs.findOne(ultimateFile.sharejs_doc_id),
       newFileContent = doc.data.snapshot,
-      oldDocContent = nucDoc.last_snapshot;
+      oldDocContent = ultimateFile.last_snapshot;
 
   var refreshFunc = shouldEvalInNucleus ? this.origLiveUpdateRefreshFile : LiveUpdate.refreshFile;
 
@@ -214,7 +208,7 @@ Deps.autorun(function () {
   Meteor.subscribe('nucleusPublisher');
 
   //below approach is required to eval the new changes for al connected clients and not for present client only
-  NucleusDocuments.find({shouldEval: true}).forEach(function (doc) {
+  UltimateFiles.find({shouldEval: true}).forEach(function (doc) {
     UltimateIDE.Files.unmarkDocForEval(doc);
     UltimateIDE.getWindow('app').eval('UltimateIDE.Files.evalNucleusDoc("' + doc._id + '")');
 

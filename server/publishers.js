@@ -1,8 +1,7 @@
 //Publishes all the collections required by nucleus with no limits or checks
-Meteor.publish("nucleusPublisher",function() {
+Meteor.publish('nucleusPublisher',function() {
   return [
-    NucleusDocuments.find({}),
-    ShareJsDocs.find({}),
+    ShareJsDocs.find({})
   ];
 });
 

@@ -122,9 +122,3 @@ UltimateIDEFactory.prototype.nucleusCloneRepo = function(git, project) {
 
 //Creat server side global `Nucleus` using the above constructor
 UltimateIDE = new UltimateIDEFactory();
-
-// Ultimate('_UltimateIDE').extends(UltimateClass, (new UltimateIDEFactory()));
-
-// UltimateIDE = new _UltimateIDE();
-
-// _UltimateIDE.extendHttp(UltimateIDE.files);

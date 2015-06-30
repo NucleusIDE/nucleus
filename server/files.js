@@ -158,19 +158,19 @@ Files.prototype.createNewFile = function(filepath, directory) {
   return filepath;
 };
 
+/**
+ * Saves the doc (the changes made in the ace editor) back to the filesystem.
+ */
 Files.prototype.saveDocToFile = function(docId) {
-  /**
-   * Saves the doc (the changes made in the ace editor) back to the filesystem.
-   */
-
-  //Flush the doc. Sharejs keeps the changes in memory without actually persisting them to the database for as long as it can. This flushes the changes to the database
+  //Flush the doc. Sharejs keeps the changes in memory without actually persisting them to
+  // the database for as long as it can. This flushes the changes to the database
   ShareJS.model.flush();
 
   //when trying to save scratch pad
   if(!docId) return false;
 
   var doc = ShareJsDocs.findOne(docId),
-      filepath = NucleusDocuments.findOne({doc_id: docId}).filepath,
+      filepath = UltimateFiles.findOne({sharejs_doc_id: docId}).filepath,
       newContents = doc.data.snapshot,
       fut = new Future();
 
@@ -220,9 +220,9 @@ Files.prototype.deleteFile = function(filepath) {
     });
   else {
     fut.return(fs.unlinkSync(filepath));
-    var nucDoc = NucleusDocuments.findOne({filepath: filepath});
-    var shareJsDocId = nucDoc ? nucDoc.doc_id : null;
-    NucleusDocuments.remove({_id: nucDoc._id});
+    var ultimateFile = UltimateFiles.findOne({filepath: filepath});
+    var shareJsDocId = ultimateFile ? ultimateFile.sharejs_doc_id : null;
+    UltimateFiles.remove({_id: ultimateFile._id});
     ShareJsDocs.remove({_id: shareJsDocId});
   }
 
@@ -238,7 +238,7 @@ Files.prototype.renameFile = function(oldpath, newpath) {
   }
 
   var renameFileOp = fs.renameSync(oldpath, newpath);
-  NucleusDocuments.update({filepath: oldpath}, {$set: {filepath: newpath}});
+  UltimateFiles.update({filepath: oldpath}, {$set: {filepath: newpath}});
 
   return true;
 };
