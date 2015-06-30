@@ -46,7 +46,7 @@ var UltimateIDEFactory = function() {
 
   //TODO: keep this Plugin manager and remove the one in this.initialize
   this.Plugins = PluginManager;
-  this.files = Files;
+  this.Files = new Files(this);
 };
 
 UltimateIDEFactory.prototype.initialize = function(config) {
@@ -67,6 +67,8 @@ UltimateIDEFactory.prototype.initialize = function(config) {
 
   if(this.config.preventAppCrashes)
     CrashWatcher.initialize();
+
+  this.Files.updateFileTreeCollection();
 };
 
 UltimateIDEFactory.prototype.configure = function(config) {

@@ -6,27 +6,24 @@
 
 
 Meteor.methods({
-  nucleusGetFileList: function() {
-    return UltimateIDE.files.getFileTree({rootDir: UltimateIDE.config.projectDir, traverseSymlinks: true});
-  },
   nucleusGetFileContents: function(filepath) {
-    return UltimateIDE.files.getFileContents(filepath);
+    return UltimateIDE.Files.getFileContents(filepath);
   },
   nucleusSaveDocToDisk: function(docId) {
-    return UltimateIDE.files.saveDocToFile(docId);
+    return UltimateIDE.Files.saveDocToFile(docId);
   },
   nucleusSetupFileForEditting: function(filepath, forceRefresh) {
-    return UltimateIDE.files.setupFileForEditting(filepath, forceRefresh);
+    return UltimateIDE.Files.setupFileForEditting(filepath, forceRefresh);
   },
 
   nucleusCreateNewFile: function(filepath) {
-    return UltimateIDE.files.createNewFile(filepath);
+    return UltimateIDE.Files.createNewFile(filepath);
   },
   nucleusCreateNewFolder: function(filepath) {
-    return UltimateIDE.files.createNewFile(filepath, true);
+    return UltimateIDE.Files.createNewFile(filepath, true);
   },
   nucleusDeleteFile: function(filepath) {
-    return UltimateIDE.files.deleteFile(filepath);
+    return UltimateIDE.Files.deleteFile(filepath);
   },
   nucleusRenameFile: function(oldpath, newpath) {
     return UltimateIDE.fiels.renameFile(oldpath, newpath);

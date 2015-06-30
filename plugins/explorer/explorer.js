@@ -1,30 +1,4 @@
-var Explorer = function() {
-  this.workingFiles = new ReactiveVar([]);
-};
-
-Explorer.prototype.addWorkingFile = function(obj) {
-  var workingFiles = this.workingFiles.get();
-
-  var alreadyPresent = R.any(function(file) {
-    return file.id === obj.id;
-  }, workingFiles);
-
-  if (alreadyPresent)
-    return;
-
-  workingFiles.push(obj);
-  this.workingFiles.set(workingFiles);
-};
-
-Explorer.prototype.removeWorkingFile = function(obj) {
-  var workingFiles = this.workingFiles.get('workingFiles');
-
-  workingFiles = R.filter(function(file) {
-    return file.id !== obj.id;
-  }, workingFiles);
-
-  this.workingFiles.set(workingFiles);
-};
+var Explorer = function() {};
 
 function setup(Plugin) {
   Plugin.Views.append('activityBar', 'ultimateExplorerActivitybar');

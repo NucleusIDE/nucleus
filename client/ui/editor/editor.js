@@ -31,8 +31,10 @@ Template.nucleusEditor.helpers({
 
 //Autorun to set file for editing when user clicks on a file in sidebar
 Deps.autorun(function() {
-  var selectedFile = Session.get("nucleus_selected_file");
+  var selectedFile = Session.get('nucleus_selected_file');
   if (!selectedFile) return;
 
-  UltimateIDE.editFile(selectedFile);
+  Deps.nonreactive(function() {
+    UltimateIDE.Files.editFile(selectedFile);
+  });
 });

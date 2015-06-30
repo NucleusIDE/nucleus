@@ -76,6 +76,7 @@ Package.on_use(function (api, where) {
     'both/collections.js',
     'chat/both/chat_model.js',
     'both/models/nucleus_user.js',
+    'both/models/ultimate-file.js',
   ], ['client', 'server']);
 
   api.add_files([

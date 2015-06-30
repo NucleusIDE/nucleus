@@ -1,8 +1,4 @@
 /**
- * # NucleusEditor
- */
-
-/**
  * Show user's nick in label when mouse is moved to her cursor in ace editor.
  *
  * We get rectangles around the cursors, and check if the mouse is in any of those rectangles.
@@ -112,7 +108,7 @@ var NucleusEditorFactory = function() {
         bindKey: {win: 'Ctrl-s',  mac: 'Command-s'},
         exec: function(editor) {
           // Save the file currently being edited in user's ace editor
-          UltimateIDE.saveSelectedFileToDisk();
+          UltimateIDE.Files.saveSelectedFileToDisk();
         },
         readOnly: true // false if this command should not apply in readOnly mode
       }

@@ -10,7 +10,7 @@ Template.ultimateProjectExplorer.helpers({
       return [];
 
     Tracker.nonreactive(function() {
-      expandingTree = new NucleusExpandingTree(tree.fetch());
+      expandingTree = new UltimateExpandingTree(tree.fetch());
     });
 
     return _.map(expandingTree.nodes, function(node) {
@@ -22,7 +22,7 @@ Template.ultimateProjectExplorer.helpers({
 Template.nucleusTree_collapse_row.helpers({
   rowClass: function() {
     var row = this;
-    if(row.get('id') === Session.get('nucleus_selected_file')) {
+    if(row.get('filepath') === Session.get('nucleus_selected_file')) {
       row.set('rowClasses', ''); //I don't know 'hidden' class gets added whenever this helper return something truthy. Have to reset this reactive var
       return 'nucleus-tree__row--focused';
     }
@@ -34,14 +34,14 @@ Template.ultimateProjectExplorer.events({
     var row = this;
 
     if (row.get('type') === 'file') {
-      Session.set('nucleus_selected_file', row.get('id'));
+      Session.set('nucleus_selected_file', row.get('filepath'));
     }
   },
   "dblclick .nucleus-tree__row": function(e) {
     var row = this;
     if (row.get('type') === 'file') {
-      row = Utils.dictToObj(row);
-      UltimateIDE.Explorer.addWorkingFile(row);
+      filepath = Utils.dictToObj(row).filepath;
+      UltimateIDE.Files.addWorkingFile(filepath);
     }
   }
 });

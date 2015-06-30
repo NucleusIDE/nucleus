@@ -5,6 +5,8 @@
     "FlashMessages": true,
     "Template": true,
     "GlobalState": true,
-    "R": true
+    "R": true,
+    "ShareJs": true,
+    "UltimateFiles": true
   }
 }
