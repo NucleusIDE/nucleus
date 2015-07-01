@@ -117,15 +117,15 @@ Files.prototype.unmarkDocForEval = function (nucDoc) {
  * We will use `channikhabra:live-update` package for evaling js/html on client, when it's implemented.
  *
  */
-Files.prototype.evalNucleusDoc = function (docId, shouldEvalInNucleus) {
-  var ultimateFile = UltimateFiles.findOne(docId);
+Files.prototype.refresh = function (fileId, shouldEvalInNucleus) {
+  var ultimateFile = UltimateFiles.findOne(fileId);
   if (!ultimateFile) {
-    console.log('Cant find doc with id', docId);
+    console.log('Cant find doc with id', fileId);
     return;
   }
   var filepath = ultimateFile.filepath,
-      doc = ShareJsDoc.collection.findOne(ultimateFile.sharejs_doc_id),
-      newFileContent = doc.data.snapshot,
+      sharejsDoc = ShareJsDoc.collection.findOne(ultimateFile.sharejs_doc_id),
+      newFileContent = sharejsDoc.data.snapshot,
       oldDocContent = ultimateFile.last_snapshot;
 
   var refreshFunc = shouldEvalInNucleus ? this.origLiveUpdateRefreshFile : LiveUpdate.refreshFile;
@@ -148,7 +148,7 @@ Deps.autorun(function () {
   //below approach is required to eval the new changes for al connected clients and not for present client only
   UltimateFiles.find({shouldEval: true}).forEach(function (doc) {
     UltimateIDE.Files.unmarkDocForEval(doc);
-    UltimateIDE.getWindow('app').eval('UltimateIDE.Files.evalNucleusDoc("' + doc._id + '")');
+    UltimateIDE.getWindow('app').eval('UltimateIDE.Files.refresh("' + doc._id + '")');
 
     if (doc.shouldEvalInNucleus) {
       //we can keep this here because all files no matter where they are located are evaled for app
@@ -156,7 +156,7 @@ Deps.autorun(function () {
       var oldCursorPosition = UltimateIDE.Editor.editor.getCursorPosition(),
           oldScrollPosition = [UltimateIDE.Editor.editor.session.getScrollTop(), UltimateIDE.Editor.editor.session.getScrollLeft()];
 
-      UltimateIDE.Files.evalNucleusDoc(doc._id, true);
+      UltimateIDE.Files.refresh(doc._id, true);
       //Since we re-render the whole window in nucleus on file change, the window flickers a little
       //and the cursor position is lost. Let's get the cursor position and set it back after the window flicker
       Meteor.setTimeout(function() {
