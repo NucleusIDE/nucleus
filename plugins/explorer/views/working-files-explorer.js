@@ -1,7 +1,14 @@
 var workingFilesState = new ReactiveDict();
 
 Template.ultimateWorkingFilesExplorer.rendered = function() {
+  var initialChangeCount = 0;
+
   UltimateIDE.Editor.addEvent('change', function addWorkingDoc() {
+    if(initialChangeCount < 2) {
+      initialChangeCount++;
+      return;
+    }
+
     var filepath = Session.get('nucleus_selected_file');
     if (!filepath)
       return;

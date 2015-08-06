@@ -35,13 +35,14 @@ Template.ultimateProjectExplorer.events({
 
     if (row.get('type') === 'file') {
       Session.set('nucleus_selected_file', row.get('filepath'));
+      UltimateIDE.Files.addWorkingFile(row.get('filepath'), {temp: true});
     }
   },
   "dblclick .nucleus-tree__row": function(e) {
     var row = this;
     if (row.get('type') === 'file') {
       filepath = Utils.dictToObj(row).filepath;
-      UltimateIDE.Files.addWorkingFile(filepath);
+      UltimateIDE.Files.addWorkingFile(filepath, {temp: false});
     }
   }
 });

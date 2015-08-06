@@ -48,7 +48,7 @@ mizzao:sharejs-ace@1.1.8_1
 momentjs:moment@2.8.4
 mongo@1.1.0
 mongo-livedata@1.0.8
-mrt:flash-messages@0.2.4
+mrt:flash-messages@1.0.1
 mrt:moment@2.8.1
 naxio:flash@0.2.4
 nucleuside:live-update@0.3.1
@@ -76,7 +76,7 @@ ui@1.0.6
 ultimateide:collection-hooks@0.7.14
 ultimateide:live-update-plus@0.0.1
 ultimateide:tabular@1.2.3
-ultimateide:ultimate@0.2.0
+ultimateide:ultimate@0.2.1
 ultimateide:ultimate-mvc@0.0.20
 ultimateide:ultimate-ui@0.0.1
 underscore@1.0.3

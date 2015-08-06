@@ -8,15 +8,26 @@ this.Files = function() {
   this.workingFiles = this.tree.find({is_working_file: true});
 };
 
-Files.prototype.addWorkingFile = function(filepath) {
+Files.prototype.addWorkingFile = function(filepath, options /* {temp: true|false} */) {
+  options = options || {};
   var file = this.tree.findOne({filepath: filepath});
+  var previousTempFile = this.tree.findOne({is_temporary_working_file: true});
+
+  if(previousTempFile && filepath !== previousTempFile.filepath) {
+    previousTempFile.is_temporary_working_file = false;
+    previousTempFile.is_working_file = false;
+    previousTempFile.save();
+  }
+
   file.is_working_file = true;
+  file.is_temporary_working_file = (options.temp || null);
   file.save();
 };
 
 Files.prototype.removeWorkingFile = function(filepath) {
   var file = this.tree.findOne({filepath: filepath});
   file.is_working_file = null;
+  file.is_temporary_working_file = null;
   file.save();
 };
 
