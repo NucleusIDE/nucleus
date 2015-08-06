@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Realtime Collaborative IDE for Meteor",
-  version: "0.2.0",
+  version: "0.2.1",
   name: "ultimateide:ultimate",
   git: 'https://github.com/nucleuside/nucleus'
 });
@@ -14,7 +14,7 @@ Npm.depends({
 });
 
 Package.on_use(function (api, where) {
-
+  api.versionsFrom('1.1.0.2');
   api.use(['ui', 'spacebars','blaze', 'jquery', 'deps', 'templating', 'underscore', 'session', 'http',
            'mrt:moment@2.8.1',
            'reactive-var',
@@ -26,12 +26,12 @@ Package.on_use(function (api, where) {
            // 'nucleuside:terminal@0.2.0',
            // 'nucleuside:eventsync@0.1.0',
            // 'aldeed:autoform@4.0.0',
-           'nucleuside:live-update-plus@0.0.1',
-           'nucleuside:nucleus-ui',
+           'ultimateide:live-update-plus@0.0.1',
+           'ultimateide:ultimate-ui@0.0.1',
            'mizzao:sharejs@0.7.3',
            'mizzao:sharejs-ace@1.1.8_1',
-           'mrt:flash-messages@0.2.4',
-           'ultimateide:ultimate-mvc'
+           'mrt:flash-messages@1.0.0',
+           'ultimateide:ultimate-mvc@0.0.19'
           ]);
 
   // we create /nucleus route only when iron:router is present. Otherwise we manually check the url
