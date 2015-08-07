@@ -11,7 +11,7 @@ Meteor.publish("all_ultimate_users", function() {
 });
 
 Meteor.publish("logged_in_ultimate_user", function(username, loginToken) {
-  var userCursor = UltimateIDEUsers.find({username: username}),
+  var userCursor = UltimateIDEUser.collection.find({username: username}),
       user = userCursor.fetch()[0];
 
   if (typeof user !== 'undefined' && user.hasValidLoginToken(loginToken)) {
