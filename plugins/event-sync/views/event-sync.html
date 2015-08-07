@@ -1,0 +1,23 @@
+<template name="ultimateEventSyncActivityBar">
+  {{#nucleusActivitybarItem title="Event Sync" id="activitybar-event-sync" sidebarTemplate="ultimateSidebarEventSync"}}
+  <i class="fa fa-chain activitybar__action-icon"></i>
+  {{/nucleusActivitybarItem}}
+</template>
+
+
+<template name="ultimateSidebarEventSync">
+  {{> nucleusSidebar_title title="Event Sync"}}
+
+  <div class="sidebar-content">
+    <div class="viewlet">
+      <div class="event-sync-viewlet">
+        <a class="ultimate-sidebar-button" href="#">
+          <i class="fa fa-chain-broken"></i> App
+        </a>
+        <a class="ultimate-sidebar-button" href="#">
+          <i class="fa fa-chain-broken"></i> Ultimate
+        </a>
+      </div>
+    </div>
+  </div>
+</template>

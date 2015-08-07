@@ -1,40 +1,43 @@
-NucleusEventSync = function(NucleusClient) {
+/* global EventSync, ReactiveVar, UltimateIDE*/
+
+var UltimateIDEEventSync = function(UltimateIDE) {
   this.Manager = EventSync;
+  this.UltimateIDE = UltimateIDE;
   this.isSyncingAppEvents = new ReactiveVar(false);
   this.addNucleusScrollEvent();
 };
 
-NucleusEventSync.prototype.isSyncingEvents = function(appName) {
+UltimateIDEEventSync.prototype.isSyncingEvents = function(appName) {
   if (appName === 'app') {
     return this.isSyncingAppEvents.get();
   } else {
-    return NucleusClient.EventSync.Manager.isSyncingEvents.get();
+    return this.UltimateIDE.EventSync.Manager.isSyncingEvents.get();
   }
 };
 
-NucleusEventSync.prototype.toggleEventSync = function(appName) {
+UltimateIDEEventSync.prototype.toggleEventSync = function(appName) {
   appName = appName || "app";
 
   if(appName === 'app') {
-    var window = NucleusClient.getWindow('app');
+    var window = this.UltimateIDE.getWindow('app');
     var enabled = this.isSyncingAppEvents.get();
 
     this.isSyncingAppEvents.set(! this.isSyncingAppEvents.get());
 
     if(enabled)
-      window.eval('NucleusClient.EventSync.Manager.stop()');
+      window.eval('this.UltimateIDE.EventSync.Manager.stop()');
     else
-      window.eval('NucleusClient.EventSync.Manager.start()');
+      window.eval('this.UltimateIDE.EventSync.Manager.start()');
   } else {
-    if (NucleusClient.EventSync.Manager.isSyncingEvents.get())
-      NucleusClient.EventSync.Manager.stop();
+    if (this.UltimateIDE.EventSync.Manager.isSyncingEvents.get())
+      this.UltimateIDE.EventSync.Manager.stop();
     else
-      NucleusClient.EventSync.Manager.start();
+      this.UltimateIDE.EventSync.Manager.start();
   }
 
 };
 
-NucleusEventSync.prototype.addNucleusScrollEvent = function() {
+UltimateIDEEventSync.prototype.addNucleusScrollEvent = function() {
   if (! window.opener) {
     //should work in nucleus window opened by app window only
     return;
@@ -44,7 +47,7 @@ NucleusEventSync.prototype.addNucleusScrollEvent = function() {
     var EVENT_NAME = "nucleus_scroll",
         $window = window,
         utils = EventSync.Utils,
-        Editor = NucleusClient.Editor,
+        Editor = this.UltimateIDE.Editor,
         NucleusEvent = EventManager.Collection;
 
     this.$window = $window;
@@ -110,3 +113,15 @@ NucleusEventSync.prototype.addNucleusScrollEvent = function() {
 
   this.Manager.addExternalEvent(NucleusScrollEvent);
 };
+
+function setup(Plugin) {
+  Plugin.Views.append('activityBar', 'ultimateEventSyncActivityBar');
+  UltimateIDE.EventSync = new UltimateIDEEventSync(UltimateIDE);
+}
+
+UltimateIDE.Plugins.register({
+  name: 'Event Sync',
+  description: 'Sync events in app and ultimate IDE',
+  setup: setup,
+  where: 'Client'
+});
