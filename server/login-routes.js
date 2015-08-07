@@ -8,9 +8,7 @@ Meteor.startup(function() {
   }
 
   var Router = Package["iron:router"].Router;
-
   var Future = Npm.require('fibers/Future');
-
   var url = Npm.require('url');
 
   SecretKeys = SecretKeys || {github: {}};
@@ -43,10 +41,10 @@ Meteor.startup(function() {
 
       githubOAuth.on('token', function(token, res) {
         try {
-          var nucUser = NucleusUser.loginWithGithubToken(token);
+          var ultimateUser = UltimateIDEUser.loginWithGithubToken(token);
 
-          var loginToken = nucUser.getLoginToken();
-          var url = baseUrl + '/nucleus?user='+nucUser.username+'&login_token='+loginToken;
+          var loginToken = ultimateUser.getLoginToken();
+          var url = baseUrl + '/nucleus?user='+ultimateUser.username+'&login_token='+loginToken;
 
           res.statusCode = 302;
           res.setHeader('location', url);

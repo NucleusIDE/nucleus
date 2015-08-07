@@ -18,42 +18,43 @@ Meteor.startup(function () {
       path: '/nucleus',
       layoutTemplate: 'nucleusLayout',
       template: 'nucleusWorkbench',
-      // waitOn: function() {
-      //   return Meteor.subscribe('all_nucleus_users');
-      // },
+      waitOn: function() {
+        return Meteor.subscribe('all_ultimate_users');
+      },
       onBeforeAction: function() {
         UltimateIDE.initialize({}, window); //initialize the nucleus window
-        //maybeLoginFromCookie(maybeLoginFromQueryParams);
+        Session.set('should_show_ultimate_login_button', true);
+        maybeLoginFromCookie(maybeLoginFromQueryParams);
         this.next();
       }
     });
   };
 
-  var nucleusUserLogin = function(user) {
-    $.cookie('nucleus-logged-in-user', JSON.stringify(user));
+  var ultimateUserLogin = function(user) {
+    $.cookie('ultimate-logged-in-user', JSON.stringify(user));
   };
   var isValidUserInfo = function(user, cb) {
     if (! user)
       return cb(null, false);
 
-    Meteor.call('nucleusCheckUserToken', user, function(err, res) {
+    Meteor.call('ultimateCheckUserToken', user, function(err, res) {
       return cb(err, res);
     });
   };
   var maybeLoginFromCookie = function(loginFailCb) {
-    var userInfo = JSON.parse($.cookie('nucleus-logged-in-user'));  //get current logged in nucleus user info
+    var userInfo = JSON.parse($.cookie('ultimate-logged-in-user'));  //get current logged in nucleus user info
 
     isValidUserInfo(userInfo, function(err, valid) {  //check if nucleus user info stored in cookies is correct
       if (err) {
-        console.log("Error occurred while checking nucleus user's login status", err);
+        console.log('Error occurred while checking nucleus user\'s login status', err);
         return;
       }
 
       if (valid) { //log the user in from cookie and hide prompt
-        var nucUser = NucleusUsers.findOne({username: userInfo.username});
-        Meteor.subscribe('logged_in_nucleus_user', userInfo.username, userInfo.login_token);
-        UltimateIDE.currentUser.set(nucUser);
-        Session.set('should_show_nucleus_login_button', false);
+        var ultimateUser = UltimateIDEUser.collection.findOne({username: userInfo.username});
+        Meteor.subscribe('logged_in_ultimate_user', userInfo.username, userInfo.login_token);
+        //UltimateIDE.currentUser.set(ultimateUser);
+        Session.set('should_show_ultimate_login_button', false);
       } else {
         loginFailCb = loginFailCb || function() {};
         loginFailCb();
@@ -86,7 +87,7 @@ Meteor.startup(function () {
 
       //We can just set the cookie without verifying it here because we navigate to same route again
       //to clear the query params. Then it gets checked in onBeforeAction
-      nucleusUserLogin(userInfo);
+      ultimateUserLogin(userInfo);
       maybeLoginFromCookie();
     } else if(loginFailed) {
       FlashMessages.sendError(message);

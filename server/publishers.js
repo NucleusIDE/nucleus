@@ -5,18 +5,18 @@ Meteor.publish(null, function() {
   ];
 });
 
-// Meteor.publish("all_nucleus_users", function() {
-//   var users = NucleusUsers.find({}, {fields: {github_data: 0, login_tokens: 0}});
-//   return users;
-// });
+Meteor.publish("all_ultimate_users", function() {
+  var users = UltimateIDEUser.collection.find({}, {fields: {github_data: 0, login_tokens: 0}});
+  return users;
+});
 
-// Meteor.publish("logged_in_nucleus_user", function(username, loginToken) {
-//   var userCursor = NucleusUsers.find({username: username}),
-//       user = userCursor.fetch()[0];
+Meteor.publish("logged_in_ultimate_user", function(username, loginToken) {
+  var userCursor = UltimateIDEUsers.find({username: username}),
+      user = userCursor.fetch()[0];
 
-//   if (typeof user !== 'undefined' && user.hasValidLoginToken(loginToken)) {
-//     return userCursor;
-//   }
+  if (typeof user !== 'undefined' && user.hasValidLoginToken(loginToken)) {
+    return userCursor;
+  }
 
-//   return false;
-// });
+  return false;
+});

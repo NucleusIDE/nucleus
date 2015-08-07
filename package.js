@@ -67,10 +67,12 @@ Package.on_use(function (api, where) {
   ], 'server');
 
   api.add_files([
+    'both/master_config.js',
     'both/utilities.js',
 
     'plugins/plugin-manager/plugin_manager.js',
 
+    'both/models/ultimate-user.js',
     'both/models/ultimate-file.js',
     'both/models/sharejs.js'
   ], ['client', 'server']);
@@ -90,6 +92,9 @@ Package.on_use(function (api, where) {
     'server/files.js',
     'server/git.js',
     'server/ultimate.js',
+    'server/secret_keys.js',
+    'server/login-routes.js',
+    'server/methods.js',
   ], ['server']);
 
   api.add_files([

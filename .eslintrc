@@ -7,6 +7,8 @@
     "GlobalState": true,
     "R": true,
     "ShareJs": true,
-    "UltimateFiles": true
+    "UltimateFiles": true,
+    "Meteor": true,
+    "Npm": true
   }
 }

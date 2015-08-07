@@ -55,15 +55,15 @@ Meteor.methods({
   nucleusIsTerminalConfigured: function() {
     return UltimateIDE.config.terminalInitialized;
   },
-  nucleusCheckUserToken: function(userinfo) {
+  ultimateCheckUserToken: function(userinfo) {
     var username = userinfo.username,
         loginToken = userinfo.login_token;
 
-    var nucUser = NucleusUsers.findOne({username: username});
+    var ultimateUser = UltimateIDEUser.collection.findOne({username: username});
 
-    if (!nucUser)
+    if (!ultimateUser)
       return false;
 
-    return nucUser.hasValidLoginToken(loginToken);
+    return ultimateUser.hasValidLoginToken(loginToken);
   }
 });
