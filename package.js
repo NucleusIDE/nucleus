@@ -27,7 +27,7 @@ Package.on_use(function (api, where) {
            // 'nucleuside:eventsync@0.1.0',
            // 'aldeed:autoform@4.0.0',
            'ultimateide:live-update-plus@0.0.1',
-           'ultimateide:ultimate-ui@0.0.1',
+           'ultimateide:ultimate-ui@0.0.2',
            'mizzao:sharejs@0.7.3',
            'mizzao:sharejs-ace@1.1.8_1',
            'mrt:flash-messages@1.0.0',

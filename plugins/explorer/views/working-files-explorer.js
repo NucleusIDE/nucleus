@@ -4,10 +4,12 @@ Template.ultimateWorkingFilesExplorer.rendered = function() {
   var initialChangeCount = 0;
 
   UltimateIDE.Editor.addEvent('change', function addWorkingDoc() {
-    if(initialChangeCount < 2) {
+    if(initialChangeCount < 3) {
       initialChangeCount++;
+      console.log('change: ', initialChangeCount);
       return;
     }
+    console.log('Change Count', initialChangeCount);
 
     var filepath = Session.get('nucleus_selected_file');
     if (!filepath)
