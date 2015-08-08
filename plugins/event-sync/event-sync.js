@@ -15,6 +15,17 @@ var UltimateIDEEventSync = function(UltimateIDE) {
   this.UltimateIDE = UltimateIDE;
   this.isSyncingAppEvents = new ReactiveVar(false);
   this.addNucleusScrollEvent();
+  this.addClickFilters();
+};
+
+UltimateIDEEventSync.prototype.addClickFilters = function() {
+  this.Manager.addEventFilter('click', function(e) {
+    var $target = $(e.target);
+    if ($target.hasClass('sync-ultimate-events') || $target.hasClass('sync-app-events')) {
+      return false;
+    };
+    return true;
+  });
 };
 
 UltimateIDEEventSync.prototype.isSyncingEvents = function(appName) {
