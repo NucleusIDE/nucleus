@@ -2,6 +2,16 @@
 
 var UltimateIDEEventSync = function(UltimateIDE) {
   this.Manager = EventSync;
+
+  var self = this;
+  Utils.when(function() {
+    return !!UltimateIDEUser.me();
+  }, function() {
+    var userId = UltimateIDEUser.me()._id;
+    EventSync.setOriginatorId(userId);
+    UltimateIDE.getWindow('app').eval('    UltimateIDE.EventSync.Manager.setOriginatorId("' + userId  + '");');
+  });
+
   this.UltimateIDE = UltimateIDE;
   this.isSyncingAppEvents = new ReactiveVar(false);
   this.addNucleusScrollEvent();

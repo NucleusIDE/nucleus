@@ -24,7 +24,7 @@ Package.on_use(function (api, where) {
            // 'nucleuside:basic-auth@0.2.1',
            // 'nucleuside:simplewebrtc@0.0.1',
            // 'nucleuside:terminal@0.2.0',
-           'ultimateide:eventsync@0.1.0',
+           'ultimateide:event-sync@0.1.0',
            // 'aldeed:autoform@4.0.0',
            'ultimateide:live-update-plus@0.0.1',
            'ultimateide:ultimate-ui@0.0.2',
@@ -133,6 +133,7 @@ Package.on_use(function (api, where) {
   api.add_files([
     'plugins/event-sync/event-sync.js',
     'plugins/event-sync/views/event-sync.html',
+    'plugins/event-sync/views/event-sync.js',
   ], 'client');
 
   api.export && api.export(['UltimateIDE'], ['server']);
