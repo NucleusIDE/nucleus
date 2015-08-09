@@ -74,11 +74,12 @@ templating@1.1.1
 tracker@1.0.7
 ui@1.0.6
 ultimateide:collection-hooks@0.7.14
+ultimateide:event-sync@0.1.0
 ultimateide:live-update-plus@0.0.1
 ultimateide:tabular@1.2.3
-ultimateide:ultimate@0.2.1
+ultimateide:ultimate@0.3.0
 ultimateide:ultimate-mvc@0.0.20
-ultimateide:ultimate-ui@0.0.1
+ultimateide:ultimate-ui@0.0.2
 underscore@1.0.3
 url@1.0.4
 webapp@1.2.0

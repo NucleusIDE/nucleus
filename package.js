@@ -1,6 +1,6 @@
 Package.describe({
   summary: "Realtime Collaborative IDE for Meteor",
-  version: "0.2.1",
+  version: "0.3.0",
   name: "ultimateide:ultimate",
   git: 'https://github.com/nucleuside/nucleus'
 });
