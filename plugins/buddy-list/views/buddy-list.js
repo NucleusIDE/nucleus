@@ -1,6 +1,6 @@
 Template.ultimateBuddyListSidebar.helpers({
   userRows: function() {
-    var rows = UltimateIDEUser.collection.find().map(function(user) {
+    var rows = UltimateIDEUser.getOnlineUsers().map(function(user) {
       return {
         subcontentClasses: 'nucleus-tree-git-file-status buddy-list-item',
         status: ' ',

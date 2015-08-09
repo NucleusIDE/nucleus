@@ -164,6 +164,10 @@ UltimateIDEUser.loginWithGithubToken = function(token) {
   }
 };
 
+UltimateIDEUser.getOnlineUsers = function() {
+  return UltimateIDEUser.find({status:{$ne: 1}});
+};
+
 if (Meteor.isClient) {
   //autorun to set user.cwd when user's current working document chagnes
   Tracker.autorun(function() {
@@ -174,5 +178,45 @@ if (Meteor.isClient) {
     if(!user) return;
 
     user.setCwd(newCwd);
+  });
+}
+
+/**
+ * KeepAlive
+ */
+Statuses = {
+  OFFLINE: 1,
+  IDLE: 2,
+  ONLINE: 3
+};
+
+if (Meteor.isServer) {
+  Meteor.startup(function() {
+    Meteor.methods({
+      keepalive: function (nick, status) {
+        UltimateIDEUser.collection.update({nick: nick}, {$set: {last_keepalive: moment().toDate().getTime() - 0, status: status}});
+      }
+    });
+
+
+    Meteor.setInterval(function () {
+      var offline_threshold = moment().toDate().getTime() - (30*1000);
+
+      UltimateIDEUser.collection.update(
+        {last_keepalive: {$lt: offline_threshold}},
+        {$set: {status: Statuses.OFFLINE}},
+        {multi: true}
+      );
+
+    }, 10*1000);
+  });
+}
+
+if (Meteor.isClient) {
+  Meteor.startup(function() {
+    Meteor.setInterval(function() {
+      var user = UltimateIDEUser.me();
+      if(user) Meteor.call('keepalive', user.username, Statuses.ONLINE);
+    }, 10*1000);
   });
 }
