@@ -44,6 +44,9 @@ this.UltimateIDEUser = Ultimate('UltimateIDEUser').extends(UltimateModel, {
   getCwd: function() {
     return this.cwd;
   },
+  setCwd: function(newCwd) {
+    this.update({cwd: newCwd});
+  },
 
   delete: function() {
     /**
@@ -144,7 +147,7 @@ UltimateIDEUser.loginWithGithubToken = function(token) {
       ultimateUser.update({
         color: Utils.getRandomColor(),
         //XXX: there is a method in ultimateClient for setting scratch doc
-        cwd: 'scratch',
+        cwd: null,
         status: 3,
         last_keepalive: moment().toDate().getTime(),
         github_access_token: token.access_token,
@@ -160,3 +163,16 @@ UltimateIDEUser.loginWithGithubToken = function(token) {
     return fut.wait();
   }
 };
+
+if (Meteor.isClient) {
+  //autorun to set user.cwd when user's current working document chagnes
+  Tracker.autorun(function() {
+    var newCwd = Session.get('nucleus_selected_file');
+    if(! newCwd) return;
+
+    var user = UltimateIDEUser.me();
+    if(!user) return;
+
+    user.setCwd(newCwd);
+  });
+}

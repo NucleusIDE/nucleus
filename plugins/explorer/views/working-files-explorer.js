@@ -6,10 +6,8 @@ Template.ultimateWorkingFilesExplorer.rendered = function() {
   UltimateIDE.Editor.addEvent('change', function addWorkingDoc() {
     if(initialChangeCount < 3) {
       initialChangeCount++;
-      console.log('change: ', initialChangeCount);
       return;
     }
-    console.log('Change Count', initialChangeCount);
 
     var filepath = Session.get('nucleus_selected_file');
     if (!filepath)
@@ -28,9 +26,9 @@ Template.ultimateWorkingFilesExplorer.helpers({
     var workingFiles = UltimateIDE.Files.workingFiles;
     return workingFiles.map(function(row) {
       return {
-        appPath: row.appPath,
+        labelSecondary: row.appPath,
         filepath: row.filepath,
-        filename: row.name,
+        label: row.name,
         labelClasses: 'working-files-item-label',
         subcontentClasses: 'working-files-item',
         actions: [{
