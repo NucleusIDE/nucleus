@@ -6,7 +6,7 @@ Template.ultimateBuddyListSidebar.helpers({
         status: ' ',
         statusStyles: 'background: ' + user.getColor(),
         label: user.username,
-        labelSecondary: user.getCwd().split('/').reverse().slice(0, 2).concat(['...']).reverse().join('/'),
+        labelSecondary: user.getCwd() ? user.getCwd().split('/').reverse().slice(0, 2).concat(['...']).reverse().join('/') : '',
         cwd: user.getCwd()
       };
     });

@@ -40,7 +40,7 @@
   }
 }
 .user_nick_cursor_label {
-  position: absolute;
+  position: fixed;
   z-index: 9;
   display: none;
   background-color: #fff;

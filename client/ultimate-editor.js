@@ -47,9 +47,9 @@ var showLabelOnMouseMove = function(e) {
   //Check if the mouse position is in any of the `cursorRects`. If it's in some cursorRect, show the label, otherwise clear the cursor label
   _.each(cursorRects, function(item) {
     if(pointIsInRect(mousePos, item.rect))
-      NucleusEditor.showLabelForUser(item.userId);
+      UltimateEditor.showLabelForUser(item.userId);
     else
-      NucleusEditor.clearCursorLabel();
+      UltimateEditor.clearCursorLabel();
   });
 };
 
@@ -251,7 +251,7 @@ var UltimateEditorFactory = function() {
     var userCursorRange = this.extraCursors[user._id].range,
         userCursorPos = this.editor.renderer.textToScreenCoordinates(userCursorRange.start.row, userCursorRange.start.column),
         color = user.getColor(),
-        nick = user.getNick();
+        nick = user.username;
 
     var lineHeight = this.editor.renderer.lineHeight;
 
@@ -279,7 +279,7 @@ var UltimateEditorFactory = function() {
         self = this,
         user = typeof user === 'string' ? UltimateIDEUser.findOne(user) : user,
         color = user.getColor(),
-        nick = user.getNick(),
+        nick = user.username,
         curClass = "extra-ace-cursor-"+color.replace("#", '');
 
 
@@ -374,3 +374,17 @@ UltimateEditor.addCursorMovementAction(function(e) {
   if(UltimateIDEUser.me())
     UltimateIDEUser.me().setCursor(cursor.row, cursor.column);
 });
+
+//Autorun to update sidebar user state boxes and cursor position for different users
+Tracker.autorun(function() {
+  var users = UltimateIDEUser.getOnlineUsers().fetch();
+
+  Tracker.nonreactive(function() {
+    _.each(users, function(user) {
+      // Below function should execute only When NucleusEditor is initialized with ace instance
+      UltimateEditor.getEditor() && UltimateEditor.userAreOnSameFile(UltimateIDEUser.me(), user) && UltimateEditor.updateCursorForUser(user);
+    });
+  });
+
+});
+
