@@ -82,9 +82,9 @@ Package.on_use(function (api, where) {
     'client/lib/hint.css',
 
     'client/routes.js',
-    'client/nucleus_editor.js',
     'client/files.js',
     'client/ultimate.js',
+    'client/ultimate-editor.js',
   ], ['client']);
 
   api.add_files([

@@ -4,7 +4,7 @@ Template.nucleusEditor.helpers({
       // This method gets called when sharejs has initialized the ace-editor.
       // `editor` argument here is the ace-instance provided by sharejs.
       // We use it to initialize `NucleusEditor`
-      NucleusEditor.initialize(editor);
+      UltimateIDE.Editor.initialize(editor);
     };
   },
   setMode: function() {
@@ -20,8 +20,8 @@ Template.nucleusEditor.helpers({
       var selectedFile = Session.get("nucleus_selected_file");
 
       //Events get unregistered on document change
-      NucleusEditor.registerAllEvents();
-      NucleusEditor.editor.scrollToRow(0);
+      UltimateIDE.Editor.registerAllEvents();
+      UltimateIDE.Editor.editor.scrollToRow(0);
     };
   },
   docid: function() {

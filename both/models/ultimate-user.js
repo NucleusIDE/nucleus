@@ -48,6 +48,13 @@ this.UltimateIDEUser = Ultimate('UltimateIDEUser').extends(UltimateModel, {
     this.update({cwd: newCwd});
   },
 
+  setCursor: function(row, col) {
+    this.update({cursor: [row, col]});
+  },
+  getCursor: function() {
+    return this.cursor;
+  },
+
   delete: function() {
     /**
      * Deletes the user. It would work and should be used only on client since Session or cookie won't be available on server.

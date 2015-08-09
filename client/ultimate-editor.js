@@ -39,8 +39,8 @@ var showLabelOnMouseMove = function(e) {
   };
 
   //get rectangles for all extra cursors present in the ace editor. Every online user has a cursor.
-  var cursorRects = _.map(Object.keys(NucleusEditor.extraCursors), function(userId) {
-    var elem = document.getElementsByClassName(NucleusEditor.extraCursors[userId].class)[0];
+  var cursorRects = _.map(Object.keys(UltimateIDE.Editor.extraCursors), function(userId) {
+    var elem = document.getElementsByClassName(UltimateIDE.Editor.extraCursors[userId].class)[0];
     return {userId: userId, rect: getRectangleForElem(elem)};
   });
 
@@ -53,10 +53,7 @@ var showLabelOnMouseMove = function(e) {
   });
 };
 
-/**
- * Constructor for `NucleusEditor`
- */
-var NucleusEditorFactory = function() {
+var UltimateEditorFactory = function() {
   //Ace editor instance. This is populated in templates.js when sharejs initializes the ace editor
   this.editor = null;
   //Array of all extra cursors present
@@ -85,9 +82,6 @@ var NucleusEditorFactory = function() {
   };
   this.Range = ace.require('ace/range').Range;
 
-  /**
-   * We initialize the `NucleusEditor` in template.js when we get ace-editor instance from shareJs
-   */
   this.initialize = function(aceInstance) {
     this.setEditor(aceInstance);
     this.setTheme('tomorrow_night');
@@ -183,9 +177,7 @@ var NucleusEditorFactory = function() {
   };
 
   /**
-   * This is why I have the events over-engineered. A more elegent solution might be possible though.
-   *
-   * This method registers all the events in `NucleusEditor.events`. Thing is that when the document in ace editor changes, it would drop all the events registered on the editor. We need to register them all again every time document being edited changes.
+   * This method registers all the events in `Editor.events`. Thing is that when the document in ace editor changes, it would drop all the events registered on the editor. We need to register them all again every time document being edited changes.
    *
    * *Arguments:*
    * * `invert` *{boolean}*: Shall I perform the inverted operation? i.e unregister events instead of registering them
@@ -251,10 +243,10 @@ var NucleusEditorFactory = function() {
    * Show the label for `user`.
    *
    * *Arguments:*
-   * * `user` *{string}* or *{NucleusUser}*
+   * * `user` *{string}* or *{UltimateIDEUser}*
    */
   this.showLabelForUser = function(user) {
-    user = typeof user === 'string' ? NucleusUsers.findOne(user) : user;
+    user = typeof user === 'string' ? UltimateIDEUser.findOne(user) : user;
 
     var userCursorRange = this.extraCursors[user._id].range,
         userCursorPos = this.editor.renderer.textToScreenCoordinates(userCursorRange.start.row, userCursorRange.start.column),
@@ -272,10 +264,10 @@ var NucleusEditorFactory = function() {
    * Insert the extra cursor for `user`. It's called extra cursor because these cursors are inserted for all users except the currently logged in users.
    * We create an element and assign it color which is same as the color assigned to a user to be displayed in sidebar status box.
    *
-   * Return value from this method is kept in `NucleusEditor.extraCursors` for interacting with these cursors
+   * Return value from this method is kept in `Editor.extraCursors` for interacting with these cursors
    *
    * *Arguments:*
-   * * `user`: *{string}* or *{NucleusUser}*
+   * * `user`: *{string}* or *{UltimateIDEUser}*
    */
   this.insertExtraCursor = function(user) {
     var cursor = user.getCursor(),
@@ -285,7 +277,7 @@ var NucleusEditorFactory = function() {
         session = this.getSession(),
         doc = session.getDocument(),
         self = this,
-        user = typeof user === 'string' ? NucleusUsers.findOne(user) : user,
+        user = typeof user === 'string' ? UltimateIDEUser.findOne(user) : user,
         color = user.getColor(),
         nick = user.getNick(),
         curClass = "extra-ace-cursor-"+color.replace("#", '');
@@ -299,7 +291,6 @@ var NucleusEditorFactory = function() {
     animation: nuc-blink 0.8s steps(5, start) infinite; \
       -webkit-animation: nuc-blink 0.8s steps(5, start) infinite; \
   }";
-    //Check documentation for `NucleusEditor.addStyleRule()`
     this.addStyleRule(cursorCss);
     //I don't really know why this is needed. I copied this from firepad code
     cursorRange.clipRows = function() {
@@ -337,7 +328,7 @@ var NucleusEditorFactory = function() {
    * Remove the cursor corresponding to `cursorRange`
    *
    * *Arguments:*
-   * * `cursorRange` *{Ace Range}* : This is retrieved from `NucleusEditor.extraCursors`
+   * * `cursorRange` *{Ace Range}* : This is retrieved from `Editor.extraCursors`
    */
   this.removeCursor = function(cursorRange) {
     cursorRange.start && cursorRange.start.detach();
@@ -349,10 +340,10 @@ var NucleusEditorFactory = function() {
    * Update the cursor for `user`. It simply remove the cursor and create it in user's changed cursor position
    *
    * *Arguments:*
-   * * `user` *{NucleusUser}*
+   * * `user` *{UltimateIDEUser}*
    */
   this.updateCursorForUser = function(user) {
-    if (! NucleusUser.me() || user._id === NucleusUser.me()._id) return;
+    if (! UltimateIDEUser.me() || user._id === UltimateIDEUser.me()._id) return;
 
     var userId = user._id;
     if(! user.getCursor()) return;
@@ -372,12 +363,14 @@ var NucleusEditorFactory = function() {
   return this;
 };
 
-NucleusEditor = new NucleusEditorFactory();
+UltimateEditor = new UltimateEditorFactory();
 
 /**
  * Update user's cursor position in mongo db when he changes his cursor. This will automatically update user's cursor on all other users' editors
  */
-// NucleusEditor.addCursorMovementAction(function(e) {
-//   var cursor = NucleusEditor.getSelection().getCursor();
-//   NucleusUser.me() && NucleusUser.me().setCursor(cursor.row, cursor.column);
-// });
+UltimateEditor.addCursorMovementAction(function(e) {
+  var cursor = UltimateEditor.getSelection().getCursor();
+
+  if(UltimateIDEUser.me())
+    UltimateIDEUser.me().setCursor(cursor.row, cursor.column);
+});

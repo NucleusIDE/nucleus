@@ -44,7 +44,7 @@ UltimateIDEFactory.prototype.initialize = function (config, nucleusWindow) {
     }
   }, 500);
 
-  this.Editor = NucleusEditor;
+  this.Editor = UltimateEditor;
 
   return false;
 };
