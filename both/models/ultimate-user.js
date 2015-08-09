@@ -41,6 +41,10 @@ this.UltimateIDEUser = Ultimate('UltimateIDEUser').extends(UltimateModel, {
     return _.contains(myTokens, token);
   },
 
+  getCwd: function() {
+    return this.cwd;
+  },
+
   delete: function() {
     /**
      * Deletes the user. It would work and should be used only on client since Session or cookie won't be available on server.

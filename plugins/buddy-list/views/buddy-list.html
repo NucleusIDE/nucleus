@@ -1,0 +1,21 @@
+<template name="ultimateBuddyListActivityBar">
+  {{#nucleusActivitybarItem title="Buddy List" tabindex=3 id="activitybar-buddy-list" sidebarTemplate="ultimateBuddyListSidebar"}}
+  <i class="fa fa-users activitybar__action-icon"></i>
+  {{/nucleusActivitybarItem}}
+</template>
+
+<template name="ultimateBuddyListSidebar">
+  {{> nucleusSidebar_title title="Buddy List"}}
+
+  <div class="sidebar-content">
+    <div class="viewlet">
+      <div class="explore-viewlet">
+        <div class="status-view">
+          {{#each userRows}}
+          {{> nucleusTree_status_row}}
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

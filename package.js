@@ -136,6 +136,15 @@ Package.on_use(function (api, where) {
     'plugins/event-sync/views/event-sync.js',
   ], 'client');
 
+  /**
+   * Buddy List Plugin
+   */
+  api.add_files([
+    'plugins/buddy-list/buddy-list.js',
+    'plugins/buddy-list/views/buddy-list.html',
+    'plugins/buddy-list/views/buddy-list.js',
+  ], 'client');
+
   api.export && api.export(['UltimateIDE'], ['server']);
   api.export && api.export(['UltimateIDE', 'LiveUpdate'], ['client']);
 });
