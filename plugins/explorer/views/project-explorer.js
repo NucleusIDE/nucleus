@@ -3,7 +3,7 @@ var state = new ReactiveDict();
 
 Template.ultimateProjectExplorer.helpers({
   rows: function() {
-    var tree = UltimateIDE.Files.tree.find(),
+    var tree = UltimateIDE.Files.tree.find({}, {sort: {created_at: 1}}),
         expandingTree = null;
 
     if(tree.count() === 0)
