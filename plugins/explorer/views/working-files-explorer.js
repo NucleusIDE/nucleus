@@ -25,12 +25,15 @@ Template.ultimateWorkingFilesExplorer.helpers({
   workingFiles: function() {
     var workingFiles = UltimateIDE.Files.workingFiles;
     return workingFiles.map(function(row) {
+      var subcontentClasses = 'working-files-item';
+      if(row.is_temporary_working_file) subcontentClasses += ' working-files-item-temporary';
+
       return {
         labelSecondary: row.appPath,
         filepath: row.filepath,
         label: row.name,
         labelClasses: 'working-files-item-label',
-        subcontentClasses: 'working-files-item',
+        subcontentClasses: subcontentClasses,
         actions: [{
           filepath: row.filepath,
           actionLabelClasses: 'nucleus-icon nucleus-icon-close-file'
