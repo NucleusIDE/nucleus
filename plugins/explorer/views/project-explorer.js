@@ -35,7 +35,13 @@ Template.ultimateProjectExplorer.events({
 
     if (row.get('type') === 'file') {
       Session.set('nucleus_selected_file', row.get('filepath'));
-      UltimateIDE.Files.addWorkingFile(row.get('filepath'), {temp: true});
+
+      var isAlreadyInWorkingFiles = false;
+      UltimateIDE.Files.workingFiles.forEach(function (file) {
+        if(file.filepath === row.get('filepath')) isAlreadyInWorkingFiles = true;
+      });
+      if(! isAlreadyInWorkingFiles)
+        UltimateIDE.Files.addWorkingFile(row.get('filepath'), {temp: true});
     }
   },
   "dblclick .nucleus-tree__row": function(e) {
