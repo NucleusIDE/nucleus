@@ -30,7 +30,7 @@ Template.nucleusTree_collapse_row.helpers({
 });
 
 Template.ultimateProjectExplorer.events({
-  "click .nucleus-tree__row": function() {
+  "click .nucleus-tree__row": function(e) {
     var row = this;
 
     if (row.get('type') === 'file') {

@@ -3,22 +3,22 @@ var workingFilesState = new ReactiveDict();
 Template.ultimateWorkingFilesExplorer.rendered = function() {
   var initialChangeCount = 0;
 
-  UltimateIDE.Editor.addEvent('change', function addWorkingDoc() {
-    if(initialChangeCount < 3) {
-      initialChangeCount++;
-      return;
-    }
+  // UltimateIDE.Editor.addEvent('change', function addWorkingDoc() {
+  //   if(initialChangeCount < 3) {
+  //     initialChangeCount++;
+  //     return;
+  //   }
 
-    var filepath = Session.get('nucleus_selected_file');
-    if (!filepath)
-      return;
+  //   var filepath = Session.get('nucleus_selected_file');
+  //   if (!filepath)
+  //     return;
 
-    UltimateIDE.Files.addWorkingFile(filepath);
-    //a teeny-weeny hack. Events directly set on ace get's washed on document change
-    //We exploit that to remove the 'change' event so it will add document to
-    //working files only on first change
-    UltimateIDE.Editor.editor.session.off('change', addWorkingDoc);
-  });
+  //   UltimateIDE.Files.addWorkingFile(filepath, {temp: false}, 'change');
+  //   //a teeny-weeny hack. Events directly set on ace get's washed on document change
+  //   //We exploit that to remove the 'change' event so it will add document to
+  //   //working files only on first change
+  //   UltimateIDE.Editor.editor.session.off('change', addWorkingDoc);
+  // });
 };
 
 Template.ultimateWorkingFilesExplorer.helpers({

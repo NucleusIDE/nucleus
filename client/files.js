@@ -10,8 +10,13 @@ this.Files = function() {
 
 Files.prototype.addWorkingFile = function(filepath, options /* {temp: true|false} */) {
   options = options || {};
+  options.temp = typeof options.temp === 'undefined' ? true : options.temp;
   var file = this.tree.findOne({filepath: filepath});
+
+  var previousWorkingFile = file.is_working_file;
   var previousTempFile = this.tree.findOne({is_temporary_working_file: true});
+
+  if(previousWorkingFile && !previousTempFile) return;
 
   if(previousTempFile && filepath !== previousTempFile.filepath) {
     previousTempFile.is_temporary_working_file = false;
@@ -20,7 +25,7 @@ Files.prototype.addWorkingFile = function(filepath, options /* {temp: true|false
   }
 
   file.is_working_file = true;
-  file.is_temporary_working_file = (options.temp || null);
+  file.is_temporary_working_file = options.temp;
   file.save();
 };
 
