@@ -133,6 +133,7 @@ Package.on_use(function (api, where) {
   api.add_files([
     'plugins/event-sync/event-sync.js',
     'plugins/event-sync/views/event-sync.html',
+    'plugins/event-sync/views/events-feed.html',
     'plugins/event-sync/views/event-sync.js',
   ], 'client');
 

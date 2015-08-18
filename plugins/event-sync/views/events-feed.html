@@ -1,0 +1,21 @@
+<template name="ultimateEventsFeed">
+  <div class="event-feed-view-wrapper">
+    {{# nucleusSplitView title="Events Feed"}}
+
+    <div class="event-feed-view">
+      {{#nucleusTree}}
+      {{#each eventFeed}}
+
+      {{> nucleusTree_status_row}}
+
+      {{/each}}
+      {{/nucleusTree}}
+    </div>
+
+    <div class="selected-event-details">
+      <pre>{{ selectedEvent }}</pre>
+
+    </div>
+    {{/nucleusSplitView}}
+  </div>
+</template>
