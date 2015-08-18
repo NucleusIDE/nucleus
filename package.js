@@ -83,8 +83,8 @@ Package.on_use(function (api, where) {
 
     'client/routes.js',
     'client/files.js',
-    'client/ultimate.js',
     'client/ultimate-editor.js',
+    'client/ultimate.js',
   ], ['client']);
 
   api.add_files([

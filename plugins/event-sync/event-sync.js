@@ -63,12 +63,12 @@ UltimateIDEEventSync.prototype.addNucleusScrollEvent = function() {
     //should work in nucleus window opened by app window only
     return;
   }
-
+  var self = this;
   var NucleusScrollEvent = function nucleus_scroll(EventManager) {
     var EVENT_NAME = "nucleus_scroll",
         $window = window,
         utils = EventSync.Utils,
-        Editor = this.UltimateIDE.Editor,
+        Editor = self.UltimateIDE.Editor,
         NucleusEvent = EventManager.Collection;
 
     this.$window = $window;

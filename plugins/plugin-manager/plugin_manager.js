@@ -14,7 +14,7 @@ PluginManager_.prototype.register = function(plugin) {
 PluginManager_.prototype._setupPlugin = function(plugin) {
   var where = plugin.where;
 
-  if (Meteor['is' + where]) {
+  if (Meteor['is' + Utils.capitalizeFirstLetter(where)]) {
     plugin.setup(this);
   }
 };

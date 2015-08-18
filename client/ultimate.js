@@ -15,6 +15,7 @@ var UltimateIDEFactory = function () {
   var ServerFiles = Ultimate('UltimateServerFiles').extends(UltimateClass, filesObj);
 
   this.Files = new ServerFiles();
+  this.Editor = UltimateEditor;
 
   this.Plugins = PluginManager;
 
@@ -43,8 +44,6 @@ UltimateIDEFactory.prototype.initialize = function (config, nucleusWindow) {
       Meteor.clearInterval(nucOverrideInterval);
     }
   }, 500);
-
-  this.Editor = UltimateEditor;
 
   return false;
 };
