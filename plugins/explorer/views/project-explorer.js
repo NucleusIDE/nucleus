@@ -1,6 +1,25 @@
 var tree = null;
 var state = new ReactiveDict();
 
+function changeHeightOfExplorer() {
+  var el = '.explorer-project-files';
+  var $el = $(el);
+  var workingFilesHeight =  $('.explorer-working-files').parent().parent().height();
+  var totalHeights = 35 + 24 + 22 + workingFilesHeight;
+  var windowHeight = $(window).height();
+
+  var projectExplorerHeight = windowHeight - totalHeights;
+
+  $el.css({'max-height': projectExplorerHeight});
+}
+
+Template.ultimateProjectExplorer.rendered = function () {
+  $(window).on('resize.explorer_resize', changeHeightOfExplorer);
+}
+Template.ultimateProjectExplorer.destroyed = function () {
+  $(window).off('resize.explorer_resize');
+}
+
 Template.ultimateProjectExplorer.helpers({
   rows: function() {
     var tree = UltimateIDE.Files.tree.find({}, {sort: {created_at: 1}}),
@@ -51,4 +70,21 @@ Template.ultimateProjectExplorer.events({
       UltimateIDE.Files.addWorkingFile(filepath, {temp: false});
     }
   }
+});
+
+/**
+ * Autorun to dynamically change height of project-explorer when the height of
+ * working-files-explorer changes
+ */
+Tracker.autorun(function projectExplorerDynamicHeight() {
+  var workingFilesCount = UltimateIDE.Files.workingFiles.count(); //we need this to make this autorun work reactively
+  var el = '.explorer-project-files';
+
+  Utils.when(
+    function explorerRenderedP() { return $(el).length; },
+    changeHeightOfExplorer,
+    400,
+    null,
+    false
+  )
 });
