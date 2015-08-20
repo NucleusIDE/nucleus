@@ -64,6 +64,8 @@ Template.ultimateProjectExplorer.events({
     }
   },
   "dblclick .nucleus-tree__row": function(e) {
+    e.stopPropagation();
+    e.preventDefault();
     var row = this;
     if (row.get('type') === 'file') {
       filepath = Utils.dictToObj(row).filepath;

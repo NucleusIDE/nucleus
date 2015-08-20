@@ -31,6 +31,9 @@ Template.ultimateEventsFeed.helpers({
   },
   selectedEvent: function () {
     var event = state.get('selectedEvent');
+    if (!event) {
+      return;
+    }
     return JSON.stringify(event._originalDoc, null, 2);
   }
 });

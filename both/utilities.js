@@ -130,5 +130,20 @@ this.Utils = {
   },
   capitalizeFirstLetter: function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  },
+  throttled: function(func, time, context, args) {
+    time = time || 300;
+    args = args || [];
+    context = context || {};
+
+    var _timeout = null;
+    return function() {
+      if (_timeout)
+        Meteor.clearTimeout(_timeout);
+
+      _timeout = Meteor.setTimeout(function() {
+        func.apply(context, args);
+      }, time);
+    };
   }
 };
