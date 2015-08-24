@@ -156,16 +156,14 @@ Files.prototype.refresh = function (fileId, shouldEvalInNucleus) {
 };
 
 Files.prototype.newFileWithPrompt = function newFilePrompt(type) {
-  var selectedFile = Session.get('nucleus_selected_file');
+  var selectedFile = Session.get('nucleus_selected_file') || Session.get('ultimate_selected_folder');
   var siblingDoc = UltimateIDE.Files.tree.findOne({filepath: selectedFile});
   var parentId, type = Utils.capitalizeFirstLetter(type);
 
   if(!siblingDoc)
     parentId = '/';
-  else if(siblingDoc.type === 'file')
+  else
     parentId = siblingDoc.appPath;
-  else if(siblingDoc.type === 'folder')
-    parentId = siblingDoc.filepath;
 
   if(!parentId) return;
 
