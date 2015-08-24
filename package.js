@@ -45,7 +45,9 @@ Package.on_use(function (api, where) {
   ]);
 
   api.add_files([
-    'client/lib/global-state.js'
+    'client/lib/bootstrap.js',
+    'client/lib/bootstrap.css',
+    'client/lib/global-state.js',
   ], 'client');
 
   //Add core nucleus plugin files
@@ -125,6 +127,7 @@ Package.on_use(function (api, where) {
     'plugins/explorer/views/explore.js',
     'plugins/explorer/views/project-explorer.js',
     'plugins/explorer/views/working-files-explorer.js',
+    'plugins/explorer/views/prompt.css',
   ], 'client');
 
   /**

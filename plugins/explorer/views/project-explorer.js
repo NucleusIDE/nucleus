@@ -87,17 +87,23 @@ Template.nucleusSplitView.events({
     e.preventDefault();
     e.stopPropagation();
 
-    UltimateIDE.Files.newPrompt('file');
+    UltimateIDE.Files.newFileWithPrompt('file');
   },
   'click .action-item .nucleus-icon-new-folder': function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    UltimateIDE.Files.newPrompt('folder');
+    UltimateIDE.Files.newFileWithPrompt('folder');
   },
   'click .action-item .nucleus-icon-refresh-explorer': function (e) {
     e.preventDefault();
     e.stopPropagation();
+    UltimateIDE.Files.updateFileTreeCollection(function (err) {
+      if(err) {
+        return console.error(err);
+      }
+      FlashMessages.sendSuccess('Refreshed File Tree');
+    })
   }
 });
 

@@ -8,6 +8,7 @@ var fs = Npm.require('fs'),
 
 this.Files = function(ideInstance) {
   this.UltimateIDE = ideInstance;
+  this.config = this.UltimateIDE.config;
 };
 
 Files.prototype.getFileTree = function(options) {
@@ -309,6 +310,8 @@ Files.prototype.setupFileForEditting = function(filepath, forceRefresh) {
 };
 
 Files.prototype.updateFileTreeCollection = function() {
+  var now = new Date();
+
   this.getFileTree().forEach(function(file) {
     var existingFile = UltimateFiles.findOne({filepath: file.filepath});
     if (existingFile) {
@@ -316,4 +319,10 @@ Files.prototype.updateFileTreeCollection = function() {
     }
     UltimateFiles.insert(file);
   });
+
+  var unexistingFiles = UltimateFiles.find({updated_at: {$lt: now}});
+  unexistingFiles.forEach(function removeUnexistingFile(file) {
+    UltimateFiles.remove({_id: file._id});
+  })
+
 };

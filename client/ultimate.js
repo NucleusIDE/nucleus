@@ -31,6 +31,7 @@ UltimateIDEFactory.prototype.initialize = function (config, nucleusWindow) {
     hideDelay: 5000,
     autoScroll: true
   });
+  window.Flash = FlashMessages;
 
   this.nucleusWindow = nucleusWindow;
 

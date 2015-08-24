@@ -155,10 +155,10 @@ Files.prototype.refresh = function (fileId, shouldEvalInNucleus) {
 
 };
 
-Files.prototype.newPrompt = function newFilePrompt(type) {
+Files.prototype.newFileWithPrompt = function newFilePrompt(type) {
   var selectedFile = Session.get('nucleus_selected_file');
   var siblingDoc = UltimateIDE.Files.tree.findOne({filepath: selectedFile});
-  var parentId = null;
+  var parentId, type = Utils.capitalizeFirstLetter(type);
 
   if(!siblingDoc)
     parentId = '/';
@@ -169,15 +169,37 @@ Files.prototype.newPrompt = function newFilePrompt(type) {
 
   if(!parentId) return;
 
-  if (type === 'file') {
-    console.group('Creating New File');
-  } else if (type === 'folder') {
-    console.group('Creating New Folder');
-  } else throw new Meteor.Error('You passed wrong type you dumb fuck', type);
+  new UltimatePrompt('newFilePrompt', {
+    Location: {
+      type: String,
+      defaultValue: parentId
+    },
+    'New Name': {
+      type: String
+    }
+  }, {
+    title: 'New ' + type
+  }).show(function(res) {
+    var loc = res['Location'];
+    loc = loc[loc.length - 1] === '/' ? loc : loc + '/';
+    var newFilepath = loc + res['New Name'];
+    newFilepath = newFilepath[0] === '/' ? newFilepath.slice(1) : newFilepath;
 
-  console.log('Location: ', parentId);
-  console.log('New file Name: <You enter. Bitch>');
-  console.groupEnd();
+    this.createNewFile(newFilepath, type === 'Folder', function newFileHandler(err, createdFilepath) {
+      if (err)
+        return console.error('Error  while creating new file/folder: ', err);
+
+      this.updateFileTreeCollection(function updateFileTree(err) {
+        if (err) {
+          return console.error('Error while refreshing File Tree', err);
+        }
+        Flash.success('Created new ' + type);
+      }.bind(this))
+
+    }.bind(this));
+
+  }.bind(this));
+
 };
 
 
