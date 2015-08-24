@@ -32,15 +32,16 @@ Template.ultimateSidebarExplore.helpers({
   workingFilesSplitView: function() {
     return {
       title: "Working Files",
-      actions: [{
-        actionClasses: "action-item--disabled",
-        actionLabelClasses: "nucleus-icon nucleus-icon-save-all",
-        actionTitle: "Save All"
-      }, {
-        actionClasses: "",
-        actionLabelClasses: "nucleus-icon nucleus-icon-close-all",
-        actionTitle: "Close All"
-      }]
+      actions: [// {
+        //   actionClasses: "action-item--disabled",
+        //   actionLabelClasses: "nucleus-icon nucleus-icon-save-all",
+        //   actionTitle: "Save All"
+        // }, {
+        //   actionClasses: "",
+        //   actionLabelClasses: "nucleus-icon nucleus-icon-close-all",
+        //   actionTitle: "Close All"
+        // }
+      ]
     };
   },
   projectExplorerSplitView: function() {
@@ -55,10 +56,11 @@ Template.ultimateSidebarExplore.helpers({
       }, {
         actionLabelClasses: "nucleus-icon nucleus-icon-refresh-explorer",
         actionTitle: "Refresh"
-      }, {
-        actionLabelClasses: "nucleus-icon nucleus-icon-collapse-explorer",
-        actionTitle: "Close All"
-      }]
+      }// , {
+      //   actionLabelClasses: "nucleus-icon nucleus-icon-collapse-explorer",
+      //   actionTitle: "Close All"
+      // }
+               ]
     };
   }
 });

@@ -155,6 +155,32 @@ Files.prototype.refresh = function (fileId, shouldEvalInNucleus) {
 
 };
 
+Files.prototype.newPrompt = function newFilePrompt(type) {
+  var selectedFile = Session.get('nucleus_selected_file');
+  var siblingDoc = UltimateIDE.Files.tree.findOne({filepath: selectedFile});
+  var parentId = null;
+
+  if(!siblingDoc)
+    parentId = '/';
+  else if(siblingDoc.type === 'file')
+    parentId = siblingDoc.appPath;
+  else if(siblingDoc.type === 'folder')
+    parentId = siblingDoc.filepath;
+
+  if(!parentId) return;
+
+  if (type === 'file') {
+    console.group('Creating New File');
+  } else if (type === 'folder') {
+    console.group('Creating New Folder');
+  } else throw new Meteor.Error('You passed wrong type you dumb fuck', type);
+
+  console.log('Location: ', parentId);
+  console.log('New file Name: <You enter. Bitch>');
+  console.groupEnd();
+};
+
+
 /**
  * EVAL AUTO RUN
  */
