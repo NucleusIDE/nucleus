@@ -32,7 +32,7 @@ UltimateIDEFactory.prototype.initialize = function (config, nucleusWindow) {
     autoScroll: true
   });
   window.Flash = FlashMessages;
-
+  Flash.danger = Flash.sendError;
   this.nucleusWindow = nucleusWindow;
 
   //let's override nucleusWindow's LiveUpdate.refresh so it won't re-render the editor page

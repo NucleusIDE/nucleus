@@ -155,15 +155,17 @@ Files.prototype.refresh = function (fileId, shouldEvalInNucleus) {
 
 };
 
-Files.prototype.newFileWithPrompt = function newFilePrompt(type) {
-  var selectedFile = Session.get('nucleus_selected_file') || Session.get('ultimate_selected_folder');
+Files.prototype.newFileWithPrompt = function newFilePrompt(type, cb) {
+  var selectedFile = Session.get('ultimate_selected_folder') || Session.get('nucleus_selected_file');
   var siblingDoc = UltimateIDE.Files.tree.findOne({filepath: selectedFile});
   var parentId, type = Utils.capitalizeFirstLetter(type);
 
   if(!siblingDoc)
     parentId = '/';
-  else
-    parentId = siblingDoc.appPath;
+    else if (siblingDoc.type === 'file')
+      parentId = siblingDoc.appPath;
+    else
+      parentId = siblingDoc.filepath;
 
   if(!parentId) return;
 
@@ -180,20 +182,20 @@ Files.prototype.newFileWithPrompt = function newFilePrompt(type) {
   }).show(function(res) {
     var loc = res['Location'];
     loc = loc[loc.length - 1] === '/' ? loc : loc + '/';
+
     var newFilepath = loc + res['New Name'];
-    newFilepath = newFilepath[0] === '/' ? newFilepath.slice(1) : newFilepath;
+      console.log('NEW PATH: ', newFilepath.split('/').length);
+    newFilepath = (newFilepath[0] === '/'  && newFilepath.split('/').length <= 2)
+        ? newFilepath.slice(1)
+        : newFilepath;
 
     this.createNewFile(newFilepath, type === 'Folder', function newFileHandler(err, createdFilepath) {
-      if (err)
-        return console.error('Error  while creating new file/folder: ', err);
-
-      this.updateFileTreeCollection(function updateFileTree(err) {
-        if (err) {
-          return console.error('Error while refreshing File Tree', err);
-        }
-        Flash.success('Created new ' + type);
-      }.bind(this))
-
+      if (err) {
+              FlashMessages.sendError('Error  while creating new file/folder');
+              console.log(err);
+              cb(err);
+          }
+        cb(null, createdFilepath);
     }.bind(this));
 
   }.bind(this));

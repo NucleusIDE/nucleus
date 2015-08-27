@@ -23,7 +23,7 @@ Files.prototype.getFileTree = function(options) {
   options = options || {};
   var rootDir = options.rootDir || this.UltimateIDE.config.projectDir;
   var includeHidden = options.includeHidden || false;
-  var traverseSymlinks = options.traverseSymlinks || true;
+  var traverseSymlinks = options.traverseSymlinks || false;
 
   if(!rootDir) {
     throw new Meteor.Error('Please provide `rootDir` to start the tree from.');
@@ -315,7 +315,7 @@ Files.prototype.updateFileTreeCollection = function() {
   this.getFileTree().forEach(function(file) {
     var existingFile = UltimateFiles.findOne({filepath: file.filepath});
     if (existingFile) {
-      return existingFile.update(file);
+      return UltimateFiles.update({_id: existingFile._id}, {$set: {random_field: Random.hexString(24)}});
     }
     UltimateFiles.insert(file);
   });

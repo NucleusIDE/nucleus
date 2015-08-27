@@ -40,15 +40,19 @@
 </template>
 
 <template name="ultimateProjectExplorer">
-  <div id="newFilePrompt" style="display: none;">
-    <h1>Lol!</h1>
-  </div>
+  <div id="newFilePrompt" style="display: none;"></div>
+
+  {{#if showSpinner}}
+    <div class="project-explorer-spinner-wrapper">
+        {{> ultimateSpinner hidden=false styles='left:30px;'}}
+    </div>
+  {{/if}}
 
   {{#nucleusTree style=treeStyles}}
 
-  {{#each rows}}
-  {{> nucleusTree_collapse_row}}
-  {{/each}}
+    {{#each rows}}
+      {{> nucleusTree_collapse_row}}
+    {{/each}}
 
   {{/nucleusTree}}
 </template>
