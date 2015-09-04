@@ -45,6 +45,19 @@
   background-color:  rgba(55,55, 55, 0.6);
 }
 
+.modal-footer button.btn.btn-danger {
+  background-color: #5E3B3B;
+  color: rgba(222,222,222,0.9);
+  border: 1px solid transparent;
+}
+.modal-footer button.btn.btn-danger:hover {
+  color: #fff;
+  border: 1px solid #EE3B3B;
+}
+.modal-footer button.btn.btn-danger:active {
+  background-color:  #9E3B3B;
+}
+
 .modal-content .modal-body input.form-control {
   width: 100%;
   height: 32px;
@@ -62,4 +75,14 @@
 
 .modal-content .modal-body .help-block {
   float: right;
+}
+
+.modal-body .header {
+    font-size: 20px;
+    margin: 10px 0;
+}
+.modal-body code {
+    margin: 0 5px;
+    font-size: 13px;
+    color: #C89494;
 }

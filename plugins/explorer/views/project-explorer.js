@@ -13,13 +13,72 @@ function changeHeightOfExplorer() {
 
     $el.css({'max-height': projectExplorerHeight});
 }
+function createFileFolder(type) {
+    UltimateIDE.Files.newFileWithPrompt(type, function () {
+        state.set('show_project_explorer_spinner', true);
+
+        // Meteor.setTimeout(function () {
+        UltimateIDE.Files.updateFileTreeCollection(function (err) {
+            if (err) {
+                FlashMessages.sendError('Error  while creating new file/folder');
+                state.set('show_project_explorer_spinner', false);
+                console.log(err);
+            }
+
+            state.set('show_project_explorer_spinner', false);
+            FlashMessages.sendSuccess('Created new ' + type);
+        })
+        // }.bind(this), 1000);
+    });
+};
+function renameFileFolder(event) {
+    var selectedFile = Session.get('ultimate_selected_folder') || Session.get('ultimate_selected_file');
+
+    if (! selectedFile)
+        return alert('Please select a file or folder to rename');
+
+    var siblingDoc = UltimateIDE.Files.tree.findOne({filepath: selectedFile});
+
+    new UltimatePrompt('newFilePrompt', {
+        'Old Location': {
+            type: String,
+            defaultValue: selectedFile
+        },
+        'New Location': {
+            type: String,
+            defaultValue: selectedFile.split('/').reverse().slice(1).reverse().join('/') + '/'
+        }
+    }, {
+        title: 'Rename'
+    }).show(function (res) {
+        var oldName = res['Old Location'],
+            newName = res['New Location'];
+
+        UltimateIDE.Files.renameFile(oldName, newName, function (err, res) {
+            if (err) {
+                console.log('Error while renameing', err);
+                return FlashMessages.sendError('Failed to rename file');
+            }
+
+        })
+    });
+};
+function deleteFileFolder() {
+    var selectedFile = Session.get('ultimate_selected_folder') || Session.get('ultimate_selected_file');
+
+    if (! selectedFile)
+        return alert('Please select a file or folder to delete');
+
+    state.set('filepathToDelete', selectedFile);
+    $('#deleteModal').modal({backdrop: true});
+};
 
 Template.ultimateProjectExplorer.rendered = function () {
     $(window).on('resize.explorer_resize', changeHeightOfExplorer);
 
     this.autorun(function createExpandingTree() {
-        var tree = UltimateIDE.Files.tree.find({}).fetch();
-        var tree = _.sortBy(tree, function (file) {
+        var tree = UltimateIDE.Files.tree.find({}, {fields: {updated_at: false}}).fetch();
+        tree = _.sortBy(tree, function (file) {
             return file.updated_at;
         });
 
@@ -29,6 +88,32 @@ Template.ultimateProjectExplorer.rendered = function () {
         Tracker.nonreactive(function() {
             ExpandingTree.set(new UltimateExpandingTree(tree));
         });
+    });
+
+    var contextMenuId = 'project-explorer-context-menu';
+    $('.explorer-project-files').contextmenu({
+        target: '#' + contextMenuId,
+        before: function(e,context) {
+            $('#'+contextMenuId).removeClass('hidden');
+        },
+        onItem: function(context, e) {
+            var action = $(e.target).attr('data-action');
+
+            switch (action) {
+            case 'newFile':
+                return createFileFolder('file');
+            case 'newFolder':
+                return createFileFolder('folder');
+            case 'rename':
+                return renameFileFolder(context);
+            case 'delete':
+                return deleteFileFolder(context, e);
+            }
+        }
+    })
+
+    $('#'+contextMenuId).on('hide.bs.context', function (e) {
+        $('#'+contextMenuId).addClass('hidden');
     });
 }
 Template.ultimateProjectExplorer.destroyed = function () {
@@ -65,15 +150,21 @@ Template.ultimateProjectExplorer.events({
 
         if (row.get('type') === 'file') {
             Session.set('nucleus_selected_file', row.get('filepath'));
+            Session.set('ultimate_selected_file', row.get('filepath'));
+            Session.set('ultimate_selected_folder', null);
 
             var isAlreadyInWorkingFiles = false;
-            UltimateIDE.Files.workingFiles.forEach(function (file) {
-                if(file.filepath === row.get('filepath')) isAlreadyInWorkingFiles = true;
+            UltimateIDE.Files.workingFiles.forEach(function(file) {
+                if (file.filepath === row.get('filepath')) isAlreadyInWorkingFiles = true;
             });
-            if(! isAlreadyInWorkingFiles)
-                UltimateIDE.Files.addWorkingFile(row.get('filepath'), {temp: true});
-        } if (row.get('type') === 'folder') {
+            if (!isAlreadyInWorkingFiles)
+                UltimateIDE.Files.addWorkingFile(row.get('filepath'), {
+                    temp: true
+                });
+        }
+        if (row.get('type') === 'folder') {
             Session.set('ultimate_selected_folder', row.get('filepath'));
+            Session.set('ultimate_selected_file', null);
         }
 
     },
@@ -93,28 +184,13 @@ Template.nucleusSplitView.events({
         e.preventDefault();
         e.stopPropagation();
 
-        UltimateIDE.Files.newFileWithPrompt('file', function () {
-            state.set('show_project_explorer_spinner', true);
-
-            // Meteor.setTimeout(function () {
-                UltimateIDE.Files.updateFileTreeCollection(function (err) {
-                    if (err) {
-                        FlashMessages.sendError('Error  while creating new file/folder');
-                        state.set('show_project_explorer_spinner', false);
-                        console.log(err);
-                    }
-
-                    state.set('show_project_explorer_spinner', false);
-                    FlashMessages.sendSuccess('Created new ' + type);
-                }.bind(this))
-            // }.bind(this), 1000);
-        }.bind(this));
+        createFileFolder('file');
     },
     'click .action-item .nucleus-icon-new-folder': function (e) {
         e.preventDefault();
         e.stopPropagation();
 
-        UltimateIDE.Files.newFileWithPrompt('folder');
+        createFileFolder('folder');
     },
     'click .action-item .nucleus-icon-refresh-explorer': function (e) {
         e.preventDefault();
@@ -132,6 +208,38 @@ Template.nucleusSplitView.events({
             FlashMessages.sendSuccess('Refreshed File Tree');
             state.set('show_project_explorer_spinner', false);
         })
+    }
+});
+
+Template.ultimateProjectExplorerDeleteModal.helpers({
+    fileToDelete: function () {
+        return state.get('filepathToDelete');
+    }
+});
+Template.ultimateProjectExplorerDeleteModal.events({
+    'click #deleteFile': function (e) {
+        var filepath = state.get('filepathToDelete');
+
+        UltimateIDE.Files.deleteFile(filepath, function (err, res) {
+            $('#deleteModal').modal('hide');
+            state.set('filepathToDelete', null);
+            state.set('show_project_explorer_spinner', true);
+            if(err) {
+                console.log('Error while deleting file: ', err);
+                return FlashMessages.sendError('Failed to delete file');
+            }
+
+            UltimateIDE.Files.updateFileTreeCollection(function (err, res) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                Meteor.setTimeout(function () {
+                    state.set('show_project_explorer_spinner', false);
+                }, 1500);
+            })
+
+        });
     }
 });
 
